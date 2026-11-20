@@ -10,7 +10,7 @@ export default function Login() {
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    setMessage("Logging in...");
+    setMessage("Checking login...");
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -44,28 +44,17 @@ export default function Login() {
 
         <div className="field">
           <label>Email</label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <input type="email" required value={email}
+            onChange={(e) => setEmail(e.target.value)} />
         </div>
 
         <div className="field">
           <label>Password</label>
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <input type="password" required value={password}
+            onChange={(e) => setPassword(e.target.value)} />
         </div>
 
-        <button className="btn" type="submit">
-          Login
-        </button>
-
+        <button className="btn" type="submit">Login</button>
         {message && <p className="notice">{message}</p>}
       </form>
     </main>
