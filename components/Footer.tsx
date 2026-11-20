@@ -1,0 +1,1 @@
+export default function Footer(){return <footer className="footer"><div className="wrap"><div className="brand">REAL HOME SERVICE</div><p>Trusted property discovery in Ahmedabad.</p><small>© {new Date().getFullYear()} Real Home Service. All rights reserved.</small></div></footer>}
