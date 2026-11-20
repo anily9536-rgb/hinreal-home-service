@@ -2,7 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-
+import EnquiryForm from "@/components/EnquiryForm";
 export default async function Home() {
   const { data } = await supabase
     .from("properties")
