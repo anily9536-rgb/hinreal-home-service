@@ -1,62 +1,100 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Real Home Service</title>
+<title>REAL HOME SERVICE | Ahmedabad Property Marketplace</title>
+<meta name="description" content="Find your dream home in Ahmedabad. Explore properties for sale and rent.">
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#222}
-header{background:#123c32;color:white;padding:22px 15px;text-align:center}
-header h1{margin:0;font-size:28px}
-header p{margin:8px 0 0}
-nav{background:#fff;padding:14px;text-align:center;box-shadow:0 2px 8px #ddd}
-nav a{color:#123c32;text-decoration:none;margin:0 10px;font-weight:bold}
-.hero{background:linear-gradient(120deg,#123c32,#25866a);color:white;text-align:center;padding:65px 20px}
-.hero h2{font-size:32px;margin:0 0 15px}
-.hero p{font-size:17px;line-height:1.6}
-.btn{display:inline-block;background:#f5b942;color:#222;padding:13px 24px;border-radius:6px;text-decoration:none;font-weight:bold;margin-top:12px}
-section{padding:35px 18px;text-align:center}
-.services{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;max-width:950px;margin:auto}
-.card{background:white;padding:24px;border-radius:12px;box-shadow:0 3px 12px #ddd}
-.card h3{color:#17634e}
-.contact{background:#e5f2ec}
-footer{background:#123c32;color:white;text-align:center;padding:20px}
+body{margin:0;font-family:Arial,sans-serif;background:#f7f5ef;color:#171717}
+header{background:#101010;color:white;padding:20px 6%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}
+.logo{font-size:23px;font-weight:bold;color:#d8b56b}
+.logo small{display:block;font-size:10px;letter-spacing:2px;color:#eee;margin-top:5px}
+nav a{color:white;text-decoration:none;margin:0 10px;font-size:14px}
+.hero{padding:85px 7%;color:white;background:linear-gradient(90deg,#111d,#1118),url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600') center/cover}
+.hero h1{font-size:48px;max-width:650px;line-height:1.15}
+.hero p{font-size:17px;line-height:1.7}
+.search{background:white;padding:14px;border-radius:10px;display:flex;gap:10px;max-width:850px;flex-wrap:wrap}
+input,select{padding:14px;border:1px solid #ddd;border-radius:6px;flex:1;min-width:150px}
+button,.btn{background:#d2ad65;color:#171717;padding:14px 22px;border:0;border-radius:6px;font-weight:bold;text-decoration:none;cursor:pointer}
+section{padding:55px 7%}
+h2{font-size:30px}
+.sub{color:#777}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{background:white;border-radius:12px;overflow:hidden;box-shadow:0 5px 20px #0001}
+.card img{width:100%;height:220px;object-fit:cover}
+.cardbody{padding:18px}
+.tag{background:#f2e8d5;color:#76551e;padding:6px 10px;border-radius:20px;font-size:12px}
+.price{font-size:22px;font-weight:bold;color:#98712d;margin:12px 0}
+.about{background:#eee9df;text-align:center}
+footer{background:#111;color:white;text-align:center;padding:35px 15px}
+footer span{color:#d2ad65}
+@media(max-width:750px){
+.hero h1{font-size:36px}
+.grid{grid-template-columns:1fr}
+header{justify-content:center;text-align:center}
+nav{line-height:2.5}
+}
 </style>
 </head>
 <body>
+
 <header>
-<h1>REAL HOME SERVICE</h1>
-<p>Your Trusted Home Service Partner</p>
-</header>
+<div class="logo">REAL HOME SERVICE
+<small>AHMEDABAD PROPERTY MARKETPLACE</small></div>
 <nav>
-<a href="#home">Home</a>
-<a href="#services">Services</a>
-<a href="#contact">Contact</a>
+<a href="/">Home</a>
+<a href="/?type=Buy">Buy</a>
+<a href="/?type=Rent">Rent</a>
+<a href="/login">Admin Login</a>
 </nav>
-<div class="hero" id="home">
-<h2>Welcome to Real Home Service</h2>
-<p>Reliable and professional home services at your doorstep.</p>
-<a class="btn" href="#contact">Contact Us</a>
+</header>
+
+<div class="hero">
+<h1>Find a Place to Call Home.</h1>
+<p>Discover premium homes, apartments, villas and commercial properties in Ahmedabad.</p>
+<form class="search" action="/">
+<select name="type">
+<option value="">Buy or Rent</option>
+<option value="Buy">Buy Property</option>
+<option value="Rent">Rent Property</option>
+</select>
+<input name="q" placeholder="Search area e.g. Satellite, Bopal">
+<button type="submit">Search Properties</button>
+</form>
 </div>
-<section id="services">
-<h2>Our Services</h2>
-<div class="services">
-<div class="card"><h3>Home Cleaning</h3><p>Professional home cleaning services.</p></div>
-<div class="card"><h3>Electrician</h3><p>Electrical repair and maintenance.</p></div>
-<div class="card"><h3>Plumbing</h3><p>Reliable plumbing assistance.</p></div>
-<div class="card"><h3>Home Repair</h3><p>Everyday home repair solutions.</p></div>
+
+<section>
+<h2>Featured Properties</h2>
+<p class="sub">Explore properties in Ahmedabad</p>
+<div class="grid">
+<div class="card">
+<img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800" alt="Modern home">
+<div class="cardbody"><span class="tag">BUY · HOUSE</span><h3>Beautiful Modern Home</h3><p>Ahmedabad, Gujarat</p><div class="price">Contact for Price</div></div>
+</div>
+<div class="card">
+<img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800" alt="Luxury apartment">
+<div class="cardbody"><span class="tag">RENT · APARTMENT</span><h3>Luxury Apartment</h3><p>Ahmedabad, Gujarat</p><div class="price">Contact for Price</div></div>
+</div>
+<div class="card">
+<img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800" alt="Modern property">
+<div class="cardbody"><span class="tag">BUY · VILLA</span><h3>Premium Villa</h3><p>Ahmedabad, Gujarat</p><div class="price">Contact for Price</div></div>
+</div>
 </div>
 </section>
-<section class="contact" id="contact">
-<h2>Contact Real Home Service</h2>
-<p>For service enquiries, contact us.</p>
-<a class="btn" href="https://wa.me/91">WhatsApp Us</a>
+
+<section class="about">
+<h2>Your Property, Our Priority</h2>
+<p>REAL HOME SERVICE – Discover, explore and find your next property in Ahmedabad.</p>
+<a class="btn" href="/login">Admin Login</a>
 </section>
+
 <footer>
+<h2><span>REAL HOME SERVICE</span></h2>
+<p>Ahmedabad Property Marketplace</p>
 <p>© 2026 Real Home Service. All Rights Reserved.</p>
 </footer>
+
 </body>
 </html>
-
