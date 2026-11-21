@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import EnquiryForm from "@/components/EnquiryForm";
@@ -15,13 +14,11 @@ export default async function Home() {
   return (
     <>
       <Header />
+
       <main>
         <section className="hero">
           <h1>Find Your Dream Property</h1>
-          <p>Buy, Sell and Rent Properties Easily</p>
-          <Link href="/sell" className="btn">
-            Post Your Property
-          </Link>
+          <p>Explore verified properties for sale and rent.</p>
         </section>
 
         <section className="container">
@@ -44,18 +41,20 @@ export default async function Home() {
                       width: "100%",
                       height: 220,
                       objectFit: "cover",
-                      borderRadius: 8
+                      borderRadius: 8,
                     }}
                   />
                 )}
 
                 <h3>{property.title}</h3>
                 <p>{property.locality}</p>
+
                 <p>
                   {property.listing_type === "Rent"
                     ? "For Rent"
                     : "For Sale"}
                 </p>
+
                 <h3>
                   ₹{Number(property.price).toLocaleString("en-IN")}
                 </h3>
@@ -73,6 +72,7 @@ export default async function Home() {
           <EnquiryForm />
         </section>
       </main>
+
       <Footer />
     </>
   );
