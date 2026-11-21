@@ -1,1 +1,19 @@
-export default function Header(){return <header className="top"><div className="wrap nav"><a className="brand" href="/">REAL HOME SERVICE<small>AHMEDABAD PROPERTY MARKETPLACE</small></a><nav className="links"><a href="/?type=Buy">Buy</a><a href="/?type=Rent">Rent</a><a href="/sell">Post Property</a><a className="hide" href="/login">Login</a><a className="btn" href="/login">Get Started</a></nav></div></header>}
+export default function Header() {
+  return (
+    <header className="top">
+      <div className="wrap nav">
+        <a className="brand" href="/">
+          REAL HOME SERVICE
+          <small>AHMEDABAD PROPERTY MARKETPLACE</small>
+        </a>
+        <nav className="links">
+          <a href="/?type=Buy">Buy</a>
+          <a href="/?type=Rent">Rent</a>
+          <a href="/sell">Post Property</a>
+          <a href="/login">Login</a>
+          <a className="btn" href="/login">Get Started</a>
+        </nav>
+      </div>
+    </header>
+  );
+}
