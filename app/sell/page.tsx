@@ -8,7 +8,8 @@ import Footer from "@/components/Footer";
 
 export default function SellPage() {
   const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
+  const [locality, setLocality] = useState("");
+  const [listingType, setListingType] = useState("Buy");
   const [price, setPrice] = useState("");
   const [propertyType, setPropertyType] = useState("Residential");
   const [description, setDescription] = useState("");
@@ -21,41 +22,52 @@ export default function SellPage() {
     setLoading(true);
     setMessage("");
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    try {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
 
-    if (!user) {
-      setMessage("Please login before posting a property.");
+      if (authError || !user) {
+        setMessage("Please login before posting a property.");
+        return;
+      }
+
+      const images = imageUrl.trim() ? [imageUrl.trim()] : [];
+
+      const { error } = await supabase.from("properties").insert({
+        user_id: user.id,
+        title: title.trim(),
+        listing_type: listingType,
+        property_type: propertyType,
+        price: Number(price),
+        locality: locality.trim(),
+        description: description.trim(),
+        images,
+        status: "pending",
+      });
+
+      if (error) {
+        setMessage("Property submission failed: " + error.message);
+        return;
+      }
+
+      setMessage(
+        "Property submitted successfully! Waiting for admin approval."
+      );
+
+      setTitle("");
+      setLocality("");
+      setListingType("Buy");
+      setPrice("");
+      setPropertyType("Residential");
+      setDescription("");
+      setImageUrl("");
+    } catch {
+      setMessage("Something went wrong. Please try again.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const { error } = await supabase.from("properties").insert({
-      title,
-      location,
-      price: Number(price),
-      property_type: propertyType,
-      description,
-      image_url: imageUrl,
-      user_id: user.id,
-      status: "pending",
-    });
-
-    setLoading(false);
-
-    if (error) {
-      setMessage(error.message);
-      return;
-    }
-
-    setMessage("Property submitted successfully! Waiting for admin approval.");
-
-    setTitle("");
-    setLocation("");
-    setPrice("");
-    setDescription("");
-    setImageUrl("");
   }
 
   return (
@@ -63,8 +75,8 @@ export default function SellPage() {
       <Header />
 
       <main className="container">
-        <h1>Sell Your Property</h1>
-        <p>Fill in the details to post your property.</p>
+        <h1>Post Your Property</h1>
+        <p>Fill in the details to list your property.</p>
 
         <form onSubmit={handleSubmit}>
           <input
@@ -75,11 +87,20 @@ export default function SellPage() {
             required
           />
 
+          <select
+            value={listingType}
+            onChange={(e) => setListingType(e.target.value)}
+            required
+          >
+            <option value="Buy">For Sale</option>
+            <option value="Rent">For Rent</option>
+          </select>
+
           <input
             type="text"
-            placeholder="Property Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            placeholder="Property Location / Locality"
+            value={locality}
+            onChange={(e) => setLocality(e.target.value)}
             required
           />
 
@@ -95,6 +116,7 @@ export default function SellPage() {
           <select
             value={propertyType}
             onChange={(e) => setPropertyType(e.target.value)}
+            required
           >
             <option value="Residential">Residential</option>
             <option value="Commercial">Commercial</option>
@@ -105,7 +127,7 @@ export default function SellPage() {
 
           <input
             type="url"
-            placeholder="Property Image URL"
+            placeholder="Property Image URL (Optional)"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
           />
@@ -123,11 +145,14 @@ export default function SellPage() {
           </button>
         </form>
 
-        {message && <p style={{ marginTop: "20px" }}>{message}</p>}
+        {message && (
+          <p role="status" style={{ marginTop: "20px" }}>
+            {message}
+          </p>
+        )}
       </main>
 
       <Footer />
     </>
   );
 }
-
