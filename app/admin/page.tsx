@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,11 +11,10 @@ export default function AdminPage() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
-  const [adminReady, setAdminReady] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [properties, setProperties] = useState<any[]>([]);
   const [enquiries, setEnquiries] = useState<any[]>([]);
   const [message, setMessage] = useState("");
-  const [saving, setSaving] = useState(false);
 
   const [title, setTitle] = useState("");
   const [locality, setLocality] = useState("");
@@ -26,33 +26,35 @@ export default function AdminPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   async function loadData() {
-    const propertyResult = await supabase
+    const p = await supabase
       .from("properties")
       .select("*")
       .order("created_at", { ascending: false });
 
-    const enquiryResult = await supabase
+    const e = await supabase
       .from("enquiries")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (propertyResult.error || enquiryResult.error) {
-      setMessage(
-        propertyResult.error?.message ||
-        enquiryResult.error?.message ||
-        "Data load nahi ho saka."
-      );
+    if (p.error) {
+      setMessage("Properties error: " + p.error.message);
+    } else {
+      setProperties(p.data || []);
     }
 
-    setProperties(propertyResult.data || []);
-    setEnquiries(enquiryResult.data || []);
+    if (e.error) {
+      setMessage("Enquiries error: " + e.error.message);
+    } else {
+      setEnquiries(e.data || []);
+    }
   }
 
   useEffect(() => {
     async function checkAdmin() {
-      const { data: auth } = await supabase.auth.getUser();
+      const { data: auth, error: authError } =
+        await supabase.auth.getUser();
 
-      if (!auth.user) {
+      if (authError || !auth.user) {
         router.replace("/admin/login");
         return;
       }
@@ -69,7 +71,6 @@ export default function AdminPage() {
         return;
       }
 
-      setAdminReady(true);
       await loadData();
       setLoading(false);
     }
@@ -78,21 +79,21 @@ export default function AdminPage() {
   }, [router]);
 
   async function handleAddProperty(
-    e: React.FormEvent<HTMLFormElement>
+    event: React.FormEvent<HTMLFormElement>
   ) {
-    e.preventDefault();
+    event.preventDefault();
 
-    if (!adminReady) return;
+    if (saving) return;
 
     setSaving(true);
-    setMessage("");
+    setMessage("Property add ho rahi hai...");
 
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const { data: auth } = await supabase.auth.getUser();
+      const user = auth.user;
 
       if (!user) {
+        setMessage("Session expire ho gaya. Dobara login karein.");
         router.replace("/admin/login");
         return;
       }
@@ -112,14 +113,14 @@ export default function AdminPage() {
           return;
         }
 
-        const { data: publicUrl } = supabase.storage
+        const { data: urlData } = supabase.storage
           .from("property-photos")
           .getPublicUrl(filePath);
 
-        images = [publicUrl.publicUrl];
+        images = [urlData.publicUrl];
       }
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("properties")
         .insert({
           user_id: user.id,
@@ -132,14 +133,16 @@ export default function AdminPage() {
           phone: phone.trim() || null,
           images,
           status: "approved",
-        });
+        })
+        .select()
+        .single();
 
       if (error) {
         setMessage("Property add error: " + error.message);
         return;
       }
 
-      setMessage("Property successfully added to website!");
+      setMessage("Success! Property website par add ho gayi.");
 
       setTitle("");
       setLocality("");
@@ -150,16 +153,18 @@ export default function AdminPage() {
       setPhone("");
       setImageFile(null);
 
-      const fileInput = document.getElementById(
+      const input = document.getElementById(
         "property-image"
       ) as HTMLInputElement | null;
 
-      if (fileInput) fileInput.value = "";
+      if (input) input.value = "";
 
       await loadData();
     } catch (error) {
       setMessage(
-        error instanceof Error ? error.message : "Something went wrong."
+        error instanceof Error
+          ? error.message
+          : "Upload nahi ho paya."
       );
     } finally {
       setSaving(false);
@@ -173,7 +178,7 @@ export default function AdminPage() {
       .eq("id", id);
 
     if (error) {
-      setMessage(error.message);
+      setMessage("Status error: " + error.message);
       return;
     }
 
@@ -187,48 +192,38 @@ export default function AdminPage() {
   }
 
   if (loading) {
-    return <main style={{ padding: 40 }}>Loading Admin Dashboard...</main>;
+    return <main style={{ padding: 30 }}>Loading Admin Dashboard...</main>;
   }
 
   return (
     <>
       <Header />
 
-      <main
-        style={{
-          maxWidth: 1100,
-          margin: "30px auto",
-          padding: 20,
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: 15,
-          }}
-        >
+      <main style={{ maxWidth: 1100, margin: "30px auto", padding: 20 }}>
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 15
+        }}>
           <h1>Admin Dashboard</h1>
-          <button onClick={logout}>Admin Logout</button>
+          <button type="button" onClick={logout}>Admin Logout</button>
         </div>
 
         {message && (
-          <p style={{ padding: 12, background: "#eef6ff" }}>
+          <p style={{
+            padding: 14,
+            background: "#eef6ff",
+            border: "1px solid #b8d8ff",
+            borderRadius: 8
+          }}>
             {message}
           </p>
         )}
 
         <h2>Dashboard Overview</h2>
 
-        <div
-          style={{
-            display: "flex",
-            gap: 20,
-            flexWrap: "wrap",
-            marginBottom: 30,
-          }}
-        >
+        <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
           <div style={{ padding: 20, background: "#eee", borderRadius: 10 }}>
             <h3>Total Properties</h3>
             <h2>{properties.length}</h2>
@@ -240,12 +235,12 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 30 }}>
-          <button onClick={() => router.push("/admin/properties")}>
+        <div style={{ display: "flex", gap: 12, margin: "25px 0" }}>
+          <button type="button" onClick={() => router.push("/admin/properties")}>
             Manage All Properties
           </button>
 
-          <button onClick={() => router.push("/admin/enquiries")}>
+          <button type="button" onClick={() => router.push("/admin/enquiries")}>
             Manage Enquiries
           </button>
         </div>
@@ -263,7 +258,7 @@ export default function AdminPage() {
             padding: 20,
             border: "1px solid #ddd",
             borderRadius: 12,
-            marginBottom: 40,
+            marginBottom: 40
           }}
         >
           <input
@@ -324,9 +319,7 @@ export default function AdminPage() {
             onChange={(e) => setDescription(e.target.value)}
           />
 
-          <label htmlFor="property-image">
-            Upload Property Photo
-          </label>
+          <label htmlFor="property-image">Upload Property Photo (Optional)</label>
 
           <input
             id="property-image"
@@ -337,28 +330,36 @@ export default function AdminPage() {
             }
           />
 
-          <button type="submit" disabled={saving}>
-            {saving ? "Uploading..." : "Add Property"}
+          <button
+            type="submit"
+            disabled={saving}
+            style={{
+              padding: 14,
+              background: "#111827",
+              color: "white",
+              border: 0,
+              borderRadius: 8,
+              cursor: saving ? "wait" : "pointer"
+            }}
+          >
+            {saving ? "Adding Property..." : "Add Property"}
           </button>
         </form>
 
         <hr />
 
-        <h2 style={{ marginTop: 30 }}>Manage Properties</h2>
+        <h2>Manage Properties</h2>
 
         {properties.length === 0 ? (
           <p>No properties found.</p>
         ) : (
           properties.map((property) => (
-            <div
-              key={property.id}
-              style={{
-                border: "1px solid #ddd",
-                padding: 15,
-                marginBottom: 15,
-                borderRadius: 10,
-              }}
-            >
+            <div key={property.id} style={{
+              border: "1px solid #ddd",
+              padding: 15,
+              marginBottom: 15,
+              borderRadius: 10
+            }}>
               <h3>{property.title}</h3>
               <p>Location: {property.locality}</p>
               <p>Price: ₹{property.price}</p>
@@ -366,6 +367,7 @@ export default function AdminPage() {
 
               {property.status !== "approved" && (
                 <button
+                  type="button"
                   onClick={() => updateStatus(property.id, "approved")}
                 >
                   Approve
@@ -374,6 +376,7 @@ export default function AdminPage() {
 
               {property.status !== "rejected" && (
                 <button
+                  type="button"
                   onClick={() => updateStatus(property.id, "rejected")}
                 >
                   Reject
@@ -385,21 +388,18 @@ export default function AdminPage() {
 
         <hr />
 
-        <h2 style={{ marginTop: 30 }}>Customer Enquiries</h2>
+        <h2>Customer Enquiries</h2>
 
         {enquiries.length === 0 ? (
           <p>No enquiries found.</p>
         ) : (
           enquiries.map((enquiry) => (
-            <div
-              key={enquiry.id}
-              style={{
-                border: "1px solid #ddd",
-                padding: 15,
-                marginBottom: 15,
-                borderRadius: 10,
-              }}
-            >
+            <div key={enquiry.id} style={{
+              border: "1px solid #ddd",
+              padding: 15,
+              marginBottom: 15,
+              borderRadius: 10
+            }}>
               <p><b>Name:</b> {enquiry.name}</p>
               <p><b>Phone:</b> {enquiry.phone}</p>
               <p><b>Email:</b> {enquiry.email || "Not provided"}</p>
