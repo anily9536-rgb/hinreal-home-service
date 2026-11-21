@@ -55,7 +55,7 @@ export default function Header() {
 
           {user ? (
             <>
-              <Link href="/dashboard">My Dashboard</Link>
+              <Link href="/sell">My Account</Link>
               <button onClick={handleLogout}>Logout</button>
             </>
           ) : (
