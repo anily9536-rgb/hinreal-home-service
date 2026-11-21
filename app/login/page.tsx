@@ -3,14 +3,50 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+  async function handleLogin(
+    e: React.FormEvent<HTMLFormElement>
+  ) {
     e.preventDefault();
-    alert("Login authentication will be connected next.");
+    setMessage("");
+    setLoading(true);
+
+    try {
+      const { data, error } =
+        await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
+
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      if (!data.user) {
+        setMessage("Login failed. Please try again.");
+        return;
+      }
+
+      setMessage("Login successful!");
+
+      router.replace("/");
+      router.refresh();
+    } catch {
+      setMessage("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -48,10 +84,26 @@ export default function LoginPage() {
             required
           />
 
-          <button type="submit" style={{ width: "100%" }}>
-            Login
+          <button
+            type="submit"
+            disabled={loading}
+            style={{ width: "100%" }}
+          >
+            {loading ? "Please Wait..." : "Login"}
           </button>
         </form>
+
+        {message && (
+          <p
+            role="status"
+            style={{
+              textAlign: "center",
+              marginTop: "15px",
+            }}
+          >
+            {message}
+          </p>
+        )}
 
         <p style={{ textAlign: "center", marginTop: "20px" }}>
           Don't have an account?{" "}
@@ -69,4 +121,3 @@ export default function LoginPage() {
     </main>
   );
 }
-
