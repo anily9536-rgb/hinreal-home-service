@@ -1,2 +1,47 @@
-import Header from "@/components/Header";import Footer from "@/components/Footer";import {supabase} from "@/lib/supabase";import EnquiryForm from "@/components/EnquiryForm";";import {notFound} from "next/navigation";
-export default async function PropertyPage({params}:{params:Promise<{id:string}>}){const{id}=await params;const{data:p}=await supabase.from("properties").select("*").eq("id",id).eq("status","approved").single();if(!p)notFound();return <><Header/><main className="wrap"><section className="section"><span className="tag">{p.listing_type} · {p.property_type}</span><h1 style={{fontFamily:"Playfair Display",fontSize:38}}>{p.title}</h1><div className="price">₹{Number(p.price).toLocaleString("en-IN")}{p.listing_type==="Rent"?"/ month":""}</div><p className="muted">{p.locality}, Ahmedabad</p><div className="grid" style={{gridTemplateColumns:"repeat(2,1fr)"}}>{(p.images||[]).map((src:string,i:number)=><img key={i} className="photo" style={{borderRadius:12}} src={src} alt={`${p.title} photo ${i+1}`}/>)}</div><h2>Property Details</h2><p>{p.description||"Contact us for more details."}</p><p><b>Area:</b> {p.area_sqft||"Not specified"} sq.ft.　<b>BHK:</b> {p.bhk||"N/A"}</p><p><b>Address:</b> {p.address}</p><EnquiryForm propertyId={p.id} title={p.title}/></section></main><Footer/></>}
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import EnquiryForm from "@/components/EnquiryForm";
+import { supabase } from "@/lib/supabase";
+
+export default function PropertyPage() {
+  const params = useParams();
+  const id = params.id as string;
+  const [property, setProperty] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function getProperty() {
+      const { data } = await supabase
+        .from("properties")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      setProperty(data);
+      setLoading(false);
+    }
+
+    if (id) getProperty();
+  }, [id]);
+
+  if (loading) return <p>Loading property...</p>;
+  if (!property) return <p>Property not found.</p>;
+
+  return (
+    <>
+      <Header />
+      <main className="wrap">
+        <h1>{property.title}</h1>
+        <p>{property.locality}</p>
+        <h2>₹{property.price}</h2>
+        <p>{property.description}</p>
+        <EnquiryForm propertyId={id} />
+      </main>
+      <Footer />
+    </>
+  );
+}
