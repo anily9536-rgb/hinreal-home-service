@@ -1,20 +1,21 @@
-
-
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 type Property = {
   id: string;
   title: string;
-  location: string;
+  locality: string;
   price: number;
   property_type: string;
   created_at?: string;
 };
 
 export default function AdminPropertiesPage() {
+  const router = useRouter();
+
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -38,8 +39,33 @@ export default function AdminPropertiesPage() {
   }
 
   useEffect(() => {
-    fetchProperties();
-  }, []);
+    async function checkAdmin() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.replace("/admin/login");
+        return;
+      }
+
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (error || profile?.role !== "admin") {
+        await supabase.auth.signOut();
+        router.replace("/admin/login");
+        return;
+      }
+
+      await fetchProperties();
+    }
+
+    checkAdmin();
+  }, [router]);
 
   async function deleteProperty(id: string) {
     const confirmed = window.confirm(
@@ -58,7 +84,7 @@ export default function AdminPropertiesPage() {
       return;
     }
 
-    fetchProperties();
+    await fetchProperties();
   }
 
   return (
@@ -76,7 +102,7 @@ export default function AdminPropertiesPage() {
 
           <button
             onClick={fetchProperties}
-            className="rounded-lg bg-blue-600 px-5 py-3 text-white hover:bg-blue-700"
+            className="rounded-lg bg-blue-600 px-5 py-3 text-white"
           >
             Refresh
           </button>
@@ -98,7 +124,7 @@ export default function AdminPropertiesPage() {
             Error: {error}
           </div>
         ) : properties.length === 0 ? (
-          <div className="rounded-xl bg-white p-8 text-center text-gray-600">
+          <div className="rounded-xl bg-white p-8 text-center">
             No properties found.
           </div>
         ) : (
@@ -120,17 +146,21 @@ export default function AdminPropertiesPage() {
                     <td className="p-4 font-medium">
                       {property.title}
                     </td>
-                    <td className="p-4">{property.location}</td>
+
+                    <td className="p-4">{property.locality}</td>
+
                     <td className="p-4">
                       ₹{Number(property.price || 0).toLocaleString("en-IN")}
                     </td>
+
                     <td className="p-4">
                       {property.property_type}
                     </td>
+
                     <td className="p-4">
                       <button
                         onClick={() => deleteProperty(property.id)}
-                        className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+                        className="rounded-lg bg-red-600 px-4 py-2 text-white"
                       >
                         Delete
                       </button>
