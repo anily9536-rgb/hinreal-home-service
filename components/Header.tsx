@@ -13,11 +13,10 @@ export default function Header() {
       setUser(data.user);
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    const { data: { subscription } } =
+      supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user ?? null);
+      });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -30,23 +29,13 @@ export default function Header() {
   return (
     <header>
       <nav>
-        <Link href="/">
-          <img
-            src="/logo.png"
-            alt="Real Home Service"
-            style={{
-              width: "190px",
-              height: "65px",
-              objectFit: "contain",
-            }}
-          />
-        </Link>
+        <Link href="/">Real Home Service</Link>
 
         <div style={{
           display: "flex",
           flexWrap: "wrap",
           alignItems: "center",
-          gap: "15px",
+          gap: "15px"
         }}>
           <Link href="/">Home</Link>
           <Link href="/about">About</Link>
@@ -64,6 +53,19 @@ export default function Header() {
               <Link href="/register">Register</Link>
             </>
           )}
+
+          <Link
+            href="/admin/login"
+            style={{
+              background: "#111827",
+              color: "white",
+              padding: "10px 15px",
+              borderRadius: "6px",
+              fontWeight: "bold"
+            }}
+          >
+            Admin Login
+          </Link>
         </div>
       </nav>
     </header>
