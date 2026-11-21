@@ -30,18 +30,24 @@ export default function Header() {
   return (
     <header>
       <nav>
-        <Link href="/" style={{ color: "white" }}>
-          <h2>Real Home Service</h2>
+        <Link href="/">
+          <img
+            src="/logo.png"
+            alt="Real Home Service"
+            style={{
+              width: "190px",
+              height: "65px",
+              objectFit: "contain",
+            }}
+          />
         </Link>
 
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            gap: "15px",
-          }}
-        >
+        <div style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          gap: "15px",
+        }}>
           <Link href="/">Home</Link>
           <Link href="/about">About</Link>
           <Link href="/contact">Contact</Link>
@@ -63,4 +69,3 @@ export default function Header() {
     </header>
   );
 }
-
