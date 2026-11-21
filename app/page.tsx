@@ -2,7 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import EnquiryForm from "@/components/EnquiryForm";
+
 export default async function Home() {
   const { data } = await supabase
     .from("properties")
@@ -13,11 +13,13 @@ export default async function Home() {
   return (
     <>
       <Header />
+
       <section className="hero">
         <div className="wrap">
           <div className="eyebrow">Ahmedabad Property Marketplace</div>
           <h1>Find a place to call home.</h1>
           <p>Buy or rent homes, flats, plots and commercial properties.</p>
+
           <form className="search" action="/">
             <select name="type">
               <option value="">Buy or Rent</option>
@@ -32,6 +34,7 @@ export default async function Home() {
 
       <main className="wrap section">
         <h2>Featured Properties</h2>
+
         <div className="grid">
           {(data || []).map((p) => (
             <Link className="card" href={`/property/${p.id}`} key={p.id}>
@@ -40,8 +43,11 @@ export default async function Home() {
                 src={p.images?.[0] || ""}
                 alt={p.title}
               />
+
               <div className="cardbody">
-                <span className="tag">{p.listing_type} · {p.property_type}</span>
+                <span className="tag">
+                  {p.listing_type} · {p.property_type}
+                </span>
                 <h3>{p.title}</h3>
                 <div className="price">
                   ₹{Number(p.price).toLocaleString("en-IN")}
@@ -51,7 +57,12 @@ export default async function Home() {
             </Link>
           ))}
         </div>
+
+        {(!data || data.length === 0) && (
+          <p> अभी कोई प्रॉपर्टी उपलब्ध नहीं है।</p>
+        )}
       </main>
+
       <Footer />
     </>
   );
