@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState } from "react";
@@ -19,28 +18,36 @@ export default function AdminLoginPage() {
     setLoading(true);
     setMessage("");
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
-      setMessage(error.message);
+      if (error || !data.user) {
+        setMessage(error?.message || "Login failed.");
+        return;
+      }
+
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .single();
+
+      if (profileError || profile?.role !== "admin") {
+        await supabase.auth.signOut();
+        setMessage("Access denied. This account is not an admin.");
+        return;
+      }
+
+      router.replace("/admin");
+      router.refresh();
+    } catch {
+      setMessage("Something went wrong. Please try again.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // IMPORTANT:
-    // Replace this placeholder with a verified server-side admin role check.
-    // A successful user login alone does NOT grant admin access.
-    if (!data.user) {
-      setMessage("Unable to verify account.");
-      setLoading(false);
-      return;
-    }
-
-    setMessage("Login successful. Admin authorization is not configured yet.");
-    setLoading(false);
   }
 
   return (
@@ -76,17 +83,13 @@ export default function AdminLoginPage() {
             required
           />
 
-          <button
-            type="submit"
-            disabled={loading}
-            style={{ width: "100%" }}
-          >
+          <button type="submit" disabled={loading} style={{ width: "100%" }}>
             {loading ? "Please Wait..." : "Login as Admin"}
           </button>
         </form>
 
         {message && (
-          <p style={{ marginTop: "20px", textAlign: "center" }}>
+          <p role="status" style={{ marginTop: "20px", textAlign: "center" }}>
             {message}
           </p>
         )}
