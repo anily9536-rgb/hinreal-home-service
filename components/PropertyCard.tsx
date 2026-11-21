@@ -5,27 +5,32 @@ type PropertyCardProps = {
   property: {
     id: string;
     title: string;
-    location: string;
+    locality: string;
     price: number | string;
-    image_url?: string | null;
+    images?: string[] | null;
     property_type?: string | null;
+    listing_type?: string | null;
   };
 };
 
-export default function PropertyCard({
-  property,
-}: PropertyCardProps) {
+export default function PropertyCard({ property }: PropertyCardProps) {
   return (
-    <div className="property-card">
-      {property.image_url ? (
+    <article className="property-card">
+      {property.images?.[0] ? (
         <img
-          src={property.image_url}
+          src={property.images[0]}
           alt={property.title}
+          style={{
+            width: "100%",
+            height: 220,
+            objectFit: "cover",
+            borderRadius: 8,
+          }}
         />
       ) : (
         <div
           style={{
-            height: "200px",
+            height: 220,
             background: "#e5e7eb",
             display: "flex",
             alignItems: "center",
@@ -37,21 +42,21 @@ export default function PropertyCard({
       )}
 
       <h3>{property.title}</h3>
+      <p>{property.locality}</p>
 
-      <p>{property.location}</p>
-
-      {property.property_type && (
-        <p>Type: {property.property_type}</p>
+      {property.listing_type && (
+        <p>
+          {property.listing_type === "Rent" ? "For Rent" : "For Sale"}
+        </p>
       )}
 
-      <h4>
-        ₹ {Number(property.price).toLocaleString("en-IN")}
-      </h4>
+      {property.property_type && <p>{property.property_type}</p>}
+
+      <h3>₹{Number(property.price).toLocaleString("en-IN")}</h3>
 
       <Link href={`/property/${property.id}`}>
         View Details
       </Link>
-    </div>
+    </article>
   );
 }
-
