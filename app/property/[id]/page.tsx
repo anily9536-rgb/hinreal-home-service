@@ -11,14 +11,14 @@ export default async function PropertyPage({
 }) {
   const { id } = await params;
 
-  const { data: property } = await supabase
+  const { data: property, error } = await supabase
     .from("properties")
     .select("*")
     .eq("id", id)
     .eq("status", "approved")
     .single();
 
-  if (!property) {
+  if (error || !property) {
     notFound();
   }
 
@@ -29,37 +29,62 @@ export default async function PropertyPage({
       <main className="container">
         <h1>{property.title}</h1>
 
-        {property.image_url && (
-          <img
-            src={property.image_url}
-            alt={property.title}
-            style={{
-              width: "100%",
-              maxWidth: "800px",
-              height: "400px",
-              objectFit: "cover",
-              borderRadius: "10px",
-            }}
-          />
+        {property.images?.length > 0 && (
+          <div>
+            {property.images.map((image: string, index: number) => (
+              <img
+                key={index}
+                src={image}
+                alt={`${property.title} - ${index + 1}`}
+                style={{
+                  width: "100%",
+                  maxWidth: "800px",
+                  height: "400px",
+                  objectFit: "cover",
+                  borderRadius: "10px",
+                  marginBottom: "15px",
+                }}
+              />
+            ))}
+          </div>
         )}
 
         <h2>₹ {property.price}</h2>
 
-        <p><strong>Location:</strong> {property.location}</p>
-
         <p>
-          <strong>Description:</strong>{" "}
-          {property.description}
+          <strong>Listing:</strong>{" "}
+          {property.listing_type === "Rent" ? "For Rent" : "For Sale"}
         </p>
 
         <p>
-          <strong>Property Type:</strong>{" "}
-          {property.property_type}
+          <strong>Location:</strong> {property.locality}
         </p>
 
         <p>
-          <strong>Status:</strong> {property.status}
+          <strong>Property Type:</strong> {property.property_type}
         </p>
+
+        {property.bhk && (
+          <p>
+            <strong>BHK:</strong> {property.bhk}
+          </p>
+        )}
+
+        {property.area_sqft && (
+          <p>
+            <strong>Area:</strong> {property.area_sqft} sq. ft.
+          </p>
+        )}
+
+        <p>
+          <strong>Description:</strong> {property.description}
+        </p>
+
+        {property.phone && (
+          <p>
+            <strong>Contact:</strong> {property.phone}
+          </p>
+        )}
 
         <a
           href="/contact"
@@ -74,4 +99,3 @@ export default async function PropertyPage({
     </>
   );
 }
-
