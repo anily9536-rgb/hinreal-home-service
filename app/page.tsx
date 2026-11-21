@@ -1,183 +1,79 @@
 
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import EnquiryForm from "@/components/EnquiryForm";
 import { supabase } from "@/lib/supabase";
+import Link from "next/link";
 
-type Property = {
-  id: string;
-  title: string;
-  locality: string;
-  price: number;
-  listing_type: string;
-  property_type: string;
-  status: string;
-  created_at: string;
-};
-
-export default function AdminDashboard() {
-  const router = useRouter();
-
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
-  const [updatingId, setUpdatingId] = useState("");
-
-  useEffect(() => {
-    async function loadDashboard() {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) {
-        router.replace("/admin/login");
-        return;
-      }
-
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-
-      if (profileError || profile?.role !== "admin") {
-        await supabase.auth.signOut();
-        router.replace("/admin/login");
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("properties")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        setMessage("Unable to load properties: " + error.message);
-      } else {
-        setProperties(data || []);
-      }
-
-      setLoading(false);
-    }
-
-    loadDashboard();
-  }, [router]);
-
-  async function updateStatus(id: string, status: string) {
-    setUpdatingId(id);
-    setMessage("");
-
-    const { error } = await supabase
-      .from("properties")
-      .update({ status })
-      .eq("id", id);
-
-    if (error) {
-      setMessage("Update failed: " + error.message);
-    } else {
-      setProperties((current) =>
-        current.map((property) =>
-          property.id === id ? { ...property, status } : property
-        )
-      );
-      setMessage("Property status updated successfully.");
-    }
-
-    setUpdatingId("");
-  }
-
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    router.replace("/admin/login");
-    router.refresh();
-  }
-
-  const pending = properties.filter((p) => p.status === "pending").length;
-  const approved = properties.filter((p) => p.status === "approved").length;
-  const rejected = properties.filter((p) => p.status === "rejected").length;
-
-  if (loading) {
-    return <main className="container"><p>Loading Admin Dashboard...</p></main>;
-  }
+export default async function Home() {
+  const { data: properties, error } = await supabase
+    .from("properties")
+    .select("*")
+    .eq("status", "approved")
+    .order("created_at", { ascending: false });
 
   return (
-    <main className="container">
-      <h1>Admin Dashboard</h1>
-      <p>Manage your website properties and enquiries.</p>
+    <>
+      <Header />
+      <main>
+        <section className="hero">
+          <h1>Find Your Dream Property</h1>
+          <p>Buy, Sell and Rent Properties Easily</p>
+          <Link href="/sell" className="btn">
+            Post Your Property
+          </Link>
+        </section>
 
-      <button onClick={handleLogout}>Logout</button>
+        <section className="container">
+          <h2>Latest Properties</h2>
 
-      <p>
-        <Link href="/admin/enquiries">View Customer Enquiries</Link>
-      </p>
+          {error && <p>Unable to load properties right now.</p>}
 
-      <div className="property-grid">
-        <div className="property-card">
-          <h3>Total Properties</h3>
-          <h2>{properties.length}</h2>
-        </div>
+          {!error && (!properties || properties.length === 0) && (
+            <p>No approved properties available yet.</p>
+          )}
 
-        <div className="property-card">
-          <h3>Pending</h3>
-          <h2>{pending}</h2>
-        </div>
+          <div className="property-grid">
+            {properties?.map((property) => (
+              <article className="property-card" key={property.id}>
+                {property.images?.[0] && (
+                  <img
+                    src={property.images[0]}
+                    alt={property.title}
+                    style={{
+                      width: "100%",
+                      height: 220,
+                      objectFit: "cover",
+                      borderRadius: 8
+                    }}
+                  />
+                )}
 
-        <div className="property-card">
-          <h3>Approved</h3>
-          <h2>{approved}</h2>
-        </div>
+                <h3>{property.title}</h3>
+                <p>{property.locality}</p>
+                <p>
+                  {property.listing_type === "Rent"
+                    ? "For Rent"
+                    : "For Sale"}
+                </p>
+                <h3>
+                  ₹{Number(property.price).toLocaleString("en-IN")}
+                </h3>
 
-        <div className="property-card">
-          <h3>Rejected</h3>
-          <h2>{rejected}</h2>
-        </div>
-      </div>
-
-      <h2>Manage Properties</h2>
-
-      {message && <p role="status">{message}</p>}
-
-      {properties.length === 0 && <p>No properties found.</p>}
-
-      <div className="property-grid">
-        {properties.map((property) => (
-          <div className="property-card" key={property.id}>
-            <h3>{property.title}</h3>
-            <p>Location: {property.locality}</p>
-            <p>Price: ₹{property.price}</p>
-            <p>Type: {property.property_type}</p>
-            <p>Listing: {property.listing_type}</p>
-            <p>Status: <strong>{property.status}</strong></p>
-
-            {property.status !== "approved" && (
-              <button
-                disabled={updatingId === property.id}
-                onClick={() => updateStatus(property.id, "approved")}
-              >
-                {updatingId === property.id ? "Updating..." : "Approve"}
-              </button>
-            )}
-
-            {property.status !== "rejected" && (
-              <button
-                disabled={updatingId === property.id}
-                onClick={() => updateStatus(property.id, "rejected")}
-              >
-                Reject
-              </button>
-            )}
-
-            {property.status !== "pending" && (
-              <button
-                disabled={updatingId === property.id}
-                onClick={() => updateStatus(property.id, "pending")}
-              >
-                Mark Pending
-              </button>
-            )}
+                <Link href={`/property/${property.id}`}>
+                  View Details
+                </Link>
+              </article>
+            ))}
           </div>
-        ))}
-      </div>
-    </main>
+        </section>
+
+        <section className="container">
+          <h2>Send an Enquiry</h2>
+          <EnquiryForm />
+        </section>
+      </main>
+      <Footer />
+    </>
   );
 }
