@@ -1,5 +1,4 @@
-
-
+l
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
@@ -7,7 +6,7 @@ import Link from "next/link";
 import EnquiryForm from "@/components/EnquiryForm";
 
 export default async function Home() {
-  const { data: properties } = await supabase
+  const { data: properties, error } = await supabase
     .from("properties")
     .select("*")
     .eq("status", "approved")
@@ -21,6 +20,7 @@ export default async function Home() {
         <section className="hero">
           <h1>Find Your Dream Property</h1>
           <p>Buy, Sell and Rent Properties Easily</p>
+
           <Link href="/sell" className="btn">
             Post Your Property
           </Link>
@@ -29,18 +29,40 @@ export default async function Home() {
         <section className="container">
           <h2>Latest Properties</h2>
 
+          {error && <p>Unable to load properties.</p>}
+
+          {!error && properties?.length === 0 && (
+            <p>No approved properties available yet.</p>
+          )}
+
           <div className="property-grid">
             {properties?.map((property) => (
               <div className="property-card" key={property.id}>
-                {property.image_url && (
+                {property.images?.[0] && (
                   <img
-                    src={property.image_url}
+                    src={property.images[0]}
                     alt={property.title}
+                    style={{
+                      width: "100%",
+                      height: "220px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
                   />
                 )}
+
                 <h3>{property.title}</h3>
-                <p>{property.location}</p>
+
+                <p>{property.locality}</p>
+
+                <p>
+                  {property.listing_type === "Rent"
+                    ? "For Rent"
+                    : "For Sale"}
+                </p>
+
                 <h4>₹ {property.price}</h4>
+
                 <Link href={`/property/${property.id}`}>
                   View Details
                 </Link>
