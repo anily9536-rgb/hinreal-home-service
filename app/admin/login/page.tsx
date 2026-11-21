@@ -20,12 +20,12 @@ export default function AdminLoginPage() {
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim(),
         password,
       });
 
       if (error || !data.user) {
-        setMessage(error?.message || "Login failed.");
+        setMessage("Login error: " + (error?.message || "User not found"));
         return;
       }
 
@@ -33,18 +33,34 @@ export default function AdminLoginPage() {
         .from("profiles")
         .select("role")
         .eq("id", data.user.id)
-        .single();
+        .maybeSingle();
 
-      if (profileError || profile?.role !== "admin") {
+      if (profileError) {
+        setMessage("Profile error: " + profileError.message);
         await supabase.auth.signOut();
-        setMessage("Access denied. This account is not an admin.");
+        return;
+      }
+
+      if (!profile) {
+        setMessage("Profile not found for this account.");
+        await supabase.auth.signOut();
+        return;
+      }
+
+      if (profile.role !== "admin") {
+        setMessage("Role found: " + profile.role);
+        await supabase.auth.signOut();
         return;
       }
 
       router.replace("/admin");
       router.refresh();
-    } catch {
-      setMessage("Something went wrong. Please try again.");
+
+    } catch (err) {
+      setMessage(
+        "Error: " +
+        (err instanceof Error ? err.message : "Unknown error")
+      );
     } finally {
       setLoading(false);
     }
@@ -89,7 +105,15 @@ export default function AdminLoginPage() {
         </form>
 
         {message && (
-          <p role="status" style={{ marginTop: "20px", textAlign: "center" }}>
+          <p
+            role="status"
+            style={{
+              marginTop: "20px",
+              textAlign: "center",
+              color: "red",
+              overflowWrap: "anywhere",
+            }}
+          >
             {message}
           </p>
         )}
