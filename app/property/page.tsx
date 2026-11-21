@@ -1,74 +1,62 @@
 
-
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
-import { notFound } from "next/navigation";
+import Link from "next/link";
 
-export default async function PropertyPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-
-  const { data: property } = await supabase
+export default async function PropertyPage() {
+  const { data: properties, error } = await supabase
     .from("properties")
     .select("*")
-    .eq("id", id)
     .eq("status", "approved")
-    .single();
-
-  if (!property) {
-    notFound();
-  }
+    .order("created_at", { ascending: false });
 
   return (
     <>
       <Header />
 
       <main className="container">
-        <h1>{property.title}</h1>
+        <h1>All Properties</h1>
 
-        {property.image_url && (
-          <img
-            src={property.image_url}
-            alt={property.title}
-            style={{
-              width: "100%",
-              maxWidth: "800px",
-              height: "400px",
-              objectFit: "cover",
-              borderRadius: "10px",
-            }}
-          />
+        {error && <p>Unable to load properties.</p>}
+
+        {!error && (!properties || properties.length === 0) && (
+          <p>No approved properties available.</p>
         )}
 
-        <h2>₹ {property.price}</h2>
+        <div className="property-grid">
+          {properties?.map((property) => (
+            <article className="property-card" key={property.id}>
+              {property.images?.[0] && (
+                <img
+                  src={property.images[0]}
+                  alt={property.title}
+                  style={{
+                    width: "100%",
+                    height: 220,
+                    objectFit: "cover",
+                    borderRadius: 8,
+                  }}
+                />
+              )}
 
-        <p><strong>Location:</strong> {property.location}</p>
+              <h2>{property.title}</h2>
+              <p>{property.locality}</p>
+              <p>
+                {property.listing_type === "Rent"
+                  ? "For Rent"
+                  : "For Sale"}
+              </p>
+              <h3>
+                ₹{Number(property.price).toLocaleString("en-IN")}
+              </h3>
 
-        <p>
-          <strong>Description:</strong>{" "}
-          {property.description}
-        </p>
-
-        <p>
-          <strong>Property Type:</strong>{" "}
-          {property.property_type}
-        </p>
-
-        <p>
-          <strong>Status:</strong> {property.status}
-        </p>
-
-        <a
-          href="/contact"
-          className="btn"
-          style={{ marginTop: "20px" }}
-        >
-          Contact Us
-        </a>
+              <Link href={`/property/${property.id}`}>
+                View Details
+              </Link>
+            </article>
+          ))}
+        </div>
       </main>
 
       <Footer />
