@@ -1,3 +1,4 @@
+"use client";
 
 export default function Loading() {
   return (
@@ -36,4 +37,3 @@ export default function Loading() {
     </div>
   );
 }
-
