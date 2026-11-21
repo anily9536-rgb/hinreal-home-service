@@ -1,8 +1,8 @@
 
-
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,20 +10,48 @@ import Footer from "@/components/Footer";
 type Property = {
   id: string;
   title: string;
-  location: string;
+  locality: string;
   price: number;
   status: string;
 };
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
+  useEffect(() => {
+    checkAdmin();
+  }, []);
+
+  async function checkAdmin() {
+    const { data: auth } = await supabase.auth.getUser();
+
+    if (!auth.user) {
+      router.replace("/admin/login");
+      return;
+    }
+
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", auth.user.id)
+      .single();
+
+    if (error || profile?.role !== "admin") {
+      await supabase.auth.signOut();
+      router.replace("/admin/login");
+      return;
+    }
+
+    await loadProperties();
+  }
+
   async function loadProperties() {
     const { data, error } = await supabase
       .from("properties")
-      .select("id, title, location, price, status")
+      .select("id, title, locality, price, status")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -34,10 +62,6 @@ export default function AdminDashboard() {
 
     setLoading(false);
   }
-
-  useEffect(() => {
-    loadProperties();
-  }, []);
 
   async function updateStatus(id: string, status: string) {
     setMessage("");
@@ -53,7 +77,11 @@ export default function AdminDashboard() {
     }
 
     setMessage(`Property ${status} successfully.`);
-    loadProperties();
+    await loadProperties();
+  }
+
+  if (loading) {
+    return <main className="container">Loading Admin Dashboard...</main>;
   }
 
   return (
@@ -66,51 +94,37 @@ export default function AdminDashboard() {
 
         {message && <p>{message}</p>}
 
-        {loading ? (
-          <p>Loading properties...</p>
-        ) : (
-          <>
-            <h2>Total Properties: {properties.length}</h2>
+        <h2>Total Properties: {properties.length}</h2>
 
-            <div className="property-grid">
-              {properties.map((property) => (
-                <div className="property-card" key={property.id}>
-                  <h3>{property.title}</h3>
+        <div className="property-grid">
+          {properties.map((property) => (
+            <div className="property-card" key={property.id}>
+              <h3>{property.title}</h3>
+              <p>Location: {property.locality}</p>
+              <h4>₹ {Number(property.price).toLocaleString("en-IN")}</h4>
+              <p>
+                Status: <strong>{property.status}</strong>
+              </p>
 
-                  <p>Location: {property.location}</p>
+              {property.status !== "approved" && (
+                <button
+                  onClick={() => updateStatus(property.id, "approved")}
+                >
+                  Approve
+                </button>
+              )}
 
-                  <h4>₹ {property.price}</h4>
-
-                  <p>
-                    Status: <strong>{property.status}</strong>
-                  </p>
-
-                  {property.status !== "approved" && (
-                    <button
-                      onClick={() =>
-                        updateStatus(property.id, "approved")
-                      }
-                      style={{ marginRight: "10px" }}
-                    >
-                      Approve
-                    </button>
-                  )}
-
-                  {property.status !== "rejected" && (
-                    <button
-                      onClick={() =>
-                        updateStatus(property.id, "rejected")
-                      }
-                      style={{ background: "#c0392b" }}
-                    >
-                      Reject
-                    </button>
-                  )}
-                </div>
-              ))}
+              {property.status !== "rejected" && (
+                <button
+                  onClick={() => updateStatus(property.id, "rejected")}
+                  style={{ background: "#c0392b" }}
+                >
+                  Reject
+                </button>
+              )}
             </div>
-          </>
-        )}
+          ))}
+        </div>
       </main>
 
       <Footer />
