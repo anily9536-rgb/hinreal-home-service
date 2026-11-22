@@ -1,19 +1,42 @@
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import EnquiryForm from "@/components/EnquiryForm";
-import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
+const categories = [
+  {
+    name: "Residential",
+    slug: "residential",
+    icon: "🏠",
+    description: "Residential Properties",
+  },
+  {
+    name: "Commercial",
+    slug: "commercial",
+    icon: "🏢",
+    description: "Shops, Offices & Commercial Spaces",
+  },
+  {
+    name: "Land",
+    slug: "land",
+    icon: "🌳",
+    description: "Plots & Land Properties",
+  },
+  {
+    name: "Apartment",
+    slug: "apartment",
+    icon: "🏬",
+    description: "Flats & Apartments",
+  },
+  {
+    name: "Villa",
+    slug: "villa",
+    icon: "🏡",
+    description: "Independent Homes & Villas",
+  },
+];
 
-export default async function Home() {
-  const { data: properties, error } = await supabase
-    .from("properties")
-    .select("*")
-    .eq("status", "approved")
-    .order("created_at", { ascending: false });
-
+export default function Home() {
   return (
     <>
       <Header />
@@ -28,7 +51,7 @@ export default async function Home() {
               width: "min(90%, 600px)",
               maxHeight: 200,
               objectFit: "contain",
-              margin: "0 auto 20px"
+              margin: "0 auto 20px",
             }}
           />
 
@@ -37,72 +60,60 @@ export default async function Home() {
         </section>
 
         <section className="container">
-          <h2>Latest Properties</h2>
+          <h2 style={{ textAlign: "center", marginBottom: 10 }}>
+            Explore Property Categories
+          </h2>
 
-          {error && (
-            <div
-              style={{
-                padding: 15,
-                margin: "15px 0",
-                background: "#fee2e2",
-                color: "#991b1b",
-                borderRadius: 8,
-                overflowWrap: "anywhere"
-              }}
-            >
-              <h3>Supabase Database Error</h3>
-              <p>{error.message}</p>
-              <p>Code: {error.code || "Not available"}</p>
-              <p>Details: {error.details || "Not available"}</p>
-              <p>Hint: {error.hint || "Not available"}</p>
-            </div>
-          )}
+          <p style={{ textAlign: "center", marginBottom: 25 }}>
+            Select a category to explore available properties.
+          </p>
 
-          {!error && (!properties || properties.length === 0) && (
-            <p>No approved properties available yet.</p>
-          )}
+          <div
+            className="property-grid"
+            style={{
+              gridTemplateColumns:
+                "repeat(auto-fit, minmax(220px, 1fr))",
+            }}
+          >
+            {categories.map((category) => (
+              <Link
+                key={category.slug}
+                href={`/category/${category.slug}`}
+                className="property-card"
+                style={{
+                  display: "block",
+                  textAlign: "center",
+                  padding: 30,
+                  minHeight: 190,
+                  border: "1px solid #dce5ee",
+                  borderRadius: 12,
+                  background: "#fff",
+                  boxShadow: "0 4px 14px rgba(0,0,0,0.08)",
+                }}
+              >
+                <div style={{ fontSize: 48, marginBottom: 12 }}>
+                  {category.icon}
+                </div>
 
-          <div className="property-grid">
-            {properties?.map((property) => (
-              <article className="property-card" key={property.id}>
-                {property.images?.[0] && (
-                  <img
-                    src={property.images[0]}
-                    alt={property.title}
-                    style={{
-                      width: "100%",
-                      height: 220,
-                      objectFit: "cover",
-                      borderRadius: 8
-                    }}
-                  />
-                )}
+                <h2 style={{ marginBottom: 10 }}>
+                  {category.name}
+                </h2>
 
-                <h3>{property.title}</h3>
-                <p>{property.locality}</p>
-                <p>{property.address}</p>
+                <p>{category.description}</p>
 
-                <p>
-                  {property.listing_type === "Rent"
-                    ? "For Rent"
-                    : "For Sale"}
-                </p>
-
-                <h3>
-                  ₹{Number(property.price).toLocaleString("en-IN")}
-                </h3>
-
-                <Link href={`/property/${property.id}`}>
-                  View Details
-                </Link>
-              </article>
+                <span
+                  style={{
+                    display: "inline-block",
+                    marginTop: 15,
+                    color: "#2874a6",
+                    fontWeight: "bold",
+                  }}
+                >
+                  View Properties →
+                </span>
+              </Link>
             ))}
           </div>
-        </section>
-
-        <section className="container">
-          <h2>Send an Enquiry</h2>
-          <EnquiryForm />
         </section>
       </main>
 
