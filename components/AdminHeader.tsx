@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminHeader() {
@@ -23,37 +23,55 @@ export default function AdminHeader() {
 
   return (
     <header style={{
-      padding: "14px 20px",
+      width: "100%",
+      padding: "10px 20px",
       background: "#fff",
       borderBottom: "1px solid #ddd",
+      boxSizing: "border-box",
       position: "relative",
-      zIndex: 1000
+      zIndex: 1000,
     }}>
       <nav style={{
         display: "flex",
         justifyContent: "space-between",
-        alignItems: "center"
+        alignItems: "center",
+        gap: "12px",
       }}>
         <Link href="/admin" style={{
-          fontSize: "21px",
-          fontWeight: "bold",
-          color: "#111",
-          textDecoration: "none"
+          display: "flex",
+          alignItems: "center",
+          gap: "9px",
+          minWidth: 0,
+          color: "#102b55",
+          textDecoration: "none",
+          fontSize: "clamp(16px, 2.5vw, 21px)",
+          fontWeight: 800,
+          whiteSpace: "nowrap",
         }}>
-          Admin Dashboard
+          <img src="/logo.png" alt="Real Home Service logo" style={{
+            width: "46px",
+            height: "46px",
+            borderRadius: "50%",
+            objectFit: "cover",
+            flexShrink: 0,
+            border: "2px solid #d6a52c",
+          }} />
+          <span>Real Home Service</span>
         </Link>
 
         <div style={{ display: "flex", gap: "18px", alignItems: "center" }}>
           <div className="desktop-links">
-            <Link href="/admin" style={linkStyle}>Home</Link>
+            <Link href="/admin" style={linkStyle}>Admin Dashboard</Link>
             <Link href="/about" style={linkStyle}>About</Link>
             <Link href="/contact" style={linkStyle}>Contact</Link>
-            <button onClick={handleLogout}>Logout</button>
+            <button type="button" onClick={handleLogout}>Logout</button>
           </div>
 
           <button
+            type="button"
             className="menu-button"
             onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
           >
             {menuOpen ? "✕" : "☰"}
           </button>
@@ -64,30 +82,28 @@ export default function AdminHeader() {
         display: menuOpen ? "flex" : "none",
         flexDirection: "column",
         gap: "12px",
-        padding: "15px"
+        padding: "15px",
+        background: "#fff",
+        border: "1px solid #ddd",
+        borderRadius: "10px",
+        position: "absolute",
+        right: "12px",
+        top: "65px",
+        width: "220px",
+        boxShadow: "0 5px 20px rgba(0,0,0,0.15)",
       }}>
-        <Link href="/admin" style={linkStyle}>Home</Link>
-        <Link href="/about" style={linkStyle}>About</Link>
-        <Link href="/contact" style={linkStyle}>Contact</Link>
-        <button onClick={handleLogout}>Logout</button>
+        <Link href="/admin" style={linkStyle} onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
+        <Link href="/about" style={linkStyle} onClick={() => setMenuOpen(false)}>About</Link>
+        <Link href="/contact" style={linkStyle} onClick={() => setMenuOpen(false)}>Contact</Link>
+        <button type="button" onClick={handleLogout}>Logout</button>
       </div>
 
       <style jsx>{`
-        .desktop-links {
-          display: flex;
-          gap: 18px;
-          align-items: center;
-        }
-        .menu-button {
-          display: none;
-        }
+        .desktop-links { display: flex; gap: 18px; align-items: center; }
+        .menu-button { display: none; }
         @media (max-width: 700px) {
-          .desktop-links {
-            display: none;
-          }
-          .menu-button {
-            display: block;
-          }
+          .desktop-links { display: none; }
+          .menu-button { display: block; }
         }
       `}</style>
     </header>
