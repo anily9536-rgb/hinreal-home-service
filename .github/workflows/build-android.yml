@@ -1,3 +1,4 @@
+
 name: Build Customer and Admin APK
 
 on:
@@ -26,21 +27,25 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3
+        with:
+          gradle-version: "8.9"
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407
 
-      - name: Install Android SDK
-        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
 
-      - name: Build APKs
-        run: |
-          gradle -p android-app assembleCustomerRelease assembleAdminRelease
+      - name: Install Android SDK
+        run: sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Build Customer and Admin APKs
+        run: gradle -p android-app assembleCustomerDebug assembleAdminDebug
 
       - name: Upload APKs
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: Real-Home-Service-APKs
           path: |
-            android-app/app/build/outputs/apk/customer/release/*.apk
-            android-app/app/build/outputs/apk/admin/release/*.apk
+            android-app/app/build/outputs/apk/customer/debug/*.apk
+            android-app/app/build/outputs/apk/admin/debug/*.apk
