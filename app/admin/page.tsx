@@ -108,7 +108,20 @@ const [editForm, setEditForm] = useState({
   const soldProperties = properties.filter(
     (property) => property.status === "sold"
   );
+const billProperties = soldProperties.filter((property) => {
+  if (!property.sold_at || !billStartDate || !billEndDate) return false;
 
+  const date = new Date(property.sold_at);
+  const soldDate =
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+  return soldDate >= billStartDate && soldDate <= billEndDate;
+});
+
+const billTotal = billProperties.reduce(
+  (total, property) => total + Number(property.sold_price || 0),
+  0
+);
   const visibleProperties = properties.filter(
     (property) => property.deleted_from_manage !== true
   );
