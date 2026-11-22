@@ -41,3 +41,23 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 }
+def generatedLogoResDir = layout.buildDirectory.dir("generated/res/logo")
+
+android.sourceSets.main.res.srcDir(generatedLogoResDir)
+
+tasks.register("downloadAppLogo") {
+    outputs.file(generatedLogoResDir.map { it.file("drawable/app_logo.png") })
+
+    doLast {
+        def logoFile = generatedLogoResDir.get().file("drawable/app_logo.png").asFile
+        logoFile.parentFile.mkdirs()
+
+        new URL("https://raw.githubusercontent.com/anily9536-rgb/hinreal-home-service/main/public/file_0000000045d0821180988036e39a5ebd.png").withInputStream { input ->
+            logoFile.withOutputStream { output -> output << input }
+        }
+    }
+}
+
+tasks.named("preBuild").configure {
+    dependsOn("downloadAppLogo")
+}
