@@ -1606,14 +1606,21 @@ async function submitPropertyEdit(
                 </button>
               )}
 
-              {property.status !== "sold" && property.status !== "rejected" && (
-                <button
-                  type="button"
-                  onClick={() => updateStatus(property.id, "rejected")}
-                >
-                  Reject
-                </button>
-              )}
+              <button
+  type="button"
+  onClick={() => openEditModal(property)}
+  style={{
+    marginTop: 10,
+    padding: "9px 16px",
+    background: "#2563eb",
+    color: "#fff",
+    border: 0,
+    borderRadius: 6,
+    cursor: "pointer"
+  }}
+>
+  Edit
+</button>
 
               {property.status !== "sold" && (
                 <button
