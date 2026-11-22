@@ -569,7 +569,82 @@ async function submitPropertyEdit(
       setSaving(false);
     }
   }
+function printBill() {
+  if (!billStartDate || !billEndDate || billStartDate > billEndDate) {
+    alert("Please select a valid date range.");
+    return;
+  }
 
+  const printWindow = window.open("", "_blank");
+
+  if (!printWindow) {
+    alert("Please allow popups to print the bill.");
+    return;
+  }
+
+  const escapeHtml = (value: unknown) =>
+    String(value ?? "").replace(/[&<>"']/g, (char) => {
+      const entities: Record<string, string> = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+      return entities[char];
+    });
+
+  const rows = billProperties.map((property) => `
+    <tr>
+      <td>${escapeHtml(property.title)}</td>
+      <td>${escapeHtml(property.locality || property.address || "-")}</td>
+      <td>${property.sold_at ? new Date(property.sold_at).toLocaleDateString("en-IN") : "-"}</td>
+      <td>₹${Number(property.sold_price || 0).toLocaleString("en-IN")}</td>
+    </tr>
+  `).join("");
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Sales Bill</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 30px; color: #222; }
+          h1, p { text-align: center; }
+          table { width: 100%; border-collapse: collapse; margin-top: 25px; }
+          th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+          th { background: #eee; }
+          .total { text-align: right; font-size: 20px; font-weight: bold; margin-top: 25px; }
+          @media print { button { display: none; } }
+        </style>
+      </head>
+      <body>
+        <h1>Sales Bill</h1>
+        <p>Period: ${escapeHtml(billStartDate)} to ${escapeHtml(billEndDate)}</p>
+        <p>Total Sold Properties: ${billProperties.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Location</th>
+              <th>Sold Date</th>
+              <th>Selling Amount</th>
+            </tr>
+          </thead>
+          <tbody>${rows || '<tr><td colspan="4">No sold properties found for this period.</td></tr>'}</tbody>
+        </table>
+        <div class="total">Total Selling Amount: ₹${billTotal.toLocaleString("en-IN")}</div>
+        <script>
+          window.onload = function() {
+            window.print();
+          };
+        <\/script>
+      </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+}
   async function deleteProperty(id: string) {
     const property = properties.find(
       (item) => String(item.id) === String(id)
