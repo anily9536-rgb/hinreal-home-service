@@ -1932,6 +1932,24 @@ function printBill() {
             );
           })
         )}
+              </button>
+
+      <button
+        onClick={() => setShowBillModal(false)}
+        style={{
+          width: "100%",
+          padding: 12,
+          background: "#eee",
+          border: 0,
+          borderRadius: 8,
+          cursor: "pointer"
+        }}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
       </main>
 
       <Footer />
