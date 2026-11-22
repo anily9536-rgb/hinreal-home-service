@@ -16,12 +16,8 @@ export default function AdminPage() {
   const [enquiries, setEnquiries] = useState<any[]>([]);
   const [message, setMessage] = useState("");
 
-  const [selectedMonth, setSelectedMonth] = useState(
-    new Date().getMonth()
-  );
-  const [selectedYear, setSelectedYear] = useState(
-    new Date().getFullYear()
-  );
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   const [title, setTitle] = useState("");
   const [locality, setLocality] = useState("");
@@ -41,30 +37,46 @@ export default function AdminPage() {
     "September", "October", "November", "December"
   ];
 
-  const years = useMemo(() => {
-    const currentYear = new Date().getFullYear();
-    const soldYears = properties
-      .filter((p) => p.status === "sold" && p.sold_at)
-      .map((p) => new Date(p.sold_at).getFullYear());
+  // Year list automatically grows every new year.
+  // It also includes older years from existing property records.
+  const currentYear = new Date().getFullYear();
 
-    return Array.from(
-      new Set([currentYear, ...soldYears, selectedYear])
-    ).sort((a, b) => b - a);
-  }, [properties, selectedYear]);
+  const earliestYear = properties.reduce((earliest, property) => {
+    const dateValue = property.sold_at || property.created_at;
+
+    if (!dateValue) return earliest;
+
+    const year = new Date(dateValue).getFullYear();
+
+    return Number.isNaN(year) ? earliest : Math.min(earliest, year);
+  }, 2020);
+
+  const firstYear = Math.min(2020, earliestYear);
+
+  const years = Array.from(
+    { length: currentYear - firstYear + 1 },
+    (_, index) => currentYear - index
+  );
 
   const monthlySales = useMemo(() => {
     return properties
-      .filter((p) => {
-        if (p.status !== "sold" || !p.sold_at) return false;
+      .filter((property) => {
+        if (property.status !== "sold" || !property.sold_at) {
+          return false;
+        }
 
-        const date = new Date(p.sold_at);
+        const date = new Date(property.sold_at);
 
         return (
           date.getMonth() === selectedMonth &&
           date.getFullYear() === selectedYear
         );
       })
-      .reduce((total, p) => total + Number(p.sold_price || 0), 0);
+      .reduce(
+        (total, property) =>
+          total + Number(property.sold_price || 0),
+        0
+      );
   }, [properties, selectedMonth, selectedYear]);
 
   async function withTimeout<T>(
@@ -513,7 +525,9 @@ export default function AdminPage() {
           borderRadius: 10
         }}>
           <h3>Month-wise Sales History</h3>
-          <p>Purane mahine ki total selling amount dekhne ke liye select karein.</p>
+          <p>
+            Purane mahine ki total selling amount dekhne ke liye select karein.
+          </p>
 
           <div style={{
             display: "flex",
@@ -725,7 +739,9 @@ export default function AdminPage() {
               <h3>{property.title}</h3>
               <p>Location: {property.locality}</p>
               <p>Address: {property.address}</p>
-              <p>Listing: {property.listing_type === "Buy" ? "For Sale" : "For Rent"}</p>
+              <p>
+                Listing: {property.listing_type === "Buy" ? "For Sale" : "For Rent"}
+              </p>
               <p>Price: ₹{property.price}</p>
               <p>Phone: {property.phone}</p>
               <p>Status: {property.status}</p>
