@@ -27,7 +27,7 @@ export default async function CategoryPage({
   const { data: properties, error } = await supabase
     .from("properties")
     .select("*")
-    .eq("status", "approved")
+    .in("status", ["approved", "sold"])
     .eq("property_type", category)
     .order("created_at", { ascending: false });
 
@@ -37,12 +37,16 @@ export default async function CategoryPage({
 
       <main className="container">
         <h1>{category} Properties</h1>
-        <p>Explore available {category.toLowerCase()} properties.</p>
+        <p>Explore {category.toLowerCase()} properties.</p>
 
-        {error && <p>Unable to load properties. Please try again.</p>}
+        {error && (
+          <p>Unable to load properties. Please try again.</p>
+        )}
 
         {!error && (!properties || properties.length === 0) && (
-          <p>No {category.toLowerCase()} properties available right now.</p>
+          <p>
+            No {category.toLowerCase()} properties available right now.
+          </p>
         )}
 
         <div className="property-grid">
@@ -62,19 +66,46 @@ export default async function CategoryPage({
               )}
 
               <h2>{property.title}</h2>
+
               <p>{property.locality}</p>
+
               <p>
-                {property.listing_type === "Rent" ? "For Rent" : "For Sale"}
+                {property.listing_type === "Rent"
+                  ? "For Rent"
+                  : "For Sale"}
               </p>
+
               <h3>
                 ₹{Number(property.price).toLocaleString("en-IN")}
               </h3>
+
+              {property.status === "sold" && (
+                <div
+                  style={{
+                    color: "#ffffff",
+                    backgroundColor: "#dc2626",
+                    padding: "10px 16px",
+                    borderRadius: 6,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    fontSize: 18,
+                    marginTop: 10,
+                    marginBottom: 10,
+                  }}
+                >
+                  SOLD
+                </div>
+              )}
 
               <Link href={`/property/${property.id}`}>
                 View Details
               </Link>
 
-              <PropertyEnquiry propertyId={String(property.id)} />
+              {property.status !== "sold" && (
+                <PropertyEnquiry
+                  propertyId={String(property.id)}
+                />
+              )}
             </article>
           ))}
         </div>
