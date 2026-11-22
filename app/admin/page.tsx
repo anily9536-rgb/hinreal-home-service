@@ -45,17 +45,14 @@ export default function AdminPage() {
         }),
       ]);
     } finally {
-      if (timer !== undefined) {
-        window.clearTimeout(timer);
-      }
+      if (timer !== undefined) window.clearTimeout(timer);
     }
   }
 
   async function loadData() {
     try {
       const p: any = await withTimeout(
-        supabase
-          .from("properties")
+        supabase.from("properties")
           .select("*")
           .order("created_at", { ascending: false })
       );
@@ -67,8 +64,7 @@ export default function AdminPage() {
       }
 
       const e: any = await withTimeout(
-        supabase
-          .from("enquiries")
+        supabase.from("enquiries")
           .select("*")
           .order("created_at", { ascending: false })
       );
@@ -81,7 +77,7 @@ export default function AdminPage() {
     } catch (error) {
       setMessage(
         "Dashboard Error: " +
-          (error instanceof Error ? error.message : String(error))
+        (error instanceof Error ? error.message : String(error))
       );
     }
   }
@@ -100,8 +96,7 @@ export default function AdminPage() {
 
         const { data: profile, error: profileError } =
           await withTimeout(
-            supabase
-              .from("profiles")
+            supabase.from("profiles")
               .select("role")
               .eq("id", data.user.id)
               .single()
@@ -117,7 +112,7 @@ export default function AdminPage() {
       } catch (error) {
         setMessage(
           "Admin Check Error: " +
-            (error instanceof Error ? error.message : String(error))
+          (error instanceof Error ? error.message : String(error))
         );
       } finally {
         setLoading(false);
@@ -162,9 +157,7 @@ export default function AdminPage() {
     }
 
     setPhotos(selected);
-    setMessage(
-      selected.length + " photo select hui hain."
-    );
+    setMessage(selected.length + " photos selected.");
   }
 
   async function handleAddProperty(
@@ -181,11 +174,6 @@ export default function AdminPage() {
       Number(price) <= 0
     ) {
       setMessage("Title, Location aur valid Price zaroori hain.");
-      return;
-    }
-
-    if (photos.length > 10) {
-      setMessage("Maximum 10 photos allowed hain.");
       return;
     }
 
@@ -213,24 +201,15 @@ export default function AdminPage() {
         );
 
         const path =
-          auth.user.id +
-          "/" +
-          Date.now() +
-          "-" +
-          i +
-          "-" +
-          safeName;
+          auth.user.id + "/" + Date.now() + "-" + i + "-" + safeName;
 
         setMessage(
           "Photo upload ho rahi hai: " +
-            (i + 1) +
-            "/" +
-            photos.length
+          (i + 1) + "/" + photos.length
         );
 
         const { error: uploadError } = await withTimeout(
-          supabase.storage
-            .from("property-images")
+          supabase.storage.from("property-images")
             .upload(path, file, {
               cacheControl: "3600",
               upsert: false,
@@ -251,35 +230,27 @@ export default function AdminPage() {
         imageUrls.push(publicUrl.publicUrl);
       }
 
-      setMessage("Property database mein save ho rahi hai...");
-
-      const finalAddress = address.trim() || locality.trim();
-      const finalPhone = phone.trim() || "Not Provided";
-
       const { error } = await withTimeout(
         supabase.from("properties").insert({
           user_id: auth.user.id,
           title: title.trim(),
           locality: locality.trim(),
-          address: finalAddress,
+          address: address.trim() || locality.trim(),
           listing_type: listingType,
           property_type: propertyType,
           price: Number(price),
           description: description.trim(),
-          phone: finalPhone,
+          phone: phone.trim() || "Not Provided",
           images: imageUrls,
           status: "approved",
         })
       );
 
-      if (error) {
-        throw new Error(error.message);
-      }
+      if (error) throw new Error(error.message);
 
       setMessage(
-        "SUCCESS! Property " +
-          imageUrls.length +
-          " photos ke saath upload ho gayi."
+        "SUCCESS! Property " + imageUrls.length +
+        " photos ke saath upload ho gayi."
       );
 
       setTitle("");
@@ -303,7 +274,7 @@ export default function AdminPage() {
 
       setMessage(
         "UPLOAD FAILED: " +
-          (error instanceof Error ? error.message : String(error))
+        (error instanceof Error ? error.message : String(error))
       );
     } finally {
       setSaving(false);
@@ -315,8 +286,7 @@ export default function AdminPage() {
 
     try {
       const { error } = await withTimeout(
-        supabase
-          .from("properties")
+        supabase.from("properties")
           .update({ status })
           .eq("id", id)
       );
@@ -328,7 +298,7 @@ export default function AdminPage() {
     } catch (error) {
       setMessage(
         "Status Error: " +
-          (error instanceof Error ? error.message : String(error))
+        (error instanceof Error ? error.message : String(error))
       );
     }
   }
@@ -350,7 +320,7 @@ export default function AdminPage() {
     } catch (error) {
       setMessage(
         "Delete Error: " +
-          (error instanceof Error ? error.message : String(error))
+        (error instanceof Error ? error.message : String(error))
       );
     }
   }
@@ -373,6 +343,7 @@ export default function AdminPage() {
         margin: "30px auto",
         padding: 20
       }}>
+
         <div style={{
           display: "flex",
           justifyContent: "space-between",
@@ -400,7 +371,11 @@ export default function AdminPage() {
 
         <h2>Dashboard Overview</h2>
 
-        <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+        <div style={{
+          display: "flex",
+          gap: 20,
+          flexWrap: "wrap"
+        }}>
           <div style={{ padding: 20, background: "#eee", borderRadius: 10 }}>
             <h3>Total Properties</h3>
             <h2>{properties.length}</h2>
@@ -515,7 +490,11 @@ export default function AdminPage() {
           />
 
           <div>
-            <label style={{ display: "block", fontWeight: "bold", marginBottom: 8 }}>
+            <label style={{
+              display: "block",
+              fontWeight: "bold",
+              marginBottom: 8
+            }}>
               Property Photos (Maximum 10)
             </label>
 
@@ -648,20 +627,61 @@ export default function AdminPage() {
         {enquiries.length === 0 ? (
           <p>No enquiries found.</p>
         ) : (
-          enquiries.map((enquiry) => (
-            <div key={enquiry.id} style={{
-              border: "1px solid #ddd",
-              padding: 15,
-              marginBottom: 15,
-              borderRadius: 10
-            }}>
-              <p><b>Name:</b> {enquiry.name}</p>
-              <p><b>Phone:</b> {enquiry.phone}</p>
-              <p><b>Email:</b> {enquiry.email || "Not provided"}</p>
-              <p><b>Message:</b> {enquiry.message}</p>
-            </div>
-          ))
+          enquiries.map((enquiry) => {
+            const customerPhone = String(enquiry.phone || "")
+              .replace(/[^\d+]/g, "");
+
+            return (
+              <div key={enquiry.id} style={{
+                border: "1px solid #ddd",
+                padding: 18,
+                marginBottom: 15,
+                borderRadius: 10,
+                background: "#fff"
+              }}>
+                <h3>{enquiry.name}</h3>
+
+                <p>
+                  <b>Phone:</b> {enquiry.phone || "Not provided"}
+                </p>
+
+                {customerPhone && (
+                  <a
+                    href={`tel:${customerPhone}`}
+                    style={{
+                      display: "inline-block",
+                      background: "#16a34a",
+                      color: "#fff",
+                      padding: "11px 20px",
+                      borderRadius: 8,
+                      textDecoration: "none",
+                      fontWeight: "bold",
+                      marginBottom: 10
+                    }}
+                  >
+                    📞 Call Customer
+                  </a>
+                )}
+
+                <p>
+                  <b>Email:</b> {enquiry.email || "Not provided"}
+                </p>
+
+                <p>
+                  <b>Message:</b> {enquiry.message || "No message"}
+                </p>
+
+                <p>
+                  <b>Date:</b>{" "}
+                  {enquiry.created_at
+                    ? new Date(enquiry.created_at).toLocaleString("en-IN")
+                    : "Not available"}
+                </p>
+              </div>
+            );
+          })
         )}
+
       </main>
 
       <Footer />
