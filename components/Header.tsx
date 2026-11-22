@@ -3,9 +3,13 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 export default function Header() {
+  const pathname = usePathname();
+  const homeHref = pathname.startsWith("/admin") ? "/admin" : "/";
+
   const [user, setUser] = useState<any>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -81,7 +85,7 @@ export default function Header() {
         }}
       >
         <Link
-          href="/"
+          href={homeHref}
           onClick={() => setMenuOpen(false)}
           style={{
             fontSize: "21px",
@@ -95,7 +99,7 @@ export default function Header() {
 
         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
           <div className="desktop-links">
-            <Link href="/" style={linkStyle}>Home</Link>
+            <Link href={homeHref} style={linkStyle}>Home</Link>
             <Link href="/about" style={linkStyle}>About</Link>
             <Link href="/contact" style={linkStyle}>Contact</Link>
             <Link
@@ -151,7 +155,7 @@ export default function Header() {
           zIndex: 9999,
         }}
       >
-        <Link href="/" style={linkStyle} onClick={() => setMenuOpen(false)}>
+        <Link href={homeHref} style={linkStyle} onClick={() => setMenuOpen(false)}>
           Home
         </Link>
 
