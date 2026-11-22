@@ -32,6 +32,19 @@ export default function AdminPage() {
   const [photoInputKey, setPhotoInputKey] = useState(0);
 
   const [showSellModal, setShowSellModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+const [editingProperty, setEditingProperty] = useState<any>(null);
+
+const [editForm, setEditForm] = useState({
+  title: "",
+  locality: "",
+  address: "",
+  listing_type: "Buy",
+  property_type: "Residential",
+  price: "",
+  description: "",
+  phone: "",
+});
   const [selectedPropertyId, setSelectedPropertyId] = useState("");
   const [saleAmount, setSaleAmount] = useState("");
   const [saleDate, setSaleDate] = useState(
