@@ -384,7 +384,76 @@ const [editForm, setEditForm] = useState({
       );
     }
   }
+function openEditModal(property: any) {
+  setEditingProperty(property);
 
+  setEditForm({
+    title: property.title || "",
+    locality: property.locality || "",
+    address: property.address || "",
+    listing_type: property.listing_type || "Buy",
+    property_type: property.property_type || "Residential",
+    price: String(property.price || ""),
+    description: property.description || "",
+    phone: property.phone || "",
+  });
+
+  setShowEditModal(true);
+}
+
+async function submitPropertyEdit(
+  event: React.FormEvent<HTMLFormElement>
+) {
+  event.preventDefault();
+
+  if (saving || !editingProperty) return;
+
+  if (
+    !editForm.title.trim() ||
+    !editForm.locality.trim() ||
+    !editForm.price ||
+    Number(editForm.price) <= 0
+  ) {
+    setMessage("Title, Location aur valid Price zaroori hain.");
+    return;
+  }
+
+  setSaving(true);
+  setMessage("Property update ho rahi hai...");
+
+  try {
+    const { error } = await withTimeout(
+      supabase
+        .from("properties")
+        .update({
+          title: editForm.title.trim(),
+          locality: editForm.locality.trim(),
+          address: editForm.address.trim() || editForm.locality.trim(),
+          listing_type: editForm.listing_type,
+          property_type: editForm.property_type,
+          price: Number(editForm.price),
+          description: editForm.description.trim(),
+          phone: editForm.phone.trim() || "Not Provided",
+        })
+        .eq("id", editingProperty.id)
+    );
+
+    if (error) throw new Error(error.message);
+
+    setShowEditModal(false);
+    setEditingProperty(null);
+    setMessage("SUCCESS! Property successfully update ho gayi.");
+
+    await loadData();
+  } catch (error) {
+    setMessage(
+      "Edit Error: " +
+      (error instanceof Error ? error.message : String(error))
+    );
+  } finally {
+    setSaving(false);
+  }
+}
   function openSellModal(property?: any) {
     const available = properties.filter(
       (item) =>
