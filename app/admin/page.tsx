@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Header from "@/components/Header";
@@ -16,6 +16,13 @@ export default function AdminPage() {
   const [enquiries, setEnquiries] = useState<any[]>([]);
   const [message, setMessage] = useState("");
 
+  const [selectedMonth, setSelectedMonth] = useState(
+    new Date().getMonth()
+  );
+  const [selectedYear, setSelectedYear] = useState(
+    new Date().getFullYear()
+  );
+
   const [title, setTitle] = useState("");
   const [locality, setLocality] = useState("");
   const [address, setAddress] = useState("");
@@ -27,6 +34,38 @@ export default function AdminPage() {
 
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoInputKey, setPhotoInputKey] = useState(0);
+
+  const months = [
+    "January", "February", "March", "April",
+    "May", "June", "July", "August",
+    "September", "October", "November", "December"
+  ];
+
+  const years = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    const soldYears = properties
+      .filter((p) => p.status === "sold" && p.sold_at)
+      .map((p) => new Date(p.sold_at).getFullYear());
+
+    return Array.from(
+      new Set([currentYear, ...soldYears, selectedYear])
+    ).sort((a, b) => b - a);
+  }, [properties, selectedYear]);
+
+  const monthlySales = useMemo(() => {
+    return properties
+      .filter((p) => {
+        if (p.status !== "sold" || !p.sold_at) return false;
+
+        const date = new Date(p.sold_at);
+
+        return (
+          date.getMonth() === selectedMonth &&
+          date.getFullYear() === selectedYear
+        );
+      })
+      .reduce((total, p) => total + Number(p.sold_price || 0), 0);
+  }, [properties, selectedMonth, selectedYear]);
 
   async function withTimeout<T>(
     request: PromiseLike<T>,
@@ -303,6 +342,57 @@ export default function AdminPage() {
     }
   }
 
+  async function markAsSold(property: any) {
+    if (property.listing_type !== "Buy") {
+      setMessage("Sirf For Sale property ko Sold mark kar sakte hain.");
+      return;
+    }
+
+    const enteredPrice = window.prompt(
+      "Is property ki final selling amount (₹) enter karein:"
+    );
+
+    if (enteredPrice === null) return;
+
+    const amount = Number(enteredPrice.replace(/,/g, "").trim());
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setMessage("Valid selling amount enter karein.");
+      return;
+    }
+
+    if (!window.confirm(
+      "Kya aap is property ko Sold mark karna chahte hain?\nSelling Amount: ₹" +
+      amount.toLocaleString("en-IN")
+    )) {
+      return;
+    }
+
+    setMessage("Sale record save ho raha hai...");
+
+    try {
+      const { error } = await withTimeout(
+        supabase.from("properties")
+          .update({
+            status: "sold",
+            sold_price: amount,
+            sold_at: new Date().toISOString(),
+          })
+          .eq("id", property.id)
+      );
+
+      if (error) throw new Error(error.message);
+
+      setMessage("Property Sold! Selling amount monthly report mein add ho gayi.");
+      await loadData();
+    } catch (error) {
+      setMessage(
+        "Sale Error: " +
+        (error instanceof Error ? error.message : String(error))
+      );
+    }
+  }
+
   async function deleteProperty(id: string) {
     if (!window.confirm("Kya aap is property ko delete karna chahte hain?")) {
       return;
@@ -399,6 +489,61 @@ export default function AdminPage() {
             <h3>Total Enquiries</h3>
             <h2>{enquiries.length}</h2>
           </div>
+
+          <div style={{
+            padding: 20,
+            background: "#e8f5e9",
+            borderRadius: 10,
+            minWidth: 220
+          }}>
+            <h3>Total Selling Amount</h3>
+            <h2 style={{ color: "#15803d" }}>
+              ₹{monthlySales.toLocaleString("en-IN")}
+            </h2>
+            <p style={{ marginBottom: 0 }}>
+              {months[selectedMonth]} {selectedYear}
+            </p>
+          </div>
+        </div>
+
+        <div style={{
+          marginTop: 20,
+          padding: 18,
+          border: "1px solid #ddd",
+          borderRadius: 10
+        }}>
+          <h3>Month-wise Sales History</h3>
+          <p>Purane mahine ki total selling amount dekhne ke liye select karein.</p>
+
+          <div style={{
+            display: "flex",
+            gap: 12,
+            flexWrap: "wrap"
+          }}>
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(Number(e.target.value))}
+              style={{ padding: 12, minWidth: 150 }}
+            >
+              {months.map((month, index) => (
+                <option key={month} value={index}>{month}</option>
+              ))}
+            </select>
+
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(Number(e.target.value))}
+              style={{ padding: 12, minWidth: 120 }}
+            >
+              {years.map((year) => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+
+          <h2 style={{ color: "#15803d" }}>
+            {months[selectedMonth]} {selectedYear}: ₹{monthlySales.toLocaleString("en-IN")}
+          </h2>
         </div>
 
         <div style={{
@@ -580,9 +725,24 @@ export default function AdminPage() {
               <h3>{property.title}</h3>
               <p>Location: {property.locality}</p>
               <p>Address: {property.address}</p>
+              <p>Listing: {property.listing_type === "Buy" ? "For Sale" : "For Rent"}</p>
               <p>Price: ₹{property.price}</p>
               <p>Phone: {property.phone}</p>
               <p>Status: {property.status}</p>
+
+              {property.status === "sold" && (
+                <>
+                  <p style={{ color: "#15803d", fontWeight: "bold" }}>
+                    Sold Amount: ₹{Number(property.sold_price || 0).toLocaleString("en-IN")}
+                  </p>
+                  <p>
+                    Sold Date: {property.sold_at
+                      ? new Date(property.sold_at).toLocaleDateString("en-IN")
+                      : "Not available"}
+                  </p>
+                </>
+              )}
+
               <p>Photos: {property.images?.length || 0}</p>
 
               <div style={{
@@ -605,7 +765,7 @@ export default function AdminPage() {
                 ))}
               </div>
 
-              {property.status !== "approved" && (
+              {property.status !== "sold" && property.status !== "approved" && (
                 <button
                   type="button"
                   onClick={() => updateStatus(property.id, "approved")}
@@ -614,12 +774,29 @@ export default function AdminPage() {
                 </button>
               )}
 
-              {property.status !== "rejected" && (
+              {property.status !== "sold" && property.status !== "rejected" && (
                 <button
                   type="button"
                   onClick={() => updateStatus(property.id, "rejected")}
                 >
                   Reject
+                </button>
+              )}
+
+              {property.listing_type === "Buy" && property.status === "approved" && (
+                <button
+                  type="button"
+                  onClick={() => markAsSold(property)}
+                  style={{
+                    marginLeft: 8,
+                    padding: "9px 14px",
+                    background: "#15803d",
+                    color: "#fff",
+                    border: 0,
+                    borderRadius: 6
+                  }}
+                >
+                  Mark as Sold
                 </button>
               )}
 
