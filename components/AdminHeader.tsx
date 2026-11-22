@@ -3,21 +3,22 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
 
   async function handleLogout() {
     await supabase.auth.signOut();
-    window.location.href = "/";
+    router.replace("/admin/login");
   }
 
   const linkStyle = {
     color: "#222",
     textDecoration: "none",
-    fontSize: "16px",
-    fontWeight: 500,
+    fontWeight: 600,
     padding: "8px 4px",
   };
 
@@ -29,81 +30,130 @@ export default function AdminHeader() {
       borderBottom: "1px solid #ddd",
       boxSizing: "border-box",
       position: "relative",
-      zIndex: 1000,
+      zIndex: 1000
     }}>
       <nav style={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        gap: "12px",
+        gap: 12
       }}>
+
         <Link href="/admin" style={{
           display: "flex",
           alignItems: "center",
-          gap: "9px",
-          minWidth: 0,
+          gap: 9,
           color: "#102b55",
           textDecoration: "none",
-          fontSize: "clamp(16px, 2.5vw, 21px)",
           fontWeight: 800,
-          whiteSpace: "nowrap",
+          fontSize: 20
         }}>
-          <img src="/logo.png" alt="Real Home Service logo" style={{
-            width: "46px",
-            height: "46px",
-            borderRadius: "50%",
-            objectFit: "cover",
-            flexShrink: 0,
-            border: "2px solid #d6a52c",
-          }} />
-          <span>Real Home Service</span>
+          <img
+            src="/logo.png"
+            alt="Real Home Service"
+            style={{
+              width: 46,
+              height: 46,
+              borderRadius: "50%",
+              objectFit: "cover",
+              border: "2px solid #d6a52c"
+            }}
+          />
+          Real Home Service
         </Link>
 
-        <div style={{ display: "flex", gap: "18px", alignItems: "center" }}>
-          <div className="desktop-links">
-            <Link href="/admin" style={linkStyle}>Admin Dashboard</Link>
-            <Link href="/about" style={linkStyle}>About</Link>
-            <Link href="/contact" style={linkStyle}>Contact</Link>
-            <button type="button" onClick={handleLogout}>Logout</button>
-          </div>
+        <div className="desktop-links">
+          <Link href="/admin" style={linkStyle}>
+            Admin Home
+          </Link>
 
-          <button
-            type="button"
-            className="menu-button"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle menu"
-          >
-            {menuOpen ? "✕" : "☰"}
+          <Link href="/admin/about" style={linkStyle}>
+            Admin About
+          </Link>
+
+          <Link href="/admin/contact" style={linkStyle}>
+            Admin Contact
+          </Link>
+
+          <button type="button" onClick={handleLogout}>
+            Logout
           </button>
         </div>
+
+        <button
+          type="button"
+          className="menu-button"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle admin menu"
+        >
+          {menuOpen ? "✕" : "☰"}
+        </button>
       </nav>
 
-      <div style={{
-        display: menuOpen ? "flex" : "none",
-        flexDirection: "column",
-        gap: "12px",
-        padding: "15px",
-        background: "#fff",
-        border: "1px solid #ddd",
-        borderRadius: "10px",
-        position: "absolute",
-        right: "12px",
-        top: "65px",
-        width: "220px",
-        boxShadow: "0 5px 20px rgba(0,0,0,0.15)",
-      }}>
-        <Link href="/admin" style={linkStyle} onClick={() => setMenuOpen(false)}>Admin Dashboard</Link>
-        <Link href="/about" style={linkStyle} onClick={() => setMenuOpen(false)}>About</Link>
-        <Link href="/contact" style={linkStyle} onClick={() => setMenuOpen(false)}>Contact</Link>
-        <button type="button" onClick={handleLogout}>Logout</button>
-      </div>
+      {menuOpen && (
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 14,
+          padding: 15,
+          background: "#fff",
+          border: "1px solid #ddd",
+          borderRadius: 10,
+          position: "absolute",
+          right: 12,
+          top: 65,
+          width: 210,
+          boxShadow: "0 5px 20px rgba(0,0,0,0.15)"
+        }}>
+          <Link
+            href="/admin"
+            style={linkStyle}
+            onClick={() => setMenuOpen(false)}
+          >
+            Admin Home
+          </Link>
+
+          <Link
+            href="/admin/about"
+            style={linkStyle}
+            onClick={() => setMenuOpen(false)}
+          >
+            Admin About
+          </Link>
+
+          <Link
+            href="/admin/contact"
+            style={linkStyle}
+            onClick={() => setMenuOpen(false)}
+          >
+            Admin Contact
+          </Link>
+
+          <button type="button" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+      )}
 
       <style jsx>{`
-        .desktop-links { display: flex; gap: 18px; align-items: center; }
-        .menu-button { display: none; }
+        .desktop-links {
+          display: flex;
+          align-items: center;
+          gap: 18px;
+        }
+
+        .menu-button {
+          display: none;
+        }
+
         @media (max-width: 700px) {
-          .desktop-links { display: none; }
-          .menu-button { display: block; }
+          .desktop-links {
+            display: none;
+          }
+
+          .menu-button {
+            display: block;
+          }
         }
       `}</style>
     </header>
