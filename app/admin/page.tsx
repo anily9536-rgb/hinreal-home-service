@@ -1,6 +1,6 @@
 
 "use client";
-
+// Trigger fresh deployment
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
