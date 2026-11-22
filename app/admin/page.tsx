@@ -29,7 +29,7 @@ export default function AdminPage() {
     request: PromiseLike<T>,
     seconds = 15
   ): Promise<T> {
-    let timer: number;
+    let timer: number | undefined;
 
     try {
       return await Promise.race([
@@ -42,14 +42,17 @@ export default function AdminPage() {
         }),
       ]);
     } finally {
-      window.clearTimeout(timer!);
+      if (timer !== undefined) {
+        window.clearTimeout(timer);
+      }
     }
   }
 
   async function loadData() {
     try {
       const p: any = await withTimeout(
-        supabase.from("properties")
+        supabase
+          .from("properties")
           .select("*")
           .order("created_at", { ascending: false })
       );
@@ -61,7 +64,8 @@ export default function AdminPage() {
       }
 
       const e: any = await withTimeout(
-        supabase.from("enquiries")
+        supabase
+          .from("enquiries")
           .select("*")
           .order("created_at", { ascending: false })
       );
@@ -73,8 +77,8 @@ export default function AdminPage() {
       }
     } catch (error) {
       setMessage(
-        "Load Error: " +
-        (error instanceof Error ? error.message : String(error))
+        "Dashboard Error: " +
+          (error instanceof Error ? error.message : String(error))
       );
     }
   }
@@ -93,7 +97,8 @@ export default function AdminPage() {
 
         const { data: profile, error: profileError } =
           await withTimeout(
-            supabase.from("profiles")
+            supabase
+              .from("profiles")
               .select("role")
               .eq("id", data.user.id)
               .single()
@@ -108,8 +113,8 @@ export default function AdminPage() {
         await loadData();
       } catch (error) {
         setMessage(
-          "Admin Error: " +
-          (error instanceof Error ? error.message : String(error))
+          "Admin Check Error: " +
+            (error instanceof Error ? error.message : String(error))
         );
       } finally {
         setLoading(false);
@@ -148,6 +153,7 @@ export default function AdminPage() {
       }
 
       const finalAddress = address.trim() || locality.trim();
+      const finalPhone = phone.trim() || "Not Provided";
 
       const { error } = await withTimeout(
         supabase.from("properties").insert({
@@ -159,7 +165,7 @@ export default function AdminPage() {
           property_type: propertyType,
           price: Number(price),
           description: description.trim(),
-          phone: phone.trim() || null,
+          phone: finalPhone,
           images: [],
           status: "approved",
         })
@@ -181,11 +187,10 @@ export default function AdminPage() {
       setPhone("");
 
       await loadData();
-
     } catch (error) {
       setMessage(
         "UPLOAD FAILED: " +
-        (error instanceof Error ? error.message : String(error))
+          (error instanceof Error ? error.message : String(error))
       );
     } finally {
       setSaving(false);
@@ -197,19 +202,22 @@ export default function AdminPage() {
 
     try {
       const { error } = await withTimeout(
-        supabase.from("properties")
+        supabase
+          .from("properties")
           .update({ status })
           .eq("id", id)
       );
 
-      if (error) throw new Error(error.message);
+      if (error) {
+        throw new Error(error.message);
+      }
 
       setMessage("Property status updated.");
       await loadData();
     } catch (error) {
       setMessage(
         "Status Error: " +
-        (error instanceof Error ? error.message : String(error))
+          (error instanceof Error ? error.message : String(error))
       );
     }
   }
@@ -221,17 +229,22 @@ export default function AdminPage() {
 
     try {
       const { error } = await withTimeout(
-        supabase.from("properties").delete().eq("id", id)
+        supabase
+          .from("properties")
+          .delete()
+          .eq("id", id)
       );
 
-      if (error) throw new Error(error.message);
+      if (error) {
+        throw new Error(error.message);
+      }
 
-      setMessage("Property deleted.");
+      setMessage("Property deleted successfully.");
       await loadData();
     } catch (error) {
       setMessage(
         "Delete Error: " +
-        (error instanceof Error ? error.message : String(error))
+          (error instanceof Error ? error.message : String(error))
       );
     }
   }
@@ -257,10 +270,12 @@ export default function AdminPage() {
         <div style={{
           display: "flex",
           justifyContent: "space-between",
+          alignItems: "center",
           flexWrap: "wrap",
           gap: 15
         }}>
           <h1>Admin Dashboard</h1>
+
           <button type="button" onClick={logout}>
             Admin Logout
           </button>
@@ -285,12 +300,20 @@ export default function AdminPage() {
           gap: 20,
           flexWrap: "wrap"
         }}>
-          <div style={{ padding: 20, background: "#eee", borderRadius: 10 }}>
+          <div style={{
+            padding: 20,
+            background: "#eee",
+            borderRadius: 10
+          }}>
             <h3>Total Properties</h3>
             <h2>{properties.length}</h2>
           </div>
 
-          <div style={{ padding: 20, background: "#eee", borderRadius: 10 }}>
+          <div style={{
+            padding: 20,
+            background: "#eee",
+            borderRadius: 10
+          }}>
             <h3>Total Enquiries</h3>
             <h2>{enquiries.length}</h2>
           </div>
@@ -434,6 +457,7 @@ export default function AdminPage() {
               <p>Location: {property.locality}</p>
               <p>Address: {property.address}</p>
               <p>Price: ₹{property.price}</p>
+              <p>Phone: {property.phone}</p>
               <p>Status: {property.status}</p>
 
               {property.status !== "approved" && (
