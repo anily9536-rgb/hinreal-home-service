@@ -24,59 +24,50 @@ export default function AdminPage() {
   const [description, setDescription] = useState("");
   const [phone, setPhone] = useState("");
 
-  function withTimeout<T>(
+  async function requestWithTimeout<T>(
     request: PromiseLike<T>,
-    milliseconds = 15000
+    seconds = 15
   ): Promise<T> {
-    return new Promise((resolve, reject) => {
-      const timer = window.setTimeout(() => {
-        reject(new Error("Request timeout. Supabase connection check karein."));
-      }, milliseconds);
-
-      Promise.resolve(request).then(
-        (result) => {
-          window.clearTimeout(timer);
-          resolve(result);
-        },
-        (error) => {
-          window.clearTimeout(timer);
-          reject(error);
-        }
-      );
-    });
+    return Promise.race([
+      Promise.resolve(request),
+      new Promise<never>((_, reject) => {
+        window.setTimeout(
+          () => reject(new Error("Request timeout after " + seconds + " seconds")),
+          seconds * 1000
+        );
+      }),
+    ]);
   }
 
   async function loadData() {
     try {
-      const p = await withTimeout(
-        supabase
-          .from("properties")
-          .select("*")
-          .order("created_at", { ascending: false })
-      );
-
-      const e = await withTimeout(
-        supabase
-          .from("enquiries")
+      const p: any = await requestWithTimeout(
+        supabase.from("properties")
           .select("*")
           .order("created_at", { ascending: false })
       );
 
       if (p.error) {
-        setMessage("Properties error: " + p.error.message);
+        setMessage("Properties Error: " + p.error.message);
       } else {
         setProperties(p.data || []);
       }
 
+      const e: any = await requestWithTimeout(
+        supabase.from("enquiries")
+          .select("*")
+          .order("created_at", { ascending: false })
+      );
+
       if (e.error) {
-        setMessage("Enquiries error: " + e.error.message);
+        setMessage("Enquiries Error: " + e.error.message);
       } else {
         setEnquiries(e.data || []);
       }
     } catch (error) {
       setMessage(
-        "Dashboard load error: " +
-          (error instanceof Error ? error.message : "Unknown error")
+        "Load Error: " +
+        (error instanceof Error ? error.message : String(error))
       );
     }
   }
@@ -84,24 +75,24 @@ export default function AdminPage() {
   useEffect(() => {
     async function checkAdmin() {
       try {
-        const { data: auth, error: authError } = await withTimeout(
+        const { data, error } = await requestWithTimeout(
           supabase.auth.getUser()
         );
 
-        if (authError || !auth.user) {
+        if (error || !data.user) {
           router.replace("/admin/login");
           return;
         }
 
-        const { data: profile, error } = await withTimeout(
-          supabase
-            .from("profiles")
-            .select("role")
-            .eq("id", auth.user.id)
-            .single()
-        );
+        const { data: profile, error: profileError } =
+          await requestWithTimeout(
+            supabase.from("profiles")
+              .select("role")
+              .eq("id", data.user.id)
+              .single()
+          );
 
-        if (error || profile?.role !== "admin") {
+        if (profileError || profile?.role !== "admin") {
           await supabase.auth.signOut();
           router.replace("/admin/login");
           return;
@@ -110,8 +101,8 @@ export default function AdminPage() {
         await loadData();
       } catch (error) {
         setMessage(
-          "Admin check error: " +
-            (error instanceof Error ? error.message : "Unknown error")
+          "Admin Error: " +
+          (error instanceof Error ? error.message : String(error))
         );
       } finally {
         setLoading(false);
@@ -128,39 +119,29 @@ export default function AdminPage() {
 
     if (saving) return;
 
-    if (
-      !title.trim() ||
-      !locality.trim() ||
-      !price ||
-      Number(price) <= 0
-    ) {
-      setMessage("Title, location aur valid price zaroori hain.");
+    setMessage("STEP 1: Submit function started.");
+
+    if (!title.trim() || !locality.trim() || !price || Number(price) <= 0) {
+      setMessage("Title, Location aur valid Price zaroori hain.");
       return;
     }
 
     setSaving(true);
-    setMessage("Step 1: Admin login check ho raha hai...");
-
-    const controller = new AbortController();
-
-    const abortTimer = window.setTimeout(() => {
-      controller.abort();
-    }, 15000);
 
     try {
-      const { data: auth, error: authError } = await withTimeout(
-        supabase.auth.getUser()
-      );
+      setMessage("STEP 2: Admin login checking...");
+
+      const { data: auth, error: authError } =
+        await requestWithTimeout(supabase.auth.getUser());
 
       if (authError || !auth.user) {
         throw new Error("Admin login expired. Dobara login karein.");
       }
 
-      setMessage("Step 2: Property database mein save ho rahi hai...");
+      setMessage("STEP 3: Database insert request starting...");
 
-      const insertRequest = supabase
-        .from("properties")
-        .insert({
+      const result: any = await requestWithTimeout(
+        supabase.from("properties").insert({
           user_id: auth.user.id,
           title: title.trim(),
           locality: locality.trim(),
@@ -171,18 +152,15 @@ export default function AdminPage() {
           phone: phone.trim() || null,
           images: [],
           status: "approved",
-        })
-        .abortSignal(controller.signal);
-
-      const result = await withTimeout(insertRequest, 16000);
+        }),
+        15
+      );
 
       if (result.error) {
         throw new Error(result.error.message);
       }
 
-      setMessage(
-        "SUCCESS! Property database mein save ho gayi."
-      );
+      setMessage("SUCCESS! Property database mein save ho gayi.");
 
       setTitle("");
       setLocality("");
@@ -192,42 +170,30 @@ export default function AdminPage() {
       setDescription("");
       setPhone("");
 
-      setSaving(false);
+      await loadData();
 
-      loadData();
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-
-      if (
-        errorMessage.includes("AbortError") ||
-        errorMessage.toLowerCase().includes("aborted")
-      ) {
-        setMessage(
-          "UPLOAD FAILED: Request 15 seconds mein complete nahi hui. Internet aur Supabase check karein."
-        );
-      } else {
-        setMessage("UPLOAD FAILED: " + errorMessage);
-      }
+      setMessage(
+        "UPLOAD FAILED: " +
+        (error instanceof Error ? error.message : String(error))
+      );
     } finally {
-      window.clearTimeout(abortTimer);
       setSaving(false);
     }
   }
 
   async function updateStatus(id: string, status: string) {
-    setMessage("Updating property status...");
+    setMessage("Updating property...");
 
     try {
-      const { error } = await withTimeout(
-        supabase
-          .from("properties")
+      const { error } = await requestWithTimeout(
+        supabase.from("properties")
           .update({ status })
           .eq("id", id)
       );
 
       if (error) {
-        setMessage("Status error: " + error.message);
+        setMessage("Status Error: " + error.message);
         return;
       }
 
@@ -235,8 +201,8 @@ export default function AdminPage() {
       await loadData();
     } catch (error) {
       setMessage(
-        "Status error: " +
-          (error instanceof Error ? error.message : "Unknown error")
+        "Status Error: " +
+        (error instanceof Error ? error.message : String(error))
       );
     }
   }
@@ -254,7 +220,11 @@ export default function AdminPage() {
     <>
       <Header />
 
-      <main style={{ maxWidth: 1100, margin: "30px auto", padding: 20 }}>
+      <main style={{
+        maxWidth: 1100,
+        margin: "30px auto",
+        padding: 20
+      }}>
         <div style={{
           display: "flex",
           justifyContent: "space-between",
@@ -262,7 +232,9 @@ export default function AdminPage() {
           gap: 15
         }}>
           <h1>Admin Dashboard</h1>
-          <button type="button" onClick={logout}>Admin Logout</button>
+          <button type="button" onClick={logout}>
+            Admin Logout
+          </button>
         </div>
 
         {message && (
@@ -279,7 +251,11 @@ export default function AdminPage() {
 
         <h2>Dashboard Overview</h2>
 
-        <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+        <div style={{
+          display: "flex",
+          gap: 20,
+          flexWrap: "wrap"
+        }}>
           <div style={{ padding: 20, background: "#eee", borderRadius: 10 }}>
             <h3>Total Properties</h3>
             <h2>{properties.length}</h2>
@@ -386,7 +362,7 @@ export default function AdminPage() {
             onChange={(e) => setDescription(e.target.value)}
           />
 
-          <p>Property bina photo ke bhi upload ho sakti hai.</p>
+          <p>Photo ke bina bhi Property Upload ho sakti hai.</p>
 
           <button
             type="submit"
@@ -394,7 +370,7 @@ export default function AdminPage() {
             style={{
               padding: 14,
               background: "#111827",
-              color: "white",
+              color: "#fff",
               border: 0,
               borderRadius: 8,
               cursor: saving ? "wait" : "pointer"
