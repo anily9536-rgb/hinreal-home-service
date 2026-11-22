@@ -60,11 +60,14 @@ export default function AdminPage() {
     (_, index) => currentYear - index
   );
 
+  // Hidden sold properties are still included in sales calculations.
   const monthlySales = useMemo(() => {
     return properties
       .filter((property) => {
         if (property.status !== "sold" || !property.sold_at) return false;
+
         const date = new Date(property.sold_at);
+
         return (
           date.getMonth() === selectedMonth &&
           date.getFullYear() === selectedYear
@@ -76,12 +79,21 @@ export default function AdminPage() {
       );
   }, [properties, selectedMonth, selectedYear]);
 
+  // All sold records remain available for Sold Properties and reports.
   const soldProperties = properties.filter(
     (property) => property.status === "sold"
   );
 
+  // Hide only properties marked deleted_from_manage.
+  const visibleProperties = properties.filter(
+    (property) => property.deleted_from_manage !== true
+  );
+
+  // Hidden sold properties cannot be sold again.
   const availableProperties = properties.filter(
-    (property) => property.status !== "sold"
+    (property) =>
+      property.status !== "sold" &&
+      property.deleted_from_manage !== true
   );
 
   async function withTimeout<T>(
@@ -89,6 +101,7 @@ export default function AdminPage() {
     seconds = 30
   ): Promise<T> {
     let timer: number | undefined;
+
     try {
       return await Promise.race([
         Promise.resolve(request),
@@ -107,7 +120,8 @@ export default function AdminPage() {
   async function loadData() {
     try {
       const p: any = await withTimeout(
-        supabase.from("properties")
+        supabase
+          .from("properties")
           .select("*")
           .order("created_at", { ascending: false })
       );
@@ -115,11 +129,13 @@ export default function AdminPage() {
       if (p.error) {
         setMessage("Properties Error: " + p.error.message);
       } else {
+        // Do not filter here. Sales reports need every sold record.
         setProperties(p.data || []);
       }
 
       const e: any = await withTimeout(
-        supabase.from("enquiries")
+        supabase
+          .from("enquiries")
           .select("*")
           .order("created_at", { ascending: false })
       );
@@ -151,7 +167,8 @@ export default function AdminPage() {
 
         const { data: profile, error: profileError } =
           await withTimeout(
-            supabase.from("profiles")
+            supabase
+              .from("profiles")
               .select("role")
               .eq("id", data.user.id)
               .single()
@@ -215,6 +232,7 @@ export default function AdminPage() {
     event: React.FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
+
     if (saving) return;
 
     if (!title.trim() || !locality.trim() || !price || Number(price) <= 0) {
@@ -240,6 +258,7 @@ export default function AdminPage() {
       for (let i = 0; i < photos.length; i++) {
         const file = photos[i];
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+
         const path =
           auth.user.id + "/" + Date.now() + "-" + i + "-" + safeName;
 
@@ -248,7 +267,8 @@ export default function AdminPage() {
         );
 
         const { error: uploadError } = await withTimeout(
-          supabase.storage.from("property-images")
+          supabase.storage
+            .from("property-images")
             .upload(path, file, {
               cacheControl: "3600",
               upsert: false,
@@ -282,6 +302,7 @@ export default function AdminPage() {
           phone: phone.trim() || "Not Provided",
           images: imageUrls,
           status: "approved",
+          deleted_from_manage: false,
         })
       );
 
@@ -306,7 +327,9 @@ export default function AdminPage() {
       await loadData();
     } catch (error) {
       if (uploadedPaths.length > 0) {
-        await supabase.storage.from("property-images").remove(uploadedPaths);
+        await supabase.storage
+          .from("property-images")
+          .remove(uploadedPaths);
       }
 
       setMessage(
@@ -339,11 +362,16 @@ export default function AdminPage() {
   }
 
   function openSellModal(property?: any) {
-    const available = properties.filter((item) => item.status !== "sold");
+    const available = properties.filter(
+      (item) =>
+        item.status !== "sold" &&
+        item.deleted_from_manage !== true
+    );
 
     setSelectedPropertyId(
       property?.id || available[0]?.id || ""
     );
+
     setSaleAmount("");
     setSaleDate(new Date().toISOString().slice(0, 10));
     setShowSellModal(true);
@@ -373,7 +401,11 @@ export default function AdminPage() {
       (property) => String(property.id) === String(selectedPropertyId)
     );
 
-    if (!selectedProperty || selectedProperty.status === "sold") {
+    if (
+      !selectedProperty ||
+      selectedProperty.status === "sold" ||
+      selectedProperty.deleted_from_manage === true
+    ) {
       setMessage("Selected property available nahi hai. List refresh karein.");
       return;
     }
@@ -394,7 +426,8 @@ export default function AdminPage() {
       const soldAt = new Date(saleDate + "T12:00:00").toISOString();
 
       const { error } = await withTimeout(
-        supabase.from("properties")
+        supabase
+          .from("properties")
           .update({
             status: "sold",
             sold_price: amount,
@@ -422,18 +455,51 @@ export default function AdminPage() {
   }
 
   async function deleteProperty(id: string) {
-    if (!window.confirm("Kya aap is property ko delete karna chahte hain?")) {
-      return;
-    }
+    const property = properties.find(
+      (item) => String(item.id) === String(id)
+    );
+
+    if (!property) return;
+
+    const isSold = property.status === "sold";
+
+    const confirmed = window.confirm(
+      isSold
+        ? "Yeh SOLD property hai. Yeh sirf Manage Properties se hide hogi. Sold Properties aur Selling Amount safe rahenge. Kya continue karein?"
+        : "Kya aap is property ko permanently delete karna chahte hain?"
+    );
+
+    if (!confirmed) return;
 
     try {
-      const { error } = await withTimeout(
-        supabase.from("properties").delete().eq("id", id)
+      let result;
+
+      if (isSold) {
+        // Keep the sold database record permanently.
+        result = await withTimeout(
+          supabase
+            .from("properties")
+            .update({ deleted_from_manage: true })
+            .eq("id", id)
+        );
+      } else {
+        // Unsold properties are permanently deleted.
+        result = await withTimeout(
+          supabase
+            .from("properties")
+            .delete()
+            .eq("id", id)
+        );
+      }
+
+      if (result.error) throw new Error(result.error.message);
+
+      setMessage(
+        isSold
+          ? "Sold property Manage Properties se hide ho gayi. Sold record aur Selling Amount safe hain."
+          : "Property permanently deleted."
       );
 
-      if (error) throw new Error(error.message);
-
-      setMessage("Property deleted successfully.");
       await loadData();
     } catch (error) {
       setMessage(
@@ -514,7 +580,7 @@ export default function AdminPage() {
             minWidth: 180
           }}>
             <h3>Total Properties</h3>
-            <h2>{properties.length}</h2>
+            <h2>{visibleProperties.length}</h2>
           </div>
 
           <div style={{
@@ -571,7 +637,9 @@ export default function AdminPage() {
           borderRadius: 10
         }}>
           <h3>Month-wise Sales History</h3>
-          <p>Purane mahine ki total selling amount dekhne ke liye select karein.</p>
+          <p>
+            Purane mahine ki total selling amount dekhne ke liye select karein.
+          </p>
 
           <div style={{
             display: "flex",
@@ -584,7 +652,9 @@ export default function AdminPage() {
               style={{ padding: 12, minWidth: 150 }}
             >
               {months.map((month, index) => (
-                <option key={month} value={index}>{month}</option>
+                <option key={month} value={index}>
+                  {month}
+                </option>
               ))}
             </select>
 
@@ -594,13 +664,16 @@ export default function AdminPage() {
               style={{ padding: 12, minWidth: 120 }}
             >
               {years.map((year) => (
-                <option key={year} value={year}>{year}</option>
+                <option key={year} value={year}>
+                  {year}
+                </option>
               ))}
             </select>
           </div>
 
           <h2 style={{ color: "#15803d" }}>
-            {months[selectedMonth]} {selectedYear}: ₹{monthlySales.toLocaleString("en-IN")}
+            {months[selectedMonth]} {selectedYear}: ₹
+            {monthlySales.toLocaleString("en-IN")}
           </h2>
         </div>
 
@@ -723,7 +796,9 @@ export default function AdminPage() {
               onChange={handlePhotoChange}
             />
 
-            <p>{photos.length}/10 photos selected. Maximum 5 MB per photo.</p>
+            <p>
+              {photos.length}/10 photos selected. Maximum 5 MB per photo.
+            </p>
 
             <div style={{
               display: "grid",
@@ -806,7 +881,10 @@ export default function AdminPage() {
               padding: 22,
               borderRadius: 12
             }}>
-              <h2 style={{ marginTop: 0 }}>Select Property to Sell</h2>
+              <h2 style={{ marginTop: 0 }}>
+                Select Property to Sell
+              </h2>
+
               <p>Yahan sabhi categories ki unsold properties dikhengi.</p>
 
               <label style={{
@@ -827,6 +905,7 @@ export default function AdminPage() {
                 }}
               >
                 <option value="">-- Property Select Karein --</option>
+
                 {availableProperties.map((item) => (
                   <option key={item.id} value={item.id}>
                     {(item.title || "Property") + " | " +
@@ -849,11 +928,14 @@ export default function AdminPage() {
                     marginBottom: 14
                   }}>
                     <b>{selected.title}</b>
+
                     <p style={{ margin: "5px 0" }}>
                       Category: {selected.property_type} | Location: {selected.locality}
                     </p>
+
                     <p style={{ margin: 0 }}>
-                      Listed Price: ₹{Number(selected.price || 0).toLocaleString("en-IN")}
+                      Listed Price: ₹
+                      {Number(selected.price || 0).toLocaleString("en-IN")}
                     </p>
 
                     {(selected.images || []).length > 0 && (
@@ -949,10 +1031,10 @@ export default function AdminPage() {
           </div>
         )}
 
-        {properties.length === 0 ? (
+        {visibleProperties.length === 0 ? (
           <p>No properties found.</p>
         ) : (
-          properties.map((property) => (
+          visibleProperties.map((property) => (
             <div key={property.id} style={{
               border: "1px solid #ddd",
               padding: 15,
@@ -962,9 +1044,11 @@ export default function AdminPage() {
               <h3>{property.title}</h3>
               <p>Location: {property.locality}</p>
               <p>Address: {property.address}</p>
+
               <p>
                 Listing: {property.listing_type === "Buy" ? "For Sale" : "For Rent"}
               </p>
+
               <p>Price: ₹{property.price}</p>
               <p>Phone: {property.phone}</p>
               <p>Status: {property.status}</p>
@@ -972,8 +1056,10 @@ export default function AdminPage() {
               {property.status === "sold" && (
                 <>
                   <p style={{ color: "#15803d", fontWeight: "bold" }}>
-                    Sold Amount: ₹{Number(property.sold_price || 0).toLocaleString("en-IN")}
+                    Sold Amount: ₹
+                    {Number(property.sold_price || 0).toLocaleString("en-IN")}
                   </p>
+
                   <p>
                     Sold Date: {property.sold_at
                       ? new Date(property.sold_at).toLocaleDateString("en-IN")
