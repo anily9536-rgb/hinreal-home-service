@@ -631,6 +631,11 @@ export default function AdminPage() {
             const customerPhone = String(enquiry.phone || "")
               .replace(/[^\d+]/g, "");
 
+            const relatedProperty = properties.find(
+              (property) =>
+                String(property.id) === String(enquiry.property_id)
+            );
+
             return (
               <div key={enquiry.id} style={{
                 border: "1px solid #ddd",
@@ -639,7 +644,31 @@ export default function AdminPage() {
                 borderRadius: 10,
                 background: "#fff"
               }}>
-                <h3>{enquiry.name}</h3>
+                <h3>Customer: {enquiry.name}</h3>
+
+                <div style={{
+                  background: "#f0f7ff",
+                  padding: 12,
+                  borderRadius: 8,
+                  marginBottom: 15
+                }}>
+                  <h3>Enquired Property</h3>
+
+                  {relatedProperty ? (
+                    <>
+                      <p><b>Property:</b> {relatedProperty.title}</p>
+                      <p><b>Location:</b> {relatedProperty.locality}</p>
+                      <p><b>Address:</b> {relatedProperty.address}</p>
+                      <p><b>Price:</b> ₹{relatedProperty.price}</p>
+                    </>
+                  ) : (
+                    <p>
+                      Property ID: {enquiry.property_id || "Not available"}
+                      <br />
+                      Property details not found.
+                    </p>
+                  )}
+                </div>
 
                 <p>
                   <b>Phone:</b> {enquiry.phone || "Not provided"}
