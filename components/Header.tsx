@@ -10,14 +10,11 @@ export default function Header() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const homeHref = isAdmin ? "/admin" : "/";
-
   useEffect(() => {
     let requestId = 0;
 
     async function checkUser(sessionUser: any) {
       const currentRequest = ++requestId;
-
       setUser(sessionUser ?? null);
 
       if (!sessionUser) {
@@ -111,7 +108,7 @@ export default function Header() {
         }}
       >
         <Link
-          href={homeHref}
+          href="/"
           onClick={() => setMenuOpen(false)}
           style={{
             fontSize: "21px",
@@ -125,36 +122,42 @@ export default function Header() {
 
         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
           <div className="desktop-links">
-            <Link href={homeHref} style={linkStyle}>
-              Home
-            </Link>
+            <Link href="/" style={linkStyle}>Home</Link>
 
-            <Link href="/about" style={linkStyle}>
-              About
-            </Link>
+            <Link href="/about" style={linkStyle}>About</Link>
 
-            <Link href="/contact" style={linkStyle}>
-              Contact
-            </Link>
+            <Link href="/contact" style={linkStyle}>Contact</Link>
 
-            <Link
-              href="/admin/login"
-              style={{ ...linkStyle, color: "#0b57d0", fontWeight: "bold" }}
-            >
-              Admin Login
-            </Link>
+            {isAdmin && (
+              <Link
+                href="/admin"
+                style={{ ...linkStyle, color: "#0b57d0", fontWeight: "bold" }}
+              >
+                Admin Dashboard
+              </Link>
+            )}
+
+            {!isAdmin && (
+              <Link
+                href="/admin/login"
+                style={{ ...linkStyle, color: "#0b57d0", fontWeight: "bold" }}
+              >
+                Admin Login
+              </Link>
+            )}
 
             {user && (
-              <button onClick={handleLogout}>Logout</button>
+              <button type="button" onClick={handleLogout}>
+                Logout
+              </button>
             )}
           </div>
 
           <button
             type="button"
             className="menu-button"
-            onClick={() => setMenuOpen((previous) => !previous)}
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
             style={{
               fontSize: "28px",
               width: "44px",
@@ -190,46 +193,40 @@ export default function Header() {
           zIndex: 9999,
         }}
       >
-        <Link
-          href={homeHref}
-          style={linkStyle}
-          onClick={() => setMenuOpen(false)}
-        >
+        <Link href="/" style={linkStyle} onClick={() => setMenuOpen(false)}>
           Home
         </Link>
 
-        <Link
-          href="/about"
-          style={linkStyle}
-          onClick={() => setMenuOpen(false)}
-        >
+        <Link href="/about" style={linkStyle} onClick={() => setMenuOpen(false)}>
           About
         </Link>
 
-        <Link
-          href="/contact"
-          style={linkStyle}
-          onClick={() => setMenuOpen(false)}
-        >
+        <Link href="/contact" style={linkStyle} onClick={() => setMenuOpen(false)}>
           Contact
         </Link>
 
         <hr />
 
-        <Link
-          href="/admin/login"
-          style={{ ...linkStyle, color: "#0b57d0", fontWeight: "bold" }}
-          onClick={() => setMenuOpen(false)}
-        >
-          Admin Login
-        </Link>
+        {isAdmin ? (
+          <Link
+            href="/admin"
+            style={{ ...linkStyle, color: "#0b57d0", fontWeight: "bold" }}
+            onClick={() => setMenuOpen(false)}
+          >
+            Admin Dashboard
+          </Link>
+        ) : (
+          <Link
+            href="/admin/login"
+            style={{ ...linkStyle, color: "#0b57d0", fontWeight: "bold" }}
+            onClick={() => setMenuOpen(false)}
+          >
+            Admin Login
+          </Link>
+        )}
 
         {user && (
-          <button
-            type="button"
-            onClick={handleLogout}
-            style={{ padding: "9px", cursor: "pointer" }}
-          >
+          <button type="button" onClick={handleLogout}>
             Logout
           </button>
         )}
