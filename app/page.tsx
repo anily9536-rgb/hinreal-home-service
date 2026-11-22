@@ -1,8 +1,11 @@
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import EnquiryForm from "@/components/EnquiryForm";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const { data: properties, error } = await supabase
@@ -24,7 +27,22 @@ export default async function Home() {
         <section className="container">
           <h2>Latest Properties</h2>
 
-          {error && <p>Unable to load properties right now.</p>}
+          {error && (
+            <div style={{
+              padding: 15,
+              margin: "15px 0",
+              background: "#fee2e2",
+              color: "#991b1b",
+              borderRadius: 8,
+              overflowWrap: "anywhere"
+            }}>
+              <h3>Supabase Database Error</h3>
+              <p>{error.message}</p>
+              <p>Code: {error.code || "Not available"}</p>
+              <p>Details: {error.details || "Not available"}</p>
+              <p>Hint: {error.hint || "Not available"}</p>
+            </div>
+          )}
 
           {!error && (!properties || properties.length === 0) && (
             <p>No approved properties available yet.</p>
@@ -41,13 +59,14 @@ export default async function Home() {
                       width: "100%",
                       height: 220,
                       objectFit: "cover",
-                      borderRadius: 8,
+                      borderRadius: 8
                     }}
                   />
                 )}
 
                 <h3>{property.title}</h3>
                 <p>{property.locality}</p>
+                <p>{property.address}</p>
 
                 <p>
                   {property.listing_type === "Rent"
