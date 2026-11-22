@@ -37,8 +37,6 @@ export default function AdminPage() {
     "September", "October", "November", "December"
   ];
 
-  // Year list automatically grows every new year.
-  // It also includes older years from existing property records.
   const currentYear = new Date().getFullYear();
 
   const earliestYear = properties.reduce((earliest, property) => {
@@ -78,6 +76,10 @@ export default function AdminPage() {
         0
       );
   }, [properties, selectedMonth, selectedYear]);
+
+  const soldProperties = properties.filter(
+    (property) => property.status === "sold"
+  );
 
   async function withTimeout<T>(
     request: PromiseLike<T>,
@@ -492,12 +494,22 @@ export default function AdminPage() {
           gap: 20,
           flexWrap: "wrap"
         }}>
-          <div style={{ padding: 20, background: "#eee", borderRadius: 10 }}>
+          <div style={{
+            padding: 20,
+            background: "#eee",
+            borderRadius: 10,
+            minWidth: 180
+          }}>
             <h3>Total Properties</h3>
             <h2>{properties.length}</h2>
           </div>
 
-          <div style={{ padding: 20, background: "#eee", borderRadius: 10 }}>
+          <div style={{
+            padding: 20,
+            background: "#eee",
+            borderRadius: 10,
+            minWidth: 180
+          }}>
             <h3>Total Enquiries</h3>
             <h2>{enquiries.length}</h2>
           </div>
@@ -516,6 +528,29 @@ export default function AdminPage() {
               {months[selectedMonth]} {selectedYear}
             </p>
           </div>
+
+          <button
+            type="button"
+            onClick={() => router.push("/admin/sold")}
+            style={{
+              padding: 20,
+              background: "#e0f2fe",
+              border: "1px solid #7dd3fc",
+              borderRadius: 10,
+              minWidth: 220,
+              cursor: "pointer",
+              textAlign: "left",
+              color: "#0c4a6e"
+            }}
+          >
+            <h3 style={{ marginTop: 0 }}>Sold Properties</h3>
+            <h2 style={{ color: "#0369a1" }}>
+              {soldProperties.length}
+            </h2>
+            <p style={{ marginBottom: 0 }}>
+              View All Sold Properties →
+            </p>
+          </button>
         </div>
 
         <div style={{
