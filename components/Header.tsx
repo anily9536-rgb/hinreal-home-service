@@ -3,33 +3,59 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 export default function Header() {
-  const pathname = usePathname();
-  const homeHref = pathname.startsWith("/admin") ? "/admin" : "/";
-
   const [user, setUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const homeHref = isAdmin ? "/admin" : "/";
+
   useEffect(() => {
+    let requestId = 0;
+
+    async function checkUser(sessionUser: any) {
+      const currentRequest = ++requestId;
+
+      setUser(sessionUser ?? null);
+
+      if (!sessionUser) {
+        setIsAdmin(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", sessionUser.id)
+        .single();
+
+      if (currentRequest === requestId) {
+        setIsAdmin(!error && data?.role === "admin");
+      }
+    }
+
     supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
+      checkUser(data.user);
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      checkUser(session?.user ?? null);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      requestId++;
+      subscription.unsubscribe();
+    };
   }, []);
 
   async function handleLogout() {
     await supabase.auth.signOut();
     setUser(null);
+    setIsAdmin(false);
     setMenuOpen(false);
     window.location.href = "/";
   }
@@ -99,9 +125,18 @@ export default function Header() {
 
         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
           <div className="desktop-links">
-            <Link href={homeHref} style={linkStyle}>Home</Link>
-            <Link href="/about" style={linkStyle}>About</Link>
-            <Link href="/contact" style={linkStyle}>Contact</Link>
+            <Link href={homeHref} style={linkStyle}>
+              Home
+            </Link>
+
+            <Link href="/about" style={linkStyle}>
+              About
+            </Link>
+
+            <Link href="/contact" style={linkStyle}>
+              Contact
+            </Link>
+
             <Link
               href="/admin/login"
               style={{ ...linkStyle, color: "#0b57d0", fontWeight: "bold" }}
@@ -155,15 +190,27 @@ export default function Header() {
           zIndex: 9999,
         }}
       >
-        <Link href={homeHref} style={linkStyle} onClick={() => setMenuOpen(false)}>
+        <Link
+          href={homeHref}
+          style={linkStyle}
+          onClick={() => setMenuOpen(false)}
+        >
           Home
         </Link>
 
-        <Link href="/about" style={linkStyle} onClick={() => setMenuOpen(false)}>
+        <Link
+          href="/about"
+          style={linkStyle}
+          onClick={() => setMenuOpen(false)}
+        >
           About
         </Link>
 
-        <Link href="/contact" style={linkStyle} onClick={() => setMenuOpen(false)}>
+        <Link
+          href="/contact"
+          style={linkStyle}
+          onClick={() => setMenuOpen(false)}
+        >
           Contact
         </Link>
 
