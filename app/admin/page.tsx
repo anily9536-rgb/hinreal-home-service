@@ -18,7 +18,17 @@ export default function AdminPage() {
 
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [showBillModal, setShowBillModal] = useState(false);
 
+const [billStartDate, setBillStartDate] = useState(() => {
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-01`;
+});
+
+const [billEndDate, setBillEndDate] = useState(() => {
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+});
   const [title, setTitle] = useState("");
   const [locality, setLocality] = useState("");
   const [address, setAddress] = useState("");
