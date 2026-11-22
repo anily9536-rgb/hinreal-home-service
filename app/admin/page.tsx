@@ -817,7 +817,22 @@ function printBill() {
             </h2>
             <p style={{ marginBottom: 0 }}>View All Sold Properties →</p>
           </button>
-        </div>
+      <button
+  onClick={() => setShowBillModal(true)}
+  style={{
+    padding: "20px",
+    borderRadius: "12px",
+    border: "1px solid #ddd",
+    background: "#fff",
+    cursor: "pointer",
+    minWidth: "180px",
+    textAlign: "left",
+  }}
+>
+  <h3 style={{ margin: "0 0 10px" }}>Bill</h3>
+  <p style={{ margin: 0 }}>₹{billTotal.toLocaleString("en-IN")}</p>
+  <p style={{ marginBottom: 0 }}>Print / Download Bill →</p>
+</button>  </div>
 
         <div style={{
           marginTop: 20,
