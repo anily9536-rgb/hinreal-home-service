@@ -840,6 +840,89 @@ function printBill() {
           border: "1px solid #ddd",
           borderRadius: 10
         }}>
+          {showBillModal && (
+  <div style={{
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.6)",
+    zIndex: 9999,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 15
+  }}>
+    <div style={{
+      background: "#fff",
+      padding: 22,
+      borderRadius: 12,
+      width: "100%",
+      maxWidth: 500,
+      maxHeight: "90vh",
+      overflowY: "auto"
+    }}>
+      <h2>Sales Bill</h2>
+
+      <label>From Date</label>
+      <input
+        type="date"
+        value={billStartDate}
+        onChange={(e) => setBillStartDate(e.target.value)}
+        style={{ width: "100%", padding: 12, margin: "8px 0 15px" }}
+      />
+
+      <label>To Date</label>
+      <input
+        type="date"
+        value={billEndDate}
+        onChange={(e) => setBillEndDate(e.target.value)}
+        style={{ width: "100%", padding: 12, margin: "8px 0 15px" }}
+      />
+
+      <div style={{
+        background: "#f0fdf4",
+        padding: 15,
+        borderRadius: 8,
+        margin: "10px 0 20px"
+      }}>
+        <p>Total Sold Properties: <b>{billProperties.length}</b></p>
+        <h2 style={{ color: "#15803d" }}>
+          ₹{billTotal.toLocaleString("en-IN")}
+        </h2>
+        <p>Total Selling Amount</p>
+      </div>
+
+      <button
+        onClick={printBill}
+        style={{
+          width: "100%",
+          padding: 14,
+          background: "#15803d",
+          color: "#fff",
+          border: 0,
+          borderRadius: 8,
+          cursor: "pointer",
+          marginBottom: 10
+        }}
+      >
+        Print Bill / Download PDF
+      </button>
+
+      <button
+        onClick={() => setShowBillModal(false)}
+        style={{
+          width: "100%",
+          padding: 12,
+          background: "#eee",
+          border: 0,
+          borderRadius: 8,
+          cursor: "pointer"
+        }}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
           <h3>Month-wise Sales History</h3>
           <p>
             Purane mahine ki total selling amount dekhne ke liye select karein.
