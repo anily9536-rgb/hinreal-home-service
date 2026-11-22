@@ -529,7 +529,7 @@ export default function AdminPage() {
 
   return (
     <>
-      <Header />
+      <AdminHeader />
 
       <main style={{
         maxWidth: 1100,
