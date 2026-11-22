@@ -1,13 +1,54 @@
 
+"use client";
+
+import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import AdminHeader from "@/components/AdminHeader";
 import Footer from "@/components/Footer";
+import { supabase } from "@/lib/supabase";
 
 export default function AboutPage() {
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+
+    async function checkAdmin() {
+      const { data: userData } = await supabase.auth.getUser();
+
+      if (!userData.user) {
+        if (active) {
+          setIsAdmin(false);
+          setChecking(false);
+        }
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", userData.user.id)
+        .single();
+
+      if (active) {
+        setIsAdmin(profile?.role === "admin");
+        setChecking(false);
+      }
+    }
+
+    checkAdmin();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <>
-      <Header />
-      <AdminHeader />
+      {!checking && (
+        isAdmin ? <AdminHeader /> : <Header />
+      )}
 
       <main className="container">
         <h1>About Real Home Service</h1>
