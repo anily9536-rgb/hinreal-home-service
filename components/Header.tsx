@@ -65,6 +65,12 @@ export default function Header() {
     padding: "8px 4px",
   };
 
+  const customerLinkStyle = {
+    ...linkStyle,
+    color: "#0b57d0",
+    fontWeight: "bold" as const,
+  };
+
   return (
     <header
       style={{
@@ -123,27 +129,24 @@ export default function Header() {
         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
           <div className="desktop-links">
             <Link href="/" style={linkStyle}>Home</Link>
-
             <Link href="/about" style={linkStyle}>About</Link>
-
             <Link href="/contact" style={linkStyle}>Contact</Link>
 
             {isAdmin && (
-              <Link
-                href="/admin"
-                style={{ ...linkStyle, color: "#0b57d0", fontWeight: "bold" }}
-              >
+              <Link href="/admin" style={customerLinkStyle}>
                 Admin Dashboard
               </Link>
             )}
 
-            {!isAdmin && (
-              <Link
-                href="/admin/login"
-                style={{ ...linkStyle, color: "#0b57d0", fontWeight: "bold" }}
-              >
-                Admin Login
-              </Link>
+            {!isAdmin && !user && (
+              <>
+                <Link href="/login" style={customerLinkStyle}>
+                  Customer Login
+                </Link>
+                <Link href="/register" style={customerLinkStyle}>
+                  Register
+                </Link>
+              </>
             )}
 
             {user && (
@@ -210,20 +213,30 @@ export default function Header() {
         {isAdmin ? (
           <Link
             href="/admin"
-            style={{ ...linkStyle, color: "#0b57d0", fontWeight: "bold" }}
+            style={customerLinkStyle}
             onClick={() => setMenuOpen(false)}
           >
             Admin Dashboard
           </Link>
-        ) : (
-          <Link
-            href="/admin/login"
-            style={{ ...linkStyle, color: "#0b57d0", fontWeight: "bold" }}
-            onClick={() => setMenuOpen(false)}
-          >
-            Admin Login
-          </Link>
-        )}
+        ) : !user ? (
+          <>
+            <Link
+              href="/login"
+              style={customerLinkStyle}
+              onClick={() => setMenuOpen(false)}
+            >
+              Customer Login
+            </Link>
+
+            <Link
+              href="/register"
+              style={customerLinkStyle}
+              onClick={() => setMenuOpen(false)}
+            >
+              Register
+            </Link>
+          </>
+        ) : null}
 
         {user && (
           <button type="button" onClick={handleLogout}>
