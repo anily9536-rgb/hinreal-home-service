@@ -31,6 +31,13 @@ export default function AdminPage() {
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoInputKey, setPhotoInputKey] = useState(0);
 
+  const [showSellModal, setShowSellModal] = useState(false);
+  const [selectedPropertyId, setSelectedPropertyId] = useState("");
+  const [saleAmount, setSaleAmount] = useState("");
+  const [saleDate, setSaleDate] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
+
   const months = [
     "January", "February", "March", "April",
     "May", "June", "July", "August",
@@ -41,11 +48,8 @@ export default function AdminPage() {
 
   const earliestYear = properties.reduce((earliest, property) => {
     const dateValue = property.sold_at || property.created_at;
-
     if (!dateValue) return earliest;
-
     const year = new Date(dateValue).getFullYear();
-
     return Number.isNaN(year) ? earliest : Math.min(earliest, year);
   }, 2020);
 
@@ -59,20 +63,15 @@ export default function AdminPage() {
   const monthlySales = useMemo(() => {
     return properties
       .filter((property) => {
-        if (property.status !== "sold" || !property.sold_at) {
-          return false;
-        }
-
+        if (property.status !== "sold" || !property.sold_at) return false;
         const date = new Date(property.sold_at);
-
         return (
           date.getMonth() === selectedMonth &&
           date.getFullYear() === selectedYear
         );
       })
       .reduce(
-        (total, property) =>
-          total + Number(property.sold_price || 0),
+        (total, property) => total + Number(property.sold_price || 0),
         0
       );
   }, [properties, selectedMonth, selectedYear]);
@@ -81,12 +80,15 @@ export default function AdminPage() {
     (property) => property.status === "sold"
   );
 
+  const availableProperties = properties.filter(
+    (property) => property.status !== "sold"
+  );
+
   async function withTimeout<T>(
     request: PromiseLike<T>,
     seconds = 30
   ): Promise<T> {
     let timer: number | undefined;
-
     try {
       return await Promise.race([
         Promise.resolve(request),
@@ -187,11 +189,7 @@ export default function AdminPage() {
       return;
     }
 
-    const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-    ];
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
     for (const file of selected) {
       if (!allowedTypes.includes(file.type)) {
@@ -217,15 +215,9 @@ export default function AdminPage() {
     event: React.FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
-
     if (saving) return;
 
-    if (
-      !title.trim() ||
-      !locality.trim() ||
-      !price ||
-      Number(price) <= 0
-    ) {
+    if (!title.trim() || !locality.trim() || !price || Number(price) <= 0) {
       setMessage("Title, Location aur valid Price zaroori hain.");
       return;
     }
@@ -247,18 +239,12 @@ export default function AdminPage() {
 
       for (let i = 0; i < photos.length; i++) {
         const file = photos[i];
-
-        const safeName = file.name.replace(
-          /[^a-zA-Z0-9._-]/g,
-          "_"
-        );
-
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
         const path =
           auth.user.id + "/" + Date.now() + "-" + i + "-" + safeName;
 
         setMessage(
-          "Photo upload ho rahi hai: " +
-          (i + 1) + "/" + photos.length
+          "Photo upload ho rahi hai: " + (i + 1) + "/" + photos.length
         );
 
         const { error: uploadError } = await withTimeout(
@@ -320,9 +306,7 @@ export default function AdminPage() {
       await loadData();
     } catch (error) {
       if (uploadedPaths.length > 0) {
-        await supabase.storage
-          .from("property-images")
-          .remove(uploadedPaths);
+        await supabase.storage.from("property-images").remove(uploadedPaths);
       }
 
       setMessage(
@@ -339,9 +323,7 @@ export default function AdminPage() {
 
     try {
       const { error } = await withTimeout(
-        supabase.from("properties")
-          .update({ status })
-          .eq("id", id)
+        supabase.from("properties").update({ status }).eq("id", id)
       );
 
       if (error) throw new Error(error.message);
@@ -356,54 +338,86 @@ export default function AdminPage() {
     }
   }
 
-  async function markAsSold(property: any) {
-    if (property.listing_type !== "Buy") {
-      setMessage("Sirf For Sale property ko Sold mark kar sakte hain.");
+  function openSellModal(property?: any) {
+    const available = properties.filter((item) => item.status !== "sold");
+
+    setSelectedPropertyId(
+      property?.id || available[0]?.id || ""
+    );
+    setSaleAmount("");
+    setSaleDate(new Date().toISOString().slice(0, 10));
+    setShowSellModal(true);
+  }
+
+  async function submitSale() {
+    if (saving) return;
+
+    if (!selectedPropertyId) {
+      setMessage("Pehle property select karein.");
       return;
     }
 
-    const enteredPrice = window.prompt(
-      "Is property ki final selling amount (₹) enter karein:"
-    );
-
-    if (enteredPrice === null) return;
-
-    const amount = Number(enteredPrice.replace(/,/g, "").trim());
+    const amount = Number(saleAmount.replace(/,/g, "").trim());
 
     if (!Number.isFinite(amount) || amount <= 0) {
-      setMessage("Valid selling amount enter karein.");
+      setMessage("Valid final selling price enter karein.");
       return;
     }
 
-    if (!window.confirm(
-      "Kya aap is property ko Sold mark karna chahte hain?\nSelling Amount: ₹" +
-      amount.toLocaleString("en-IN")
-    )) {
+    if (!saleDate) {
+      setMessage("Selling date select karein.");
       return;
     }
 
-    setMessage("Sale record save ho raha hai...");
+    const selectedProperty = properties.find(
+      (property) => String(property.id) === String(selectedPropertyId)
+    );
+
+    if (!selectedProperty || selectedProperty.status === "sold") {
+      setMessage("Selected property available nahi hai. List refresh karein.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      selectedProperty.title +
+      " ko Sold mark karna hai?\nSelling Price: ₹" +
+      amount.toLocaleString("en-IN") +
+      "\nSelling Date: " + saleDate
+    );
+
+    if (!confirmed) return;
+
+    setSaving(true);
+    setMessage("Property sold record save ho raha hai...");
 
     try {
+      const soldAt = new Date(saleDate + "T12:00:00").toISOString();
+
       const { error } = await withTimeout(
         supabase.from("properties")
           .update({
             status: "sold",
             sold_price: amount,
-            sold_at: new Date().toISOString(),
+            sold_at: soldAt,
           })
-          .eq("id", property.id)
+          .eq("id", selectedPropertyId)
       );
 
       if (error) throw new Error(error.message);
 
-      setMessage("Property Sold! Selling amount monthly report mein add ho gayi.");
+      setShowSellModal(false);
+      setSelectedPropertyId("");
+      setSaleAmount("");
+      setMessage("Property Sold Properties mein add ho gayi.");
+
       await loadData();
     } catch (error) {
       setMessage(
         "Sale Error: " +
         (error instanceof Error ? error.message : String(error))
       );
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -447,7 +461,6 @@ export default function AdminPage() {
         margin: "30px auto",
         padding: 20
       }}>
-
         <div style={{
           display: "flex",
           justifyContent: "space-between",
@@ -547,9 +560,7 @@ export default function AdminPage() {
             <h2 style={{ color: "#0369a1" }}>
               {soldProperties.length}
             </h2>
-            <p style={{ marginBottom: 0 }}>
-              View All Sold Properties →
-            </p>
+            <p style={{ marginBottom: 0 }}>View All Sold Properties →</p>
           </button>
         </div>
 
@@ -560,9 +571,7 @@ export default function AdminPage() {
           borderRadius: 10
         }}>
           <h3>Month-wise Sales History</h3>
-          <p>
-            Purane mahine ki total selling amount dekhne ke liye select karein.
-          </p>
+          <p>Purane mahine ki total selling amount dekhne ke liye select karein.</p>
 
           <div style={{
             display: "flex",
@@ -714,9 +723,7 @@ export default function AdminPage() {
               onChange={handlePhotoChange}
             />
 
-            <p>
-              {photos.length}/10 photos selected. Maximum 5 MB per photo.
-            </p>
+            <p>{photos.length}/10 photos selected. Maximum 5 MB per photo.</p>
 
             <div style={{
               display: "grid",
@@ -760,6 +767,187 @@ export default function AdminPage() {
         <hr />
 
         <h2>Manage Properties</h2>
+
+        <button
+          type="button"
+          onClick={() => openSellModal()}
+          style={{
+            padding: "12px 20px",
+            background: "#15803d",
+            color: "#fff",
+            border: 0,
+            borderRadius: 8,
+            fontWeight: "bold",
+            cursor: "pointer",
+            margin: "10px 0 20px"
+          }}
+        >
+          + Sell Property
+        </button>
+
+        {showSellModal && (
+          <div style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            background: "rgba(0,0,0,0.6)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16
+          }}>
+            <div style={{
+              background: "#fff",
+              color: "#111",
+              width: "100%",
+              maxWidth: 520,
+              maxHeight: "90vh",
+              overflowY: "auto",
+              padding: 22,
+              borderRadius: 12
+            }}>
+              <h2 style={{ marginTop: 0 }}>Select Property to Sell</h2>
+              <p>Yahan sabhi categories ki unsold properties dikhengi.</p>
+
+              <label style={{
+                display: "block",
+                fontWeight: "bold",
+                marginBottom: 8
+              }}>
+                Select Property
+              </label>
+
+              <select
+                value={selectedPropertyId}
+                onChange={(e) => setSelectedPropertyId(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: 12,
+                  marginBottom: 14
+                }}
+              >
+                <option value="">-- Property Select Karein --</option>
+                {availableProperties.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {(item.title || "Property") + " | " +
+                    (item.property_type || "Other") + " | " +
+                    (item.locality || "Location not set")}
+                  </option>
+                ))}
+              </select>
+
+              {selectedPropertyId && (() => {
+                const selected = properties.find(
+                  (item) => String(item.id) === String(selectedPropertyId)
+                );
+
+                return selected ? (
+                  <div style={{
+                    padding: 12,
+                    background: "#f1f5f9",
+                    borderRadius: 8,
+                    marginBottom: 14
+                  }}>
+                    <b>{selected.title}</b>
+                    <p style={{ margin: "5px 0" }}>
+                      Category: {selected.property_type} | Location: {selected.locality}
+                    </p>
+                    <p style={{ margin: 0 }}>
+                      Listed Price: ₹{Number(selected.price || 0).toLocaleString("en-IN")}
+                    </p>
+
+                    {(selected.images || []).length > 0 && (
+                      <img
+                        src={selected.images[0]}
+                        alt={selected.title}
+                        style={{
+                          width: "100%",
+                          maxHeight: 180,
+                          objectFit: "cover",
+                          borderRadius: 8,
+                          marginTop: 10
+                        }}
+                      />
+                    )}
+                  </div>
+                ) : null;
+              })()}
+
+              <label style={{
+                display: "block",
+                fontWeight: "bold",
+                marginBottom: 8
+              }}>
+                Final Selling Price (₹)
+              </label>
+
+              <input
+                type="number"
+                min="1"
+                value={saleAmount}
+                onChange={(e) => setSaleAmount(e.target.value)}
+                placeholder="Final selling amount"
+                style={{
+                  width: "100%",
+                  padding: 12,
+                  marginBottom: 14,
+                  boxSizing: "border-box"
+                }}
+              />
+
+              <label style={{
+                display: "block",
+                fontWeight: "bold",
+                marginBottom: 8
+              }}>
+                Selling Date
+              </label>
+
+              <input
+                type="date"
+                value={saleDate}
+                onChange={(e) => setSaleDate(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: 12,
+                  marginBottom: 18,
+                  boxSizing: "border-box"
+                }}
+              />
+
+              <div style={{
+                display: "flex",
+                gap: 10,
+                flexWrap: "wrap"
+              }}>
+                <button
+                  type="button"
+                  onClick={submitSale}
+                  disabled={saving || !selectedPropertyId || !saleAmount}
+                  style={{
+                    padding: "12px 20px",
+                    background: "#15803d",
+                    color: "#fff",
+                    border: 0,
+                    borderRadius: 7,
+                    cursor: "pointer"
+                  }}
+                >
+                  {saving ? "Submitting..." : "Submit Sold Property"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowSellModal(false)}
+                  disabled={saving}
+                  style={{ padding: "12px 20px", borderRadius: 7 }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {properties.length === 0 ? (
           <p>No properties found.</p>
@@ -834,20 +1022,22 @@ export default function AdminPage() {
                 </button>
               )}
 
-              {property.listing_type === "Buy" && property.status === "approved" && (
+              {property.status !== "sold" && (
                 <button
                   type="button"
-                  onClick={() => markAsSold(property)}
+                  onClick={() => openSellModal(property)}
                   style={{
                     marginLeft: 8,
+                    marginTop: 10,
                     padding: "9px 14px",
                     background: "#15803d",
                     color: "#fff",
                     border: 0,
-                    borderRadius: 6
+                    borderRadius: 6,
+                    cursor: "pointer"
                   }}
                 >
-                  Mark as Sold
+                  Sell Property
                 </button>
               )}
 
@@ -912,9 +1102,7 @@ export default function AdminPage() {
                   )}
                 </div>
 
-                <p>
-                  <b>Phone:</b> {enquiry.phone || "Not provided"}
-                </p>
+                <p><b>Phone:</b> {enquiry.phone || "Not provided"}</p>
 
                 {customerPhone && (
                   <a
@@ -934,13 +1122,8 @@ export default function AdminPage() {
                   </a>
                 )}
 
-                <p>
-                  <b>Email:</b> {enquiry.email || "Not provided"}
-                </p>
-
-                <p>
-                  <b>Message:</b> {enquiry.message || "No message"}
-                </p>
+                <p><b>Email:</b> {enquiry.email || "Not provided"}</p>
+                <p><b>Message:</b> {enquiry.message || "No message"}</p>
 
                 <p>
                   <b>Date:</b>{" "}
@@ -952,7 +1135,6 @@ export default function AdminPage() {
             );
           })
         )}
-
       </main>
 
       <Footer />
