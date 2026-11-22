@@ -28,18 +28,48 @@ export default function Header() {
     window.location.href = "/";
   }
 
+  const linkStyle = {
+    color: "#222",
+    textDecoration: "none",
+    fontSize: "15px",
+    fontWeight: 500
+  };
+
   return (
     <header style={{
       width: "100%",
       padding: "14px 20px",
-      background: "#ffffff",
+      background: "#fff",
       borderBottom: "1px solid #ddd",
       boxSizing: "border-box"
     }}>
+      <style jsx>{`
+        .desktop-links {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+        }
+
+        .mobile-links {
+          display: none;
+        }
+
+        @media (max-width: 700px) {
+          .desktop-links {
+            display: none;
+          }
+
+          .mobile-links {
+            display: flex;
+          }
+        }
+      `}</style>
+
       <nav style={{
         display: "flex",
-        alignItems: "center",
         justifyContent: "space-between",
+        alignItems: "center",
+        position: "relative",
         width: "100%"
       }}>
         <Link href="/" style={{
@@ -54,23 +84,19 @@ export default function Header() {
         <div style={{
           display: "flex",
           alignItems: "center",
-          gap: "18px"
+          gap: "20px"
         }}>
-          <div className="desktop-menu" style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "18px"
-          }}>
-            <Link href="/">Home</Link>
-            <Link href="/about">About</Link>
-            <Link href="/contact">Contact</Link>
+          <div className="desktop-links">
+            <Link href="/" style={linkStyle}>Home</Link>
+            <Link href="/about" style={linkStyle}>About</Link>
+            <Link href="/contact" style={linkStyle}>Contact</Link>
 
             {user ? (
               <button onClick={handleLogout}>Logout</button>
             ) : (
               <>
-                <Link href="/login">Login</Link>
-                <Link href="/register">Register</Link>
+                <Link href="/register" style={linkStyle}>Register</Link>
+                <Link href="/login" style={linkStyle}>Login</Link>
               </>
             )}
           </div>
@@ -83,14 +109,10 @@ export default function Header() {
               fontSize: "28px",
               width: "40px",
               height: "40px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
               border: "none",
               background: "transparent",
               cursor: "pointer",
-              color: "#111",
-              padding: 0
+              color: "#111"
             }}
           >
             ☰
@@ -98,10 +120,10 @@ export default function Header() {
         </div>
 
         {menuOpen && (
-          <div style={{
+          <div className="mobile-links" style={{
             position: "absolute",
-            right: "12px",
-            top: "65px",
+            right: 0,
+            top: "55px",
             width: "210px",
             background: "#fff",
             border: "1px solid #ddd",
@@ -109,22 +131,27 @@ export default function Header() {
             padding: "16px",
             boxShadow: "0 5px 20px rgba(0,0,0,0.15)",
             zIndex: 1000,
-            display: "flex",
             flexDirection: "column",
             gap: "16px"
           }}>
-            <Link href="/" onClick={() => setMenuOpen(false)}>Home</Link>
-            <Link href="/about" onClick={() => setMenuOpen(false)}>About</Link>
-            <Link href="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
-            <Link href="/login" onClick={() => setMenuOpen(false)}>Login</Link>
-            <Link href="/register" onClick={() => setMenuOpen(false)}>Register</Link>
+            <Link href="/" style={linkStyle} onClick={() => setMenuOpen(false)}>Home</Link>
+            <Link href="/about" style={linkStyle} onClick={() => setMenuOpen(false)}>About</Link>
+            <Link href="/contact" style={linkStyle} onClick={() => setMenuOpen(false)}>Contact</Link>
+            {user ? (
+              <button onClick={handleLogout}>Logout</button>
+            ) : (
+              <>
+                <Link href="/register" style={linkStyle} onClick={() => setMenuOpen(false)}>Register</Link>
+                <Link href="/login" style={linkStyle} onClick={() => setMenuOpen(false)}>Login</Link>
+              </>
+            )}
             <hr />
             <Link
               href="/admin/login"
+              style={{ ...linkStyle, color: "#0b57d0", fontWeight: "bold" }}
               onClick={() => setMenuOpen(false)}
-              style={{ color: "#0b57d0", fontWeight: "bold" }}
             >
-              🔐 Admin Login
+              Admin Login
             </Link>
           </div>
         )}
