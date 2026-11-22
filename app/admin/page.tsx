@@ -25,9 +25,12 @@ export default function AdminPage() {
   const [description, setDescription] = useState("");
   const [phone, setPhone] = useState("");
 
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [photoInputKey, setPhotoInputKey] = useState(0);
+
   async function withTimeout<T>(
     request: PromiseLike<T>,
-    seconds = 15
+    seconds = 30
   ): Promise<T> {
     let timer: number | undefined;
 
@@ -124,6 +127,46 @@ export default function AdminPage() {
     checkAdmin();
   }, [router]);
 
+  function handlePhotoChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    const selected = Array.from(event.target.files || []);
+
+    if (selected.length > 10) {
+      setMessage("Maximum 10 photos select kar sakte hain.");
+      setPhotos([]);
+      setPhotoInputKey((key) => key + 1);
+      return;
+    }
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+    ];
+
+    for (const file of selected) {
+      if (!allowedTypes.includes(file.type)) {
+        setMessage("Sirf JPG, PNG aur WEBP photos allowed hain.");
+        setPhotos([]);
+        setPhotoInputKey((key) => key + 1);
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage("Har photo maximum 5 MB ki honi chahiye.");
+        setPhotos([]);
+        setPhotoInputKey((key) => key + 1);
+        return;
+      }
+    }
+
+    setPhotos(selected);
+    setMessage(
+      selected.length + " photo select hui hain."
+    );
+  }
+
   async function handleAddProperty(
     event: React.FormEvent<HTMLFormElement>
   ) {
@@ -141,8 +184,15 @@ export default function AdminPage() {
       return;
     }
 
+    if (photos.length > 10) {
+      setMessage("Maximum 10 photos allowed hain.");
+      return;
+    }
+
     setSaving(true);
-    setMessage("Property upload ho rahi hai...");
+    setMessage("Property aur photos upload ho rahe hain...");
+
+    const uploadedPaths: string[] = [];
 
     try {
       const { data: auth, error: authError } =
@@ -151,6 +201,57 @@ export default function AdminPage() {
       if (authError || !auth.user) {
         throw new Error("Admin login expired. Dobara login karein.");
       }
+
+      const imageUrls: string[] = [];
+
+      for (let i = 0; i < photos.length; i++) {
+        const file = photos[i];
+
+        const safeName = file.name.replace(
+          /[^a-zA-Z0-9._-]/g,
+          "_"
+        );
+
+        const path =
+          auth.user.id +
+          "/" +
+          Date.now() +
+          "-" +
+          i +
+          "-" +
+          safeName;
+
+        setMessage(
+          "Photo upload ho rahi hai: " +
+            (i + 1) +
+            "/" +
+            photos.length
+        );
+
+        const { error: uploadError } = await withTimeout(
+          supabase.storage
+            .from("property-images")
+            .upload(path, file, {
+              cacheControl: "3600",
+              upsert: false,
+              contentType: file.type,
+            })
+        );
+
+        if (uploadError) {
+          throw new Error("Photo upload failed: " + uploadError.message);
+        }
+
+        uploadedPaths.push(path);
+
+        const { data: publicUrl } = supabase.storage
+          .from("property-images")
+          .getPublicUrl(path);
+
+        imageUrls.push(publicUrl.publicUrl);
+      }
+
+      setMessage("Property database mein save ho rahi hai...");
 
       const finalAddress = address.trim() || locality.trim();
       const finalPhone = phone.trim() || "Not Provided";
@@ -166,7 +267,7 @@ export default function AdminPage() {
           price: Number(price),
           description: description.trim(),
           phone: finalPhone,
-          images: [],
+          images: imageUrls,
           status: "approved",
         })
       );
@@ -175,7 +276,11 @@ export default function AdminPage() {
         throw new Error(error.message);
       }
 
-      setMessage("SUCCESS! Property upload ho gayi.");
+      setMessage(
+        "SUCCESS! Property " +
+          imageUrls.length +
+          " photos ke saath upload ho gayi."
+      );
 
       setTitle("");
       setLocality("");
@@ -185,9 +290,17 @@ export default function AdminPage() {
       setPrice("");
       setDescription("");
       setPhone("");
+      setPhotos([]);
+      setPhotoInputKey((key) => key + 1);
 
       await loadData();
     } catch (error) {
+      if (uploadedPaths.length > 0) {
+        await supabase.storage
+          .from("property-images")
+          .remove(uploadedPaths);
+      }
+
       setMessage(
         "UPLOAD FAILED: " +
           (error instanceof Error ? error.message : String(error))
@@ -208,9 +321,7 @@ export default function AdminPage() {
           .eq("id", id)
       );
 
-      if (error) {
-        throw new Error(error.message);
-      }
+      if (error) throw new Error(error.message);
 
       setMessage("Property status updated.");
       await loadData();
@@ -229,15 +340,10 @@ export default function AdminPage() {
 
     try {
       const { error } = await withTimeout(
-        supabase
-          .from("properties")
-          .delete()
-          .eq("id", id)
+        supabase.from("properties").delete().eq("id", id)
       );
 
-      if (error) {
-        throw new Error(error.message);
-      }
+      if (error) throw new Error(error.message);
 
       setMessage("Property deleted successfully.");
       await loadData();
@@ -275,7 +381,6 @@ export default function AdminPage() {
           gap: 15
         }}>
           <h1>Admin Dashboard</h1>
-
           <button type="button" onClick={logout}>
             Admin Logout
           </button>
@@ -295,25 +400,13 @@ export default function AdminPage() {
 
         <h2>Dashboard Overview</h2>
 
-        <div style={{
-          display: "flex",
-          gap: 20,
-          flexWrap: "wrap"
-        }}>
-          <div style={{
-            padding: 20,
-            background: "#eee",
-            borderRadius: 10
-          }}>
+        <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+          <div style={{ padding: 20, background: "#eee", borderRadius: 10 }}>
             <h3>Total Properties</h3>
             <h2>{properties.length}</h2>
           </div>
 
-          <div style={{
-            padding: 20,
-            background: "#eee",
-            borderRadius: 10
-          }}>
+          <div style={{ padding: 20, background: "#eee", borderRadius: 10 }}>
             <h3>Total Enquiries</h3>
             <h2>{enquiries.length}</h2>
           </div>
@@ -421,7 +514,45 @@ export default function AdminPage() {
             onChange={(e) => setDescription(e.target.value)}
           />
 
-          <p>Photo ke bina bhi Property Upload ho sakti hai.</p>
+          <div>
+            <label style={{ display: "block", fontWeight: "bold", marginBottom: 8 }}>
+              Property Photos (Maximum 10)
+            </label>
+
+            <input
+              key={photoInputKey}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              onChange={handlePhotoChange}
+            />
+
+            <p>
+              {photos.length}/10 photos selected. Maximum 5 MB per photo.
+            </p>
+
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
+              gap: 10
+            }}>
+              {photos.map((photo, index) => (
+                <div key={index}>
+                  <img
+                    src={URL.createObjectURL(photo)}
+                    alt={photo.name}
+                    style={{
+                      width: "100%",
+                      height: 90,
+                      objectFit: "cover",
+                      borderRadius: 8
+                    }}
+                  />
+                  <small>{photo.name}</small>
+                </div>
+              ))}
+            </div>
+          </div>
 
           <button
             type="submit"
@@ -435,7 +566,7 @@ export default function AdminPage() {
               cursor: saving ? "wait" : "pointer"
             }}
           >
-            {saving ? "Adding Property..." : "Add Property"}
+            {saving ? "Uploading Property..." : "Add Property"}
           </button>
         </form>
 
@@ -459,6 +590,27 @@ export default function AdminPage() {
               <p>Price: ₹{property.price}</p>
               <p>Phone: {property.phone}</p>
               <p>Status: {property.status}</p>
+              <p>Photos: {property.images?.length || 0}</p>
+
+              <div style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 8
+              }}>
+                {(property.images || []).map((url: string, index: number) => (
+                  <img
+                    key={index}
+                    src={url}
+                    alt="Property"
+                    style={{
+                      width: 100,
+                      height: 80,
+                      objectFit: "cover",
+                      borderRadius: 6
+                    }}
+                  />
+                ))}
+              </div>
 
               {property.status !== "approved" && (
                 <button
