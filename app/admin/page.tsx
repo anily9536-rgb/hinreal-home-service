@@ -818,6 +818,7 @@ function printBill() {
             <p style={{ marginBottom: 0 }}>View All Sold Properties →</p>
           </button>
       <button
+  type="button"
   onClick={() => setShowBillModal(true)}
   style={{
     padding: "20px",
