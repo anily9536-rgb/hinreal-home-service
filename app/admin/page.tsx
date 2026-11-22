@@ -351,7 +351,21 @@ export default function AdminPage() {
           flexWrap: "wrap",
           gap: 15
         }}>
-          <h1>Admin Dashboard</h1>
+          <div>
+            <img
+              src="/file_0000000045d0821180988036e39a5ebd.png"
+              alt="Real Home Service Logo"
+              style={{
+                display: "block",
+                width: "min(90%, 350px)",
+                maxHeight: 130,
+                objectFit: "contain",
+                marginBottom: 15
+              }}
+            />
+            <h1>Admin Dashboard</h1>
+          </div>
+
           <button type="button" onClick={logout}>
             Admin Logout
           </button>
