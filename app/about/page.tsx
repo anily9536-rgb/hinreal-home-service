@@ -1,11 +1,13 @@
 
 import Header from "@/components/Header";
+import AdminHeader from "@/components/AdminHeader";
 import Footer from "@/components/Footer";
 
 export default function AboutPage() {
   return (
     <>
       <Header />
+      <AdminHeader />
 
       <main className="container">
         <h1>About Real Home Service</h1>
@@ -43,4 +45,3 @@ export default function AboutPage() {
     </>
   );
 }
-
