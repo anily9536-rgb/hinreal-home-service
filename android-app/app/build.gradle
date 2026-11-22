@@ -1,0 +1,43 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.realhomeservice.app'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.realhomeservice.customer'
+        minSdk 23
+        targetSdk 35
+        versionCode 1
+        versionName '1.0'
+    }
+
+    flavorDimensions += 'edition'
+
+    productFlavors {
+        customer {
+            dimension 'edition'
+            applicationId 'com.realhomeservice.customer'
+            resValue 'string', 'app_name', 'Real Home Service'
+            buildConfigField 'String', 'START_URL', '"https://real-home-service.vercel.app/"'
+        }
+
+        admin {
+            dimension 'edition'
+            applicationId 'com.realhomeservice.admin'
+            resValue 'string', 'app_name', 'Real Home Service Admin'
+            buildConfigField 'String', 'START_URL', '"https://real-home-service.vercel.app/admin/login"'
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
