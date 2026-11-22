@@ -38,6 +38,11 @@ export default function AdminPage() {
     new Date().toISOString().slice(0, 10)
   );
 
+  // Find Property states
+  const [showFindProperty, setShowFindProperty] = useState(false);
+  const [searchArea, setSearchArea] = useState("");
+  const [selectedFindProperty, setSelectedFindProperty] = useState<any | null>(null);
+
   const months = [
     "January", "February", "March", "April",
     "May", "June", "July", "August",
@@ -60,12 +65,10 @@ export default function AdminPage() {
     (_, index) => currentYear - index
   );
 
-  // Hidden sold properties are still included in sales calculations.
   const monthlySales = useMemo(() => {
     return properties
       .filter((property) => {
         if (property.status !== "sold" || !property.sold_at) return false;
-
         const date = new Date(property.sold_at);
 
         return (
@@ -79,22 +82,31 @@ export default function AdminPage() {
       );
   }, [properties, selectedMonth, selectedYear]);
 
-  // All sold records remain available for Sold Properties and reports.
   const soldProperties = properties.filter(
     (property) => property.status === "sold"
   );
 
-  // Hide only properties marked deleted_from_manage.
   const visibleProperties = properties.filter(
     (property) => property.deleted_from_manage !== true
   );
 
-  // Hidden sold properties cannot be sold again.
   const availableProperties = properties.filter(
     (property) =>
       property.status !== "sold" &&
       property.deleted_from_manage !== true
   );
+
+  // Area name se property search
+  const foundProperties = properties.filter((property) => {
+    const query = searchArea.trim().toLowerCase();
+
+    if (!query) return false;
+
+    return (
+      String(property.locality || "").toLowerCase().includes(query) ||
+      String(property.address || "").toLowerCase().includes(query)
+    );
+  });
 
   async function withTimeout<T>(
     request: PromiseLike<T>,
@@ -129,7 +141,6 @@ export default function AdminPage() {
       if (p.error) {
         setMessage("Properties Error: " + p.error.message);
       } else {
-        // Do not filter here. Sales reports need every sold record.
         setProperties(p.data || []);
       }
 
@@ -475,7 +486,6 @@ export default function AdminPage() {
       let result;
 
       if (isSold) {
-        // Keep the sold database record permanently.
         result = await withTimeout(
           supabase
             .from("properties")
@@ -483,7 +493,6 @@ export default function AdminPage() {
             .eq("id", id)
         );
       } else {
-        // Unsold properties are permanently deleted.
         result = await withTimeout(
           supabase
             .from("properties")
@@ -711,7 +720,7 @@ export default function AdminPage() {
             padding: 20,
             border: "1px solid #ddd",
             borderRadius: 12,
-            marginBottom: 40
+            marginBottom: 25
           }}
         >
           <input
@@ -838,6 +847,275 @@ export default function AdminPage() {
             {saving ? "Uploading Property..." : "Add Property"}
           </button>
         </form>
+
+        {/* FIND PROPERTY BUTTON */}
+        <div style={{ marginBottom: 30 }}>
+          <button
+            type="button"
+            onClick={() => {
+              setShowFindProperty(!showFindProperty);
+              setSearchArea("");
+              setSelectedFindProperty(null);
+            }}
+            style={{
+              width: "100%",
+              padding: 15,
+              background: "#2563eb",
+              color: "#fff",
+              border: 0,
+              borderRadius: 8,
+              fontSize: 17,
+              fontWeight: "bold",
+              cursor: "pointer"
+            }}
+          >
+            {showFindProperty ? "✕ Close Find Property" : "🔎 Find Property"}
+          </button>
+
+          {showFindProperty && (
+            <div style={{
+              marginTop: 15,
+              padding: 18,
+              border: "1px solid #bfdbfe",
+              background: "#f8fbff",
+              borderRadius: 10
+            }}>
+              <h2 style={{ marginTop: 0 }}>Search Property by Area</h2>
+
+              <input
+                type="text"
+                value={searchArea}
+                onChange={(e) => {
+                  setSearchArea(e.target.value);
+                  setSelectedFindProperty(null);
+                }}
+                placeholder="Area / Locality ka naam likhein..."
+                style={{
+                  width: "100%",
+                  padding: 14,
+                  border: "1px solid #aaa",
+                  borderRadius: 8,
+                  fontSize: 16,
+                  boxSizing: "border-box"
+                }}
+              />
+
+              {searchArea.trim() === "" ? (
+                <p>Property search karne ke liye area ka naam likhein.</p>
+              ) : foundProperties.length === 0 ? (
+                <p>Is area mein koi property nahi mili.</p>
+              ) : (
+                <>
+                  <h3>
+                    {foundProperties.length} Properties Found
+                  </h3>
+
+                  <div style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+                    gap: 12
+                  }}>
+                    {foundProperties.map((property) => (
+                      <button
+                        type="button"
+                        key={property.id}
+                        onClick={() => setSelectedFindProperty(property)}
+                        style={{
+                          textAlign: "left",
+                          padding: 12,
+                          background:
+                            selectedFindProperty?.id === property.id
+                              ? "#dbeafe"
+                              : "#fff",
+                          border: "1px solid #cbd5e1",
+                          borderRadius: 9,
+                          cursor: "pointer",
+                          color: "#111"
+                        }}
+                      >
+                        {property.images?.[0] && (
+                          <img
+                            src={property.images[0]}
+                            alt={property.title || "Property"}
+                            style={{
+                              width: "100%",
+                              height: 140,
+                              objectFit: "cover",
+                              borderRadius: 6,
+                              marginBottom: 8
+                            }}
+                          />
+                        )}
+
+                        <strong>{property.title || "Property"}</strong>
+
+                        <p style={{ margin: "6px 0" }}>
+                          Area: {property.locality || "Not provided"}
+                        </p>
+
+                        <p style={{ margin: "6px 0" }}>
+                          Category: {property.property_type || "Not provided"}
+                        </p>
+
+                        <p style={{ margin: "6px 0" }}>
+                          Price: ₹{Number(property.price || 0).toLocaleString("en-IN")}
+                        </p>
+
+                        <p style={{
+                          margin: "6px 0",
+                          fontWeight: "bold",
+                          color: property.status === "sold" ? "#dc2626" : "#15803d"
+                        }}>
+                          Status: {property.status || "Not available"}
+                        </p>
+
+                        <span style={{ color: "#2563eb" }}>
+                          View Full Details →
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {/* SELECTED PROPERTY FULL DETAILS */}
+              {selectedFindProperty && (
+                <div style={{
+                  marginTop: 22,
+                  padding: 18,
+                  background: "#fff",
+                  border: "2px solid #2563eb",
+                  borderRadius: 10
+                }}>
+                  <div style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 10,
+                    flexWrap: "wrap"
+                  }}>
+                    <h2 style={{ marginTop: 0 }}>
+                      Full Property Details
+                    </h2>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedFindProperty(null)}
+                      style={{
+                        padding: "8px 13px",
+                        border: 0,
+                        borderRadius: 6,
+                        background: "#fee2e2",
+                        color: "#991b1b",
+                        cursor: "pointer"
+                      }}
+                    >
+                      Close Details
+                    </button>
+                  </div>
+
+                  <h2>{selectedFindProperty.title || "Property"}</h2>
+
+                  {[
+                    {
+                      label: "Area / Locality",
+                      value: selectedFindProperty.locality
+                    },
+                    {
+                      label: "Full Address",
+                      value: selectedFindProperty.address
+                    },
+                    {
+                      label: "Property Category",
+                      value: selectedFindProperty.property_type
+                    },
+                    {
+                      label: "Listing Type",
+                      value: selectedFindProperty.listing_type === "Buy"
+                        ? "For Sale"
+                        : selectedFindProperty.listing_type === "Rent"
+                          ? "For Rent"
+                          : selectedFindProperty.listing_type
+                    },
+                    {
+                      label: "Listed Price",
+                      value: "₹" + Number(selectedFindProperty.price || 0).toLocaleString("en-IN")
+                    },
+                    {
+                      label: "Contact Phone",
+                      value: selectedFindProperty.phone
+                    },
+                    {
+                      label: "Property Status",
+                      value: selectedFindProperty.status
+                    },
+                    {
+                      label: "Selling Price",
+                      value: selectedFindProperty.status === "sold"
+                        ? "₹" + Number(selectedFindProperty.sold_price || 0).toLocaleString("en-IN")
+                        : "Not Sold"
+                    },
+                    {
+                      label: "Selling Date",
+                      value: selectedFindProperty.sold_at
+                        ? new Date(selectedFindProperty.sold_at).toLocaleDateString("en-IN")
+                        : "Not Sold"
+                    },
+                    {
+                      label: "Property Added Date",
+                      value: selectedFindProperty.created_at
+                        ? new Date(selectedFindProperty.created_at).toLocaleDateString("en-IN")
+                        : "Not available"
+                    },
+                    {
+                      label: "Description",
+                      value: selectedFindProperty.description
+                    }
+                  ].map((item) => (
+                    <div
+                      key={item.label}
+                      style={{
+                        padding: "10px 0",
+                        borderBottom: "1px solid #eee"
+                      }}
+                    >
+                      <strong>{item.label}:</strong>{" "}
+                      {item.value || "Not provided"}
+                    </div>
+                  ))}
+
+                  <h3>Property Photos</h3>
+
+                  {(selectedFindProperty.images || []).length === 0 ? (
+                    <p>No photos available.</p>
+                  ) : (
+                    <div style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+                      gap: 10
+                    }}>
+                      {(selectedFindProperty.images || []).map(
+                        (url: string, index: number) => (
+                          <img
+                            key={index}
+                            src={url}
+                            alt={"Property photo " + (index + 1)}
+                            style={{
+                              width: "100%",
+                              height: 150,
+                              objectFit: "cover",
+                              borderRadius: 8
+                            }}
+                          />
+                        )
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         <hr />
 
