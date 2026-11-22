@@ -122,3 +122,19 @@ select {
     margin: 20px auto;
   }
 }
+.property-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 20px;
+  width: 100%;
+}
+
+.property-card {
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .property-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
