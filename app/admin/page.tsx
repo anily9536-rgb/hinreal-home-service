@@ -24,54 +24,98 @@ export default function AdminPage() {
   const [description, setDescription] = useState("");
   const [phone, setPhone] = useState("");
 
+  function withTimeout<T>(
+    request: PromiseLike<T>,
+    milliseconds = 15000
+  ): Promise<T> {
+    return new Promise((resolve, reject) => {
+      const timer = window.setTimeout(() => {
+        reject(new Error("Request timeout. Supabase connection check karein."));
+      }, milliseconds);
+
+      Promise.resolve(request).then(
+        (result) => {
+          window.clearTimeout(timer);
+          resolve(result);
+        },
+        (error) => {
+          window.clearTimeout(timer);
+          reject(error);
+        }
+      );
+    });
+  }
+
   async function loadData() {
-    const p = await supabase
-      .from("properties")
-      .select("*")
-      .order("created_at", { ascending: false });
+    try {
+      const p = await withTimeout(
+        supabase
+          .from("properties")
+          .select("*")
+          .order("created_at", { ascending: false })
+      );
 
-    const e = await supabase
-      .from("enquiries")
-      .select("*")
-      .order("created_at", { ascending: false });
+      const e = await withTimeout(
+        supabase
+          .from("enquiries")
+          .select("*")
+          .order("created_at", { ascending: false })
+      );
 
-    if (p.error) {
-      setMessage("Properties error: " + p.error.message);
-    } else {
-      setProperties(p.data || []);
-    }
+      if (p.error) {
+        setMessage("Properties error: " + p.error.message);
+      } else {
+        setProperties(p.data || []);
+      }
 
-    if (e.error) {
-      setMessage("Enquiries error: " + e.error.message);
-    } else {
-      setEnquiries(e.data || []);
+      if (e.error) {
+        setMessage("Enquiries error: " + e.error.message);
+      } else {
+        setEnquiries(e.data || []);
+      }
+    } catch (error) {
+      setMessage(
+        "Dashboard load error: " +
+          (error instanceof Error ? error.message : "Unknown error")
+      );
     }
   }
 
   useEffect(() => {
     async function checkAdmin() {
-      const { data: auth, error: authError } =
-        await supabase.auth.getUser();
+      try {
+        const { data: auth, error: authError } = await withTimeout(
+          supabase.auth.getUser()
+        );
 
-      if (authError || !auth.user) {
-        router.replace("/admin/login");
-        return;
+        if (authError || !auth.user) {
+          router.replace("/admin/login");
+          return;
+        }
+
+        const { data: profile, error } = await withTimeout(
+          supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", auth.user.id)
+            .single()
+        );
+
+        if (error || profile?.role !== "admin") {
+          await supabase.auth.signOut();
+          router.replace("/admin/login");
+          return;
+        }
+
+        await loadData();
+      } catch (error) {
+        setMessage(
+          "Admin check error: " +
+            (error instanceof Error ? error.message : "Unknown error")
+        );
+      } finally {
+        setLoading(false);
       }
-
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", auth.user.id)
-        .single();
-
-      if (error || profile?.role !== "admin") {
-        await supabase.auth.signOut();
-        router.replace("/admin/login");
-        return;
-      }
-
-      await loadData();
-      setLoading(false);
     }
 
     checkAdmin();
@@ -84,60 +128,61 @@ export default function AdminPage() {
 
     if (saving) return;
 
-    if (!title.trim() || !locality.trim() || !price || Number(price) <= 0) {
+    if (
+      !title.trim() ||
+      !locality.trim() ||
+      !price ||
+      Number(price) <= 0
+    ) {
       setMessage("Title, location aur valid price zaroori hain.");
       return;
     }
 
     setSaving(true);
-    setMessage("Property add ho rahi hai...");
+    setMessage("Step 1: Admin login check ho raha hai...");
 
-    const timeout = <T,>(request: PromiseLike<T>) =>
-      Promise.race([
-        Promise.resolve(request),
-        new Promise<never>((_, reject) =>
-          setTimeout(
-            () => reject(new Error("Supabase response timeout. Connection check karein.")),
-            15000
-          )
-        ),
-      ]);
+    const controller = new AbortController();
+
+    const abortTimer = window.setTimeout(() => {
+      controller.abort();
+    }, 15000);
 
     try {
-      const { data: auth, error: authError } = await timeout(
+      const { data: auth, error: authError } = await withTimeout(
         supabase.auth.getUser()
       );
 
       if (authError || !auth.user) {
-        throw new Error(authError?.message || "Admin login expired.");
+        throw new Error("Admin login expired. Dobara login karein.");
       }
 
-      setMessage("Database mein property save ho rahi hai...");
+      setMessage("Step 2: Property database mein save ho rahi hai...");
 
-      const result = await timeout(
-        supabase
-          .from("properties")
-          .insert({
-            user_id: auth.user.id,
-            title: title.trim(),
-            locality: locality.trim(),
-            listing_type: listingType,
-            property_type: propertyType,
-            price: Number(price),
-            description: description.trim(),
-            phone: phone.trim() || null,
-            images: [],
-            status: "approved",
-          })
-          .select()
-          .single()
-      );
+      const insertRequest = supabase
+        .from("properties")
+        .insert({
+          user_id: auth.user.id,
+          title: title.trim(),
+          locality: locality.trim(),
+          listing_type: listingType,
+          property_type: propertyType,
+          price: Number(price),
+          description: description.trim(),
+          phone: phone.trim() || null,
+          images: [],
+          status: "approved",
+        })
+        .abortSignal(controller.signal);
+
+      const result = await withTimeout(insertRequest, 16000);
 
       if (result.error) {
         throw new Error(result.error.message);
       }
 
-      setMessage("SUCCESS! Property website par add ho gayi.");
+      setMessage(
+        "SUCCESS! Property database mein save ho gayi."
+      );
 
       setTitle("");
       setLocality("");
@@ -147,30 +192,53 @@ export default function AdminPage() {
       setDescription("");
       setPhone("");
 
-      await loadData();
+      setSaving(false);
+
+      loadData();
     } catch (error) {
-      setMessage(
-        "UPLOAD FAILED: " +
-          (error instanceof Error ? error.message : "Unknown error")
-      );
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      if (
+        errorMessage.includes("AbortError") ||
+        errorMessage.toLowerCase().includes("aborted")
+      ) {
+        setMessage(
+          "UPLOAD FAILED: Request 15 seconds mein complete nahi hui. Internet aur Supabase check karein."
+        );
+      } else {
+        setMessage("UPLOAD FAILED: " + errorMessage);
+      }
     } finally {
+      window.clearTimeout(abortTimer);
       setSaving(false);
     }
   }
 
   async function updateStatus(id: string, status: string) {
-    const { error } = await supabase
-      .from("properties")
-      .update({ status })
-      .eq("id", id);
+    setMessage("Updating property status...");
 
-    if (error) {
-      setMessage("Status error: " + error.message);
-      return;
+    try {
+      const { error } = await withTimeout(
+        supabase
+          .from("properties")
+          .update({ status })
+          .eq("id", id)
+      );
+
+      if (error) {
+        setMessage("Status error: " + error.message);
+        return;
+      }
+
+      setMessage("Property status updated.");
+      await loadData();
+    } catch (error) {
+      setMessage(
+        "Status error: " +
+          (error instanceof Error ? error.message : "Unknown error")
+      );
     }
-
-    setMessage("Property status updated.");
-    await loadData();
   }
 
   async function logout() {
@@ -202,7 +270,8 @@ export default function AdminPage() {
             padding: 14,
             background: "#eef6ff",
             border: "1px solid #b8d8ff",
-            borderRadius: 8
+            borderRadius: 8,
+            overflowWrap: "anywhere"
           }}>
             {message}
           </p>
@@ -222,12 +291,23 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: 12, margin: "25px 0", flexWrap: "wrap" }}>
-          <button type="button" onClick={() => router.push("/admin/properties")}>
+        <div style={{
+          display: "flex",
+          gap: 12,
+          margin: "25px 0",
+          flexWrap: "wrap"
+        }}>
+          <button
+            type="button"
+            onClick={() => router.push("/admin/properties")}
+          >
             Manage All Properties
           </button>
 
-          <button type="button" onClick={() => router.push("/admin/enquiries")}>
+          <button
+            type="button"
+            onClick={() => router.push("/admin/enquiries")}
+          >
             Manage Enquiries
           </button>
         </div>
@@ -306,7 +386,7 @@ export default function AdminPage() {
             onChange={(e) => setDescription(e.target.value)}
           />
 
-          <p>पहले बिना फोटो के Property Upload टेस्ट करें।</p>
+          <p>Property bina photo ke bhi upload ho sakti hai.</p>
 
           <button
             type="submit"
