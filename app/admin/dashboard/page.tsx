@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import Header from "@/components/Header";
+import AdminHeader from "@/components/AdminHeader";
 import Footer from "@/components/Footer";
 
 type Property = {
@@ -26,26 +26,36 @@ export default function AdminDashboard() {
   }, []);
 
   async function checkAdmin() {
-    const { data: auth } = await supabase.auth.getUser();
+    try {
+      const { data: auth, error: authError } =
+        await supabase.auth.getUser();
 
-    if (!auth.user) {
-      router.replace("/admin/login");
-      return;
+      if (authError || !auth.user) {
+        router.replace("/admin/login");
+        return;
+      }
+
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", auth.user.id)
+        .single();
+
+      if (error || profile?.role !== "admin") {
+        await supabase.auth.signOut();
+        router.replace("/admin/login");
+        return;
+      }
+
+      await loadProperties();
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Admin verification failed."
+      );
+      setLoading(false);
     }
-
-    const { data: profile, error } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", auth.user.id)
-      .single();
-
-    if (error || profile?.role !== "admin") {
-      await supabase.auth.signOut();
-      router.replace("/admin/login");
-      return;
-    }
-
-    await loadProperties();
   }
 
   async function loadProperties() {
@@ -81,12 +91,16 @@ export default function AdminDashboard() {
   }
 
   if (loading) {
-    return <main className="container">Loading Admin Dashboard...</main>;
+    return (
+      <main className="container">
+        Loading Admin Dashboard...
+      </main>
+    );
   }
 
   return (
     <>
-      <Header />
+      <AdminHeader />
 
       <main className="container">
         <h1>Admin Dashboard</h1>
@@ -101,14 +115,21 @@ export default function AdminDashboard() {
             <div className="property-card" key={property.id}>
               <h3>{property.title}</h3>
               <p>Location: {property.locality}</p>
-              <h4>₹ {Number(property.price).toLocaleString("en-IN")}</h4>
+
+              <h4>
+                ₹ {Number(property.price).toLocaleString("en-IN")}
+              </h4>
+
               <p>
                 Status: <strong>{property.status}</strong>
               </p>
 
               {property.status !== "approved" && (
                 <button
-                  onClick={() => updateStatus(property.id, "approved")}
+                  type="button"
+                  onClick={() =>
+                    updateStatus(property.id, "approved")
+                  }
                 >
                   Approve
                 </button>
@@ -116,7 +137,10 @@ export default function AdminDashboard() {
 
               {property.status !== "rejected" && (
                 <button
-                  onClick={() => updateStatus(property.id, "rejected")}
+                  type="button"
+                  onClick={() =>
+                    updateStatus(property.id, "rejected")
+                  }
                   style={{ background: "#c0392b" }}
                 >
                   Reject
