@@ -20,6 +20,18 @@ export default async function Home() {
 
       <main>
         <section className="hero">
+          <img
+            src="/file_0000000045d0821180988036e39a5ebd.png"
+            alt="Real Home Service Logo"
+            style={{
+              display: "block",
+              width: "min(90%, 600px)",
+              maxHeight: 200,
+              objectFit: "contain",
+              margin: "0 auto 20px"
+            }}
+          />
+
           <h1>Find Your Dream Property</h1>
           <p>Explore verified properties for sale and rent.</p>
         </section>
@@ -28,14 +40,16 @@ export default async function Home() {
           <h2>Latest Properties</h2>
 
           {error && (
-            <div style={{
-              padding: 15,
-              margin: "15px 0",
-              background: "#fee2e2",
-              color: "#991b1b",
-              borderRadius: 8,
-              overflowWrap: "anywhere"
-            }}>
+            <div
+              style={{
+                padding: 15,
+                margin: "15px 0",
+                background: "#fee2e2",
+                color: "#991b1b",
+                borderRadius: 8,
+                overflowWrap: "anywhere"
+              }}
+            >
               <h3>Supabase Database Error</h3>
               <p>{error.message}</p>
               <p>Code: {error.code || "Not available"}</p>
