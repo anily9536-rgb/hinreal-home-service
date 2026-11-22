@@ -28,90 +28,101 @@ export default function Header() {
     window.location.href = "/";
   }
 
-  function closeMenu() {
-    setMenuOpen(false);
-  }
-
   return (
     <header style={{
-      padding: "15px 20px",
+      width: "100%",
+      padding: "14px 20px",
+      background: "#ffffff",
       borderBottom: "1px solid #ddd",
-      background: "#fff"
+      boxSizing: "border-box"
     }}>
       <nav style={{
         display: "flex",
-        justifyContent: "space-between",
         alignItems: "center",
-        position: "relative"
+        justifyContent: "space-between",
+        width: "100%"
       }}>
-        <Link
-          href="/"
-          style={{
-            fontSize: "20px",
-            fontWeight: "bold",
-            color: "#111",
-            textDecoration: "none"
-          }}
-        >
+        <Link href="/" style={{
+          fontSize: "21px",
+          fontWeight: "bold",
+          color: "#111",
+          textDecoration: "none"
+        }}>
           Real Home Service
         </Link>
 
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Open menu"
-          aria-expanded={menuOpen}
-          style={{
-            fontSize: "28px",
-            border: "none",
-            background: "transparent",
-            cursor: "pointer",
-            color: "#111"
-          }}
-        >
-          ☰
-        </button>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "18px"
+        }}>
+          <div className="desktop-menu" style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "18px"
+          }}>
+            <Link href="/">Home</Link>
+            <Link href="/about">About</Link>
+            <Link href="/contact">Contact</Link>
+
+            {user ? (
+              <button onClick={handleLogout}>Logout</button>
+            ) : (
+              <>
+                <Link href="/login">Login</Link>
+                <Link href="/register">Register</Link>
+              </>
+            )}
+          </div>
+
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Open menu"
+            aria-expanded={menuOpen}
+            style={{
+              fontSize: "28px",
+              width: "40px",
+              height: "40px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "none",
+              background: "transparent",
+              cursor: "pointer",
+              color: "#111",
+              padding: 0
+            }}
+          >
+            ☰
+          </button>
+        </div>
 
         {menuOpen && (
           <div style={{
             position: "absolute",
-            right: 0,
-            top: "45px",
+            right: "12px",
+            top: "65px",
             width: "210px",
             background: "#fff",
             border: "1px solid #ddd",
             borderRadius: "10px",
-            padding: "15px",
+            padding: "16px",
             boxShadow: "0 5px 20px rgba(0,0,0,0.15)",
             zIndex: 1000,
             display: "flex",
             flexDirection: "column",
             gap: "16px"
           }}>
-            <Link href="/" onClick={closeMenu}>Home</Link>
-            <Link href="/about" onClick={closeMenu}>About</Link>
-            <Link href="/contact" onClick={closeMenu}>Contact</Link>
-
-            {user ? (
-              <button onClick={handleLogout}>
-                Logout
-              </button>
-            ) : (
-              <>
-                <Link href="/login" onClick={closeMenu}>Login</Link>
-                <Link href="/register" onClick={closeMenu}>Register</Link>
-              </>
-            )}
-
+            <Link href="/" onClick={() => setMenuOpen(false)}>Home</Link>
+            <Link href="/about" onClick={() => setMenuOpen(false)}>About</Link>
+            <Link href="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
+            <Link href="/login" onClick={() => setMenuOpen(false)}>Login</Link>
+            <Link href="/register" onClick={() => setMenuOpen(false)}>Register</Link>
             <hr />
-
             <Link
               href="/admin/login"
-              onClick={closeMenu}
-              style={{
-                color: "#0b57d0",
-                fontWeight: "bold",
-                textDecoration: "none"
-              }}
+              onClick={() => setMenuOpen(false)}
+              style={{ color: "#0b57d0", fontWeight: "bold" }}
             >
               🔐 Admin Login
             </Link>
