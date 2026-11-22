@@ -1,0 +1,43 @@
+name: Build Customer and Admin APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "android-app/**"
+      - ".github/workflows/build-android.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build Customer APK
+        run: |
+          cd android-app
+          gradle assembleCustomerRelease
+
+      - name: Build Admin APK
+        run: |
+          cd android-app
+          gradle assembleAdminRelease
+
+      - name: Upload APK files
+        uses: actions/upload-artifact@v4
+        with:
+          name: Real-Home-Service-APKs
+          path: |
+            android-app/app/build/outputs/apk/customer/release/*.apk
+            android-app/app/build/outputs/apk/admin/release/*.apk
