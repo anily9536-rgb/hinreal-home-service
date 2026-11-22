@@ -2,69 +2,89 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+const companyName = "Real Home Service";
+const companyEmail = "anily9536@gmail.com";
+const companyPhone = "9173086571";
+
 export default function ContactPage() {
   return (
     <>
       <Header />
 
-      <main className="container">
+      <main className="container" style={{ padding: "30px 20px" }}>
         <h1>Contact Us</h1>
-        <p>We are here to help you with your property needs.</p>
+        <p>Real Home Service में आपका स्वागत है। Property से जुड़ी जानकारी के लिए हमसे संपर्क करें।</p>
 
-        <section>
-          <h2>Get In Touch</h2>
+        <section style={{
+          border: "1px solid #ddd",
+          borderRadius: 12,
+          padding: 20,
+          margin: "25px 0",
+          maxWidth: 600
+        }}>
+          <h2>Company Contact Details</h2>
+
+          <p><strong>Company:</strong> {companyName}</p>
 
           <p>
-            <strong>Company:</strong> Real Home Service
+            <strong>Email:</strong>{" "}
+            <a href={`mailto:${companyEmail}`}>{companyEmail}</a>
           </p>
 
           <p>
-            <strong>Email:</strong> support@realhomeservice.com
+            <strong>Mobile:</strong>{" "}
+            <a href={`tel:${companyPhone}`}>{companyPhone}</a>
           </p>
 
-          <p>
-            <strong>Phone:</strong> Contact our support team
-          </p>
+          <div style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 12,
+            marginTop: 20
+          }}>
+            <a href={`tel:${companyPhone}`} style={{
+              background: "#16a34a",
+              color: "white",
+              padding: "12px 18px",
+              borderRadius: 8,
+              textDecoration: "none"
+            }}>
+              📞 Call Us
+            </a>
 
-          <p>
-            <strong>Services:</strong> Buy, Sell and Rent Properties
-          </p>
+            <a href={`mailto:${companyEmail}`} style={{
+              background: "#2563eb",
+              color: "white",
+              padding: "12px 18px",
+              borderRadius: 8,
+              textDecoration: "none"
+            }}>
+              ✉️ Email Us
+            </a>
+
+            <a
+              href={`https://wa.me/91${companyPhone}`}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                background: "#15803d",
+                color: "white",
+                padding: "12px 18px",
+                borderRadius: 8,
+                textDecoration: "none"
+              }}
+            >
+              WhatsApp
+            </a>
+          </div>
         </section>
 
-        <section>
+        <section style={{ maxWidth: 600 }}>
           <h2>Send Us Your Enquiry</h2>
-
-          <form action="mailto:support@realhomeservice.com" method="post" encType="text/plain">
-            <input
-              type="text"
-              name="name"
-              placeholder="Your Name"
-              required
-            />
-
-            <input
-              type="email"
-              name="email"
-              placeholder="Your Email"
-              required
-            />
-
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Your Phone Number"
-              required
-            />
-
-            <textarea
-              name="message"
-              placeholder="Your Message"
-              rows={5}
-              required
-            />
-
-            <button type="submit">Send Enquiry</button>
-          </form>
+          <p>
+            Enquiry submit karne ke liye Home Page par available
+            Enquiry Form ka use karein.
+          </p>
         </section>
       </main>
 
@@ -72,4 +92,3 @@ export default function ContactPage() {
     </>
   );
 }
-
