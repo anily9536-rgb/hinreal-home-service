@@ -45,52 +45,64 @@ export default function Header() {
   };
 
   return (
-    <header style={{
-      width: "100%",
-      padding: "10px 20px",
-      background: "#fff",
-      borderBottom: "1px solid #ddd",
-      boxSizing: "border-box",
-      position: "relative",
-      zIndex: 1000,
-    }}>
+    <header
+      style={{
+        width: "100%",
+        padding: "10px 20px",
+        background: "#fff",
+        borderBottom: "1px solid #ddd",
+        boxSizing: "border-box",
+        position: "relative",
+        zIndex: 1000,
+      }}
+    >
       <style jsx>{`
         .desktop-links {
           display: flex;
           align-items: center;
           gap: 20px;
         }
+
         .menu-button {
           display: none;
         }
+
         @media (max-width: 700px) {
           .desktop-links {
             display: none;
           }
+
           .menu-button {
             display: flex;
           }
         }
       `}</style>
 
-      <nav style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        width: "100%",
-        gap: "12px",
-      }}>
-        <Link href="/" onClick={() => setMenuOpen(false)} style={{
+      <nav
+        style={{
           display: "flex",
+          justifyContent: "space-between",
           alignItems: "center",
-          gap: "9px",
-          minWidth: 0,
-          color: "#102b55",
-          textDecoration: "none",
-          fontSize: "clamp(16px, 2.5vw, 21px)",
-          fontWeight: 800,
-          whiteSpace: "nowrap",
-        }}>
+          width: "100%",
+          gap: "12px",
+        }}
+      >
+        {/* Public Website Logo and Home */}
+        <a
+          href="/"
+          onClick={() => setMenuOpen(false)}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "9px",
+            minWidth: 0,
+            color: "#102b55",
+            textDecoration: "none",
+            fontSize: "clamp(16px, 2.5vw, 21px)",
+            fontWeight: 800,
+            whiteSpace: "nowrap",
+          }}
+        >
           <img
             src="/logo.png"
             alt="Real Home Service logo"
@@ -104,26 +116,37 @@ export default function Header() {
             }}
           />
           <span>Real Home Service</span>
-        </Link>
+        </a>
 
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "15px",
-        }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "15px",
+          }}
+        >
           <div className="desktop-links">
-            <Link href="/" style={linkStyle}>Home</Link>
-            <Link href="/about" style={linkStyle}>About</Link>
-            <Link href="/contact" style={linkStyle}>Contact</Link>
+            <a href="/" style={linkStyle}>Home</a>
 
-            {!user && <>
-              <Link href="/login" style={customerLinkStyle}>
-                Customer Login
-              </Link>
-              <Link href="/register" style={customerLinkStyle}>
-                Register
-              </Link>
-            </>}
+            <Link href="/about" style={linkStyle}>
+              About
+            </Link>
+
+            <Link href="/contact" style={linkStyle}>
+              Contact
+            </Link>
+
+            {!user && (
+              <>
+                <Link href="/login" style={customerLinkStyle}>
+                  Customer Login
+                </Link>
+
+                <Link href="/register" style={customerLinkStyle}>
+                  Register
+                </Link>
+              </>
+            )}
 
             {user && (
               <button type="button" onClick={handleLogout}>
@@ -155,41 +178,69 @@ export default function Header() {
         </div>
       </nav>
 
-      <div style={{
-        display: menuOpen ? "flex" : "none",
-        position: "absolute",
-        right: "12px",
-        top: "65px",
-        width: "220px",
-        background: "#fff",
-        border: "1px solid #ddd",
-        borderRadius: "10px",
-        padding: "16px",
-        boxShadow: "0 5px 20px rgba(0,0,0,0.15)",
-        flexDirection: "column",
-        gap: "12px",
-        zIndex: 9999,
-      }}>
-        <Link href="/" style={linkStyle} onClick={() => setMenuOpen(false)}>
+      {/* Mobile Menu */}
+      <div
+        style={{
+          display: menuOpen ? "flex" : "none",
+          position: "absolute",
+          right: "12px",
+          top: "65px",
+          width: "220px",
+          background: "#fff",
+          border: "1px solid #ddd",
+          borderRadius: "10px",
+          padding: "16px",
+          boxShadow: "0 5px 20px rgba(0,0,0,0.15)",
+          flexDirection: "column",
+          gap: "12px",
+          zIndex: 9999,
+        }}
+      >
+        <a
+          href="/"
+          style={linkStyle}
+          onClick={() => setMenuOpen(false)}
+        >
           Home
-        </Link>
-        <Link href="/about" style={linkStyle} onClick={() => setMenuOpen(false)}>
+        </a>
+
+        <Link
+          href="/about"
+          style={linkStyle}
+          onClick={() => setMenuOpen(false)}
+        >
           About
         </Link>
-        <Link href="/contact" style={linkStyle} onClick={() => setMenuOpen(false)}>
+
+        <Link
+          href="/contact"
+          style={linkStyle}
+          onClick={() => setMenuOpen(false)}
+        >
           Contact
         </Link>
 
         <hr />
 
-        {!user && <>
-          <Link href="/login" style={customerLinkStyle} onClick={() => setMenuOpen(false)}>
-            Customer Login
-          </Link>
-          <Link href="/register" style={customerLinkStyle} onClick={() => setMenuOpen(false)}>
-            Register
-          </Link>
-        </>}
+        {!user && (
+          <>
+            <Link
+              href="/login"
+              style={customerLinkStyle}
+              onClick={() => setMenuOpen(false)}
+            >
+              Customer Login
+            </Link>
+
+            <Link
+              href="/register"
+              style={customerLinkStyle}
+              onClick={() => setMenuOpen(false)}
+            >
+              Register
+            </Link>
+          </>
+        )}
 
         {user && (
           <button type="button" onClick={handleLogout}>
