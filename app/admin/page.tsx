@@ -1390,7 +1390,154 @@ async function submitPropertyEdit(
             </div>
           </div>
         )}
+{showEditModal && editingProperty && (
+  <div style={{
+    position: "fixed",
+    inset: 0,
+    zIndex: 2000,
+    background: "rgba(0,0,0,0.65)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 15
+  }}>
+    <form
+      onSubmit={submitPropertyEdit}
+      style={{
+        background: "#fff",
+        color: "#111",
+        width: "100%",
+        maxWidth: 550,
+        maxHeight: "90vh",
+        overflowY: "auto",
+        padding: 22,
+        borderRadius: 12
+      }}
+    >
+      <h2>Edit Property</h2>
 
+      {[
+        ["title", "Property Title"],
+        ["locality", "Location / Locality"],
+        ["address", "Full Address"],
+        ["price", "Price"],
+        ["phone", "Phone Number"]
+      ].map(([key, label]) => (
+        <div key={key} style={{ marginBottom: 14 }}>
+          <label style={{ display: "block", fontWeight: "bold" }}>
+            {label}
+          </label>
+
+          <input
+            type={key === "price" ? "number" : "text"}
+            value={editForm[key as keyof typeof editForm]}
+            onChange={(e) =>
+              setEditForm({
+                ...editForm,
+                [key]: e.target.value
+              })
+            }
+            required={key === "title" || key === "locality" || key === "price"}
+            style={{
+              width: "100%",
+              padding: 12,
+              boxSizing: "border-box",
+              marginTop: 5
+            }}
+          />
+        </div>
+      ))}
+
+      <label style={{ display: "block", fontWeight: "bold" }}>
+        Listing Type
+      </label>
+
+      <select
+        value={editForm.listing_type}
+        onChange={(e) =>
+          setEditForm({ ...editForm, listing_type: e.target.value })
+        }
+        style={{ width: "100%", padding: 12, marginBottom: 14 }}
+      >
+        <option value="Buy">Buy</option>
+        <option value="Rent">Rent</option>
+      </select>
+
+      <label style={{ display: "block", fontWeight: "bold" }}>
+        Property Category
+      </label>
+
+      <select
+        value={editForm.property_type}
+        onChange={(e) =>
+          setEditForm({ ...editForm, property_type: e.target.value })
+        }
+        style={{ width: "100%", padding: 12, marginBottom: 14 }}
+      >
+        {!["Residential", "Commercial", "Land", "Apartment", "Villa"].includes(
+          editForm.property_type
+        ) && (
+          <option value={editForm.property_type}>
+            {editForm.property_type}
+          </option>
+        )}
+        <option value="Residential">Residential</option>
+        <option value="Commercial">Commercial</option>
+        <option value="Land">Land</option>
+        <option value="Apartment">Apartment</option>
+        <option value="Villa">Villa</option>
+      </select>
+
+      <label style={{ display: "block", fontWeight: "bold" }}>
+        Description
+      </label>
+
+      <textarea
+        value={editForm.description}
+        onChange={(e) =>
+          setEditForm({ ...editForm, description: e.target.value })
+        }
+        rows={5}
+        style={{
+          width: "100%",
+          padding: 12,
+          boxSizing: "border-box",
+          marginBottom: 18
+        }}
+      />
+
+      <p>पुरानी Property Photos सुरक्षित रहेंगी।</p>
+
+      <button
+        type="submit"
+        disabled={saving}
+        style={{
+          padding: "12px 22px",
+          background: "#15803d",
+          color: "#fff",
+          border: 0,
+          borderRadius: 7,
+          cursor: "pointer"
+        }}
+      >
+        {saving ? "Updating..." : "Submit"}
+      </button>
+
+      <button
+        type="button"
+        disabled={saving}
+        onClick={() => setShowEditModal(false)}
+        style={{
+          padding: "12px 22px",
+          marginLeft: 10,
+          borderRadius: 7
+        }}
+      >
+        Cancel
+      </button>
+    </form>
+  </div>
+)}
         {visibleProperties.length === 0 ? (
           <p>No properties found.</p>
         ) : (
