@@ -18,30 +18,37 @@ export default function AdminPage() {
 
   const [title, setTitle] = useState("");
   const [locality, setLocality] = useState("");
+  const [address, setAddress] = useState("");
   const [listingType, setListingType] = useState("Buy");
   const [propertyType, setPropertyType] = useState("Residential");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [phone, setPhone] = useState("");
 
-  async function requestWithTimeout<T>(
+  async function withTimeout<T>(
     request: PromiseLike<T>,
     seconds = 15
   ): Promise<T> {
-    return Promise.race([
-      Promise.resolve(request),
-      new Promise<never>((_, reject) => {
-        window.setTimeout(
-          () => reject(new Error("Request timeout after " + seconds + " seconds")),
-          seconds * 1000
-        );
-      }),
-    ]);
+    let timer: number;
+
+    try {
+      return await Promise.race([
+        Promise.resolve(request),
+        new Promise<never>((_, reject) => {
+          timer = window.setTimeout(
+            () => reject(new Error("Request timeout. Please try again.")),
+            seconds * 1000
+          );
+        }),
+      ]);
+    } finally {
+      window.clearTimeout(timer!);
+    }
   }
 
   async function loadData() {
     try {
-      const p: any = await requestWithTimeout(
+      const p: any = await withTimeout(
         supabase.from("properties")
           .select("*")
           .order("created_at", { ascending: false })
@@ -53,7 +60,7 @@ export default function AdminPage() {
         setProperties(p.data || []);
       }
 
-      const e: any = await requestWithTimeout(
+      const e: any = await withTimeout(
         supabase.from("enquiries")
           .select("*")
           .order("created_at", { ascending: false })
@@ -75,7 +82,7 @@ export default function AdminPage() {
   useEffect(() => {
     async function checkAdmin() {
       try {
-        const { data, error } = await requestWithTimeout(
+        const { data, error } = await withTimeout(
           supabase.auth.getUser()
         );
 
@@ -85,7 +92,7 @@ export default function AdminPage() {
         }
 
         const { data: profile, error: profileError } =
-          await requestWithTimeout(
+          await withTimeout(
             supabase.from("profiles")
               .select("role")
               .eq("id", data.user.id)
@@ -119,32 +126,35 @@ export default function AdminPage() {
 
     if (saving) return;
 
-    setMessage("STEP 1: Submit function started.");
-
-    if (!title.trim() || !locality.trim() || !price || Number(price) <= 0) {
+    if (
+      !title.trim() ||
+      !locality.trim() ||
+      !price ||
+      Number(price) <= 0
+    ) {
       setMessage("Title, Location aur valid Price zaroori hain.");
       return;
     }
 
     setSaving(true);
+    setMessage("Property upload ho rahi hai...");
 
     try {
-      setMessage("STEP 2: Admin login checking...");
-
       const { data: auth, error: authError } =
-        await requestWithTimeout(supabase.auth.getUser());
+        await withTimeout(supabase.auth.getUser());
 
       if (authError || !auth.user) {
         throw new Error("Admin login expired. Dobara login karein.");
       }
 
-      setMessage("STEP 3: Database insert request starting...");
+      const finalAddress = address.trim() || locality.trim();
 
-      const result: any = await requestWithTimeout(
+      const { error } = await withTimeout(
         supabase.from("properties").insert({
           user_id: auth.user.id,
           title: title.trim(),
           locality: locality.trim(),
+          address: finalAddress,
           listing_type: listingType,
           property_type: propertyType,
           price: Number(price),
@@ -152,18 +162,18 @@ export default function AdminPage() {
           phone: phone.trim() || null,
           images: [],
           status: "approved",
-        }),
-        15
+        })
       );
 
-      if (result.error) {
-        throw new Error(result.error.message);
+      if (error) {
+        throw new Error(error.message);
       }
 
-      setMessage("SUCCESS! Property database mein save ho gayi.");
+      setMessage("SUCCESS! Property upload ho gayi.");
 
       setTitle("");
       setLocality("");
+      setAddress("");
       setListingType("Buy");
       setPropertyType("Residential");
       setPrice("");
@@ -183,25 +193,44 @@ export default function AdminPage() {
   }
 
   async function updateStatus(id: string, status: string) {
-    setMessage("Updating property...");
+    setMessage("Updating property status...");
 
     try {
-      const { error } = await requestWithTimeout(
+      const { error } = await withTimeout(
         supabase.from("properties")
           .update({ status })
           .eq("id", id)
       );
 
-      if (error) {
-        setMessage("Status Error: " + error.message);
-        return;
-      }
+      if (error) throw new Error(error.message);
 
       setMessage("Property status updated.");
       await loadData();
     } catch (error) {
       setMessage(
         "Status Error: " +
+        (error instanceof Error ? error.message : String(error))
+      );
+    }
+  }
+
+  async function deleteProperty(id: string) {
+    if (!window.confirm("Kya aap is property ko delete karna chahte hain?")) {
+      return;
+    }
+
+    try {
+      const { error } = await withTimeout(
+        supabase.from("properties").delete().eq("id", id)
+      );
+
+      if (error) throw new Error(error.message);
+
+      setMessage("Property deleted.");
+      await loadData();
+    } catch (error) {
+      setMessage(
+        "Delete Error: " +
         (error instanceof Error ? error.message : String(error))
       );
     }
@@ -320,6 +349,13 @@ export default function AdminPage() {
             required
           />
 
+          <input
+            type="text"
+            placeholder="Full Property Address (Optional)"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+          />
+
           <select
             value={listingType}
             onChange={(e) => setListingType(e.target.value)}
@@ -396,6 +432,7 @@ export default function AdminPage() {
             }}>
               <h3>{property.title}</h3>
               <p>Location: {property.locality}</p>
+              <p>Address: {property.address}</p>
               <p>Price: ₹{property.price}</p>
               <p>Status: {property.status}</p>
 
@@ -416,6 +453,14 @@ export default function AdminPage() {
                   Reject
                 </button>
               )}
+
+              <button
+                type="button"
+                onClick={() => deleteProperty(property.id)}
+                style={{ marginLeft: 10 }}
+              >
+                Delete
+              </button>
             </div>
           ))
         )}
