@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import Header from "@/components/Header";
+import AdminHeader from "@/components/AdminHeader";
 import Footer from "@/components/Footer";
 
 export default function AdminPage() {
