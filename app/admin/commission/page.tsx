@@ -818,6 +818,25 @@ export default function CommissionPage() {
                         <td style={{ padding: "10px", border: "1px solid #ddd" }}>
                           {item.remarks || "-"}
                         </td>
+                        
+  <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+    <button
+      type="button"
+      onClick={() => printSingleCommission(item)}
+      style={{
+        padding: "8px 12px",
+        background: "#15803d",
+        color: "#fff",
+        border: "none",
+        borderRadius: "6px",
+        cursor: "pointer",
+        fontWeight: "bold",
+      }}
+    >
+      Print / PDF
+    </button>
+  </td>
+
                       </tr>
                     ))
                   )}
