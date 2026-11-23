@@ -515,7 +515,28 @@ setPaymentMode("Cash");
       setMessage("Valid final selling price enter karein.");
       return;
     }
+if (!customerName.trim()) {
+  setMessage("Customer ka naam enter karein.");
+  return;
+}
 
+const phone = customerPhone.trim();
+
+if (!/^[6-9]\d{9}$/.test(phone)) {
+  setMessage("Valid 10 digit mobile number enter karein.");
+  return;
+}
+
+const received = Number(amountReceived.replace(/,/g, "").trim());
+
+if (
+  !Number.isFinite(received) ||
+  received < 0 ||
+  received > amount
+) {
+  setMessage("Received amount 0 se sale price tak enter karein.");
+  return;
+}
     if (!saleDate) {
       setMessage("Selling date select karein.");
       return;
