@@ -1863,7 +1863,7 @@ function printPurchaseBill() {
                 >
                   Cancel
                 </button>
-              </div>
+             
             </div>
           </div>
         )}
