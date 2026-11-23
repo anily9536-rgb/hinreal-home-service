@@ -46,7 +46,7 @@ const [billEndDate, setBillEndDate] = useState(() => {
 const [customerPhone, setCustomerPhone] = useState("");
 const [amountReceived, setAmountReceived] = useState("");
 const [paymentMode, setPaymentMode] = useState("Cash");
-  const [showPurchaseBillModal, setShowPurchaseBillModal] = useState(false);
+  
 const [selectedPurchaseBillId, setSelectedPurchaseBillId] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
 const [editingProperty, setEditingProperty] = useState<any>(null);
@@ -594,7 +594,11 @@ bill_date: saleDate,
       setSelectedPropertyId("");
       setSaleAmount("");
       setMessage("Property Sold Properties mein add ho gayi.");
-
+      setCustomerName("");
+setCustomerPhone("");
+setAmountReceived("");
+setPaymentMode("Cash");
+            
       await loadData();
     } catch (error) {
       setMessage(
@@ -1776,6 +1780,65 @@ function printPurchaseBill() {
               />
 
               
+              <label style={{ display: "block", fontWeight: "bold", marginBottom: 8 }}>
+                Customer Name
+              </label>
+              <input
+                type="text"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="Customer ka naam"
+                style={{ width: "100%", padding: 12, marginBottom: 14, boxSizing: "border-box" }}
+              />
+
+              <label style={{ display: "block", fontWeight: "bold", marginBottom: 8 }}>
+                Customer Mobile Number
+              </label>
+              <input
+                type="tel"
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+                placeholder="10 digit mobile number"
+                maxLength={10}
+                style={{ width: "100%", padding: 12, marginBottom: 14, boxSizing: "border-box" }}
+              />
+
+              <label style={{ display: "block", fontWeight: "bold", marginBottom: 8 }}>
+                Amount Received (₹)
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={amountReceived}
+                onChange={(e) => setAmountReceived(e.target.value)}
+                placeholder="Kitna paisa mila"
+                style={{ width: "100%", padding: 12, marginBottom: 14, boxSizing: "border-box" }}
+              />
+
+              <label style={{ display: "block", fontWeight: "bold", marginBottom: 8 }}>
+                Payment Mode
+              </label>
+              <select
+                value={paymentMode}
+                onChange={(e) => setPaymentMode(e.target.value)}
+                style={{ width: "100%", padding: 12, marginBottom: 14, boxSizing: "border-box" }}
+              >
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Cheque">Cheque</option>
+              </select>
+
+              <label style={{ display: "block", fontWeight: "bold", marginBottom: 8 }}>
+                Selling Date
+              </label>
+              <input
+                type="date"
+                value={saleDate}
+                onChange={(e) => setSaleDate(e.target.value)}
+                style={{ width: "100%", padding: 12, marginBottom: 18, boxSizing: "border-box" }}
+              />
+
                 <button
                   type="button"
                   onClick={submitSale}
