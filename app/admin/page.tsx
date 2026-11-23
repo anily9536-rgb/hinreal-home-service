@@ -494,6 +494,10 @@ async function submitPropertyEdit(
 
     setSaleAmount("");
     setSaleDate(new Date().toISOString().slice(0, 10));
+    setCustomerName("");
+setCustomerPhone("");
+setAmountReceived("");
+setPaymentMode("Cash");
     setShowSellModal(true);
   }
 
