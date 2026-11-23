@@ -138,17 +138,18 @@ const billTotal = billProperties.reduce(
       property.deleted_from_manage !== true
   );
 
-  // Area name se property search
-  const foundProperties = properties.filter((property) => {
-    const query = searchArea.trim().toLowerCase();
+  // Area, Address ya Property ID se search
+const foundProperties = properties.filter((property) => {
+  const query = searchArea.trim().toLowerCase();
 
-    if (!query) return false;
+  if (!query) return false;
 
-    return (
-      String(property.locality || "").toLowerCase().includes(query) ||
-      String(property.address || "").toLowerCase().includes(query)
-    );
-  });
+  return (
+    String(property.locality || "").toLowerCase().includes(query) ||
+    String(property.address || "").toLowerCase().includes(query) ||
+    String(property.property_code || "").includes(query)
+  );
+});
 
   async function withTimeout<T>(
     request: PromiseLike<T>,
@@ -1456,7 +1457,7 @@ function printPurchaseBill() {
                   setSearchArea(e.target.value);
                   setSelectedFindProperty(null);
                 }}
-                placeholder="Area / Locality ka naam likhein..."
+                placeholder="Property ID / Area / Locality likhein..."
                 style={{
                   width: "100%",
                   padding: 14,
@@ -1514,7 +1515,9 @@ function printPurchaseBill() {
                           />
                         )}
 
-                        <strong>{property.title || "Property"}</strong>
+                        <p style={{ margin: "6px 0", fontWeight: "bold", color: "#2563eb" }}>
+  Property ID: {property.property_code || "Not assigned"}
+</p>
 
                         <p style={{ margin: "6px 0" }}>
                           Area: {property.locality || "Not provided"}
