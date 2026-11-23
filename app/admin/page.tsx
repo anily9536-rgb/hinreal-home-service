@@ -2216,7 +2216,7 @@ function printPurchaseBill() {
                 Delete
               </button>
             </div>
-          ))
+                    ))}
                       </div>
         )}
 
