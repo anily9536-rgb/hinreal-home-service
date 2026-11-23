@@ -976,6 +976,22 @@ function editCommission(item: Commission) {
 >
   Edit
 </button>
+    <button
+  type="button"
+  onClick={() => deleteCommission(item)}
+  style={{
+    padding: "8px 12px",
+    background: "#dc2626",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    marginLeft: "6px",
+  }}
+>
+  Delete
+</button>
   </td>
 
                       </tr>
