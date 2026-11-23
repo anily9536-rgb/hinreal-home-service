@@ -936,6 +936,22 @@ function editCommission(item: Commission) {
     >
       Print / PDF
     </button>
+    <button
+  type="button"
+  onClick={() => editCommission(item)}
+  style={{
+    padding: "8px 12px",
+    background: "#2563eb",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    marginLeft: "6px",
+  }}
+>
+  Edit
+</button>
   </td>
 
                       </tr>
