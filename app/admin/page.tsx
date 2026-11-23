@@ -569,8 +569,8 @@ async function submitPropertyEdit(
       setSaving(false);
     }
   }
-function printBill() {
 
+function printBill() {
   const printWindow = window.open("", "_blank");
 
   if (!printWindow) {
@@ -603,21 +603,94 @@ function printBill() {
     <!DOCTYPE html>
     <html>
       <head>
-        <title>Sales Bill</title>
+        <title>REAL HOME SERVICE - Sales Bill</title>
         <style>
-          body { font-family: Arial, sans-serif; padding: 30px; color: #222; }
-          h1, p { text-align: center; }
-          table { width: 100%; border-collapse: collapse; margin-top: 25px; }
-          th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
-          th { background: #eee; }
-          .total { text-align: right; font-size: 20px; font-weight: bold; margin-top: 25px; }
-          @media print { button { display: none; } }
+          body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            color: #222;
+          }
+
+          .company-header {
+            text-align: center;
+            border-bottom: 2px solid #222;
+            padding-bottom: 15px;
+          }
+
+          .company-header img {
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
+          }
+
+          .company-header h1 {
+            margin: 8px 0;
+            font-size: 26px;
+          }
+
+          .bill-title {
+            text-align: center;
+            margin-top: 20px;
+          }
+
+          .details {
+            text-align: center;
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+          }
+
+          th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+          }
+
+          th {
+            background: #eee;
+          }
+
+          .total {
+            text-align: right;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 25px;
+          }
+
+          .authorised {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 60px;
+            font-size: 14px;
+          }
+
+          @media print {
+            button {
+              display: none;
+            }
+          }
         </style>
       </head>
+
       <body>
-        <h1>Sales Bill</h1>
-        <p>Period: ${escapeHtml(billStartDate)} to ${escapeHtml(billEndDate)}</p>
-        <p>Total Sold Properties: ${billProperties.length}</p>
+        <div class="company-header">
+          <img src="${window.location.origin}/logo.png" alt="Company Logo">
+          <h1>REAL HOME SERVICE</h1>
+        </div>
+
+        <h2 class="bill-title">SALES BILL</h2>
+
+        <p class="details">
+          Period: ${escapeHtml(billStartDate)} to ${escapeHtml(billEndDate)}
+        </p>
+
+        <p class="details">
+          Total Sold Properties: ${billProperties.length}
+        </p>
+
         <table>
           <thead>
             <tr>
@@ -627,9 +700,20 @@ function printBill() {
               <th>Selling Amount</th>
             </tr>
           </thead>
-          <tbody>${rows || '<tr><td colspan="4">No sold properties found for this period.</td></tr>'}</tbody>
+
+          <tbody>
+            ${rows || '<tr><td colspan="4">No sold properties found for this period.</td></tr>'}
+          </tbody>
         </table>
-        <div class="total">Total Selling Amount: ₹${billTotal.toLocaleString("en-IN")}</div>
+
+        <div class="total">
+          Total Selling Amount: ₹${billTotal.toLocaleString("en-IN")}
+        </div>
+
+        <div class="authorised">
+          AUTHORISED BILL
+        </div>
+
         <script>
           window.onload = function() {
             window.print();
@@ -641,6 +725,7 @@ function printBill() {
 
   printWindow.document.close();
 }
+
   async function deleteProperty(id: string) {
     const property = properties.find(
       (item) => String(item.id) === String(id)
