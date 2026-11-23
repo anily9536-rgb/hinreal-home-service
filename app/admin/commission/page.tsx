@@ -780,7 +780,7 @@ export default function CommissionPage() {
               }}>
                 <thead>
                   <tr style={{ background: "#f3f4f6" }}>
-                    {["Property ID", "Property", "Month", "Commission", "Remarks"].map((heading) => (
+                    {["Property ID", "Property", "Month", "Commission", "Remarks", "Print Bill"].map((heading) => (
                       <th key={heading} style={{
                         padding: "10px",
                         border: "1px solid #ddd",
