@@ -2072,6 +2072,13 @@ function printPurchaseBill() {
               borderRadius: 10
             }}>
               <h3>{property.title}</h3>
+              <p style={{
+  margin: "6px 0",
+  fontWeight: "bold",
+  color: "#2563eb"
+}}>
+  Property ID: {property.property_code || "Not assigned"}
+</p>
               <p>Location: {property.locality}</p>
               <p>Address: {property.address}</p>
 
