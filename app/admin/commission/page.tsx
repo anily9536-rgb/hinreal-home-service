@@ -273,48 +273,7 @@ function editCommission(item: Commission) {
   }
 }
 
-    const commissionAmount = Number(amount);
-
-    if (!amount || !Number.isFinite(commissionAmount) || commissionAmount <= 0) {
-      alert("Sahi commission amount enter karein.");
-      return;
-    }
-
-    setSaving(true);
-
-    try {
-      const { data, error } = await supabase
-        .from("property_commissions")
-        .insert({
-          property_id: selected.id,
-          property_code: selected.property_code,
-          property_title: selected.title,
-          area: selected.locality,
-          property_type: selected.property_type,
-          commission_amount: commissionAmount,
-          commission_month: Number(commissionMonth),
-          commission_year: Number(commissionYear),
-          remarks: remarks.trim() || null,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setCommissions((previous) => [data, ...previous]);
-      setAmount("");
-      setRemarks("");
-      setSelected(null);
-      setSearch("");
-
-      alert("Commission successfully save ho gaya.");
-    } catch (error) {
-      console.error("Commission save error:", error);
-      alert("Commission save nahi hua. Please dobara try karein.");
-    } finally {
-      setSaving(false);
-    }
-  }
+    
 
   function escapeHtml(value: unknown) {
     return String(value ?? "").replace(/[&<>"']/g, (character) => {
