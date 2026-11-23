@@ -2064,12 +2064,21 @@ function printPurchaseBill() {
         {visibleProperties.length === 0 ? (
           <p>No properties found.</p>
         ) : (
-          visibleProperties.map((property) => (
+                    <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+            gap: 16,
+            alignItems: "start"
+          }}>
+          {visibleProperties.map((property) => (
             <div key={property.id} style={{
-              border: "1px solid #ddd",
-              padding: 15,
-              marginBottom: 15,
-              borderRadius: 10
+              border: "1px solid #dbe3ee",
+              padding: 12,
+              marginBottom: 0,
+              borderRadius: 12,
+              background: "#fff",
+              boxShadow: "0 3px 12px rgba(15, 23, 42, 0.08)",
+              minWidth: 0
             }}>
               <h3>{property.title}</h3>
               <p style={{
