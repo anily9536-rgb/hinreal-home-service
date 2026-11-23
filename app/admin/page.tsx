@@ -2217,6 +2217,7 @@ function printPurchaseBill() {
               </button>
             </div>
           ))
+                      </div>
         )}
 
         <hr />
