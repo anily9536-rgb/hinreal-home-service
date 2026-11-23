@@ -784,7 +784,26 @@ function editCommission(item: Commission) {
                 opacity: (!selected || saving) ? 0.6 : 1,
               }}
             >
-              {saving ? "Saving..." : "Save Commission"}
+              {saving
+  ? "Saving..."
+  : editingCommissionId !== null
+    ? "Update Commission"
+    : "Save Commission"}
+              {editingCommissionId !== null && (
+  <button
+    type="button"
+    onClick={() => {
+      setEditingCommissionId(null);
+      setSelected(null);
+      setAmount("");
+      setRemarks("");
+      setSearch("");
+    }}
+    style={{ ...buttonStyle, background: "#6b7280", color: "#fff", marginTop: "10px" }}
+  >
+    Cancel Edit
+  </button>
+)}
             </button>
           </section>
 
