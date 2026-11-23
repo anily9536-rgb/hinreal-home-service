@@ -1020,6 +1020,25 @@ function printPurchaseBill() {
             </h2>
             <p style={{ marginBottom: 0 }}>View All Sold Properties →</p>
           </button>
+          
+      <button
+        type="button"
+        onClick={() => router.push("/admin/commission")}
+        style={{
+          padding: "20px",
+          borderRadius: "12px",
+          border: "1px solid #ddd",
+          background: "#fff",
+          cursor: "pointer",
+          minWidth: "180px",
+          textAlign: "left",
+        }}
+      >
+        <h3 style={{ margin: "0 0 10px" }}>Commission</h3>
+        <p style={{ margin: 0 }}>Property Commission</p>
+        <p style={{ marginBottom: 0 }}>Add / View / Print →</p>
+      </button>
+
       <button
   type="button"
   onClick={() => setShowBillModal(true)}
