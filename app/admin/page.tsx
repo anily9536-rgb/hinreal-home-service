@@ -1870,43 +1870,6 @@ function printPurchaseBill() {
   style={{
     width: "100%",
     padding: 12,
-    marginBottom: 14,
-    boxSizing: "border-box"
-  }}
-/>
-
-<label style={{
-  display: "block",
-  fontWeight: "bold",
-  marginBottom: 8
-}}>
-  Customer Mobile Number
-</label>
-
-<input
-  type="tel"
-  value={customerPhone}
-  onChange={(e) => setCustomerPhone(e.target.value)}
-  placeholder="10 digit mobile number"
-  maxLength={10}
-  style={{
-    width: "100%",
-    padding: 12,
-    marginBottom: 14,
-    boxSizing: "border-box"
-  }}
-/>
-
-<label style={{
-  display: "block",
-  fontWeight: "bold",
-  marginBottom: 8
-}}>
-  Amount Received (₹)
-</label>
-
-
-
 
 
               <div style={{
