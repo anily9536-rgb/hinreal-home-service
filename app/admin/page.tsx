@@ -2080,7 +2080,35 @@ function printPurchaseBill() {
               boxShadow: "0 3px 12px rgba(15, 23, 42, 0.08)",
               minWidth: 0
             }}>
-              <h3>{property.title}</h3>
+              {property.images?.[0] ? (
+  <img
+    src={property.images[0]}
+    alt={property.title || "Property"}
+    style={{
+      width: "100%",
+      aspectRatio: "1 / 1",
+      objectFit: "cover",
+      borderRadius: 9,
+      display: "block",
+      marginBottom: 10
+    }}
+  />
+) : (
+  <div style={{
+    width: "100%",
+    aspectRatio: "1 / 1",
+    borderRadius: 9,
+    background: "#eef2f7",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#64748b",
+    marginBottom: 10
+  }}>
+    No Property Photo
+  </div>
+)}
+<h3 style={{ margin: "6px 0 8px" }}>{property.title}</h3>
               <p style={{
   margin: "6px 0",
   fontWeight: "bold",
