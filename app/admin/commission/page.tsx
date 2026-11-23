@@ -161,7 +161,22 @@ export default function CommissionPage() {
       ...commissions.map((item) => item.commission_year),
     ])
   ).sort((a, b) => b - a);
+function editCommission(item: Commission) {
+  setEditingCommissionId(item.id);
+  setSelected({
+    id: item.property_id || "",
+    property_code: item.property_code,
+    title: item.property_title,
+    locality: item.area,
+    property_type: item.property_type,
+  });
+  setAmount(String(item.commission_amount));
+  setCommissionMonth(String(item.commission_month));
+  setCommissionYear(String(item.commission_year));
+  setRemarks(item.remarks || "");
 
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
   async function saveCommission() {
     if (!selected) {
       alert("Please property select karein.");
