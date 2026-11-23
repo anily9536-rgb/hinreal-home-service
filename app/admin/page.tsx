@@ -569,7 +569,7 @@ async function submitPropertyEdit(
       setSaving(false);
     }
   }
-function printBill()
+function printBill() {
 
   const printWindow = window.open("", "_blank");
 
