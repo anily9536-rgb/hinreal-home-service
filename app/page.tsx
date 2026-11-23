@@ -382,7 +382,8 @@ export default function Home() {
                     )}
 
                     <h3>{property.title}</h3>
-                    <p>{property.property_type}</p>
+<p><strong>Property ID:</strong> {property.property_code}</p>
+<p>{property.property_type}</p>
                     <p>📍 {property.locality}</p>
 
                     <p>
