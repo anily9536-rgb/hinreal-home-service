@@ -1985,6 +1985,27 @@ function printPurchaseBill() {
                 fontWeight: "bold",
                 marginBottom: 8
               }}>
+                Customer Name
+              </label>
+
+              <input
+                type="text"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="Customer ka naam"
+                style={{
+                  width: "100%",
+                  padding: 12,
+                  marginBottom: 14,
+                  boxSizing: "border-box"
+                }}
+              />
+
+              <label style={{
+                display: "block",
+                fontWeight: "bold",
+                marginBottom: 8
+              }}>
                 Customer Mobile Number
               </label>
 
