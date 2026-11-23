@@ -46,6 +46,8 @@ const [billEndDate, setBillEndDate] = useState(() => {
 const [customerPhone, setCustomerPhone] = useState("");
 const [amountReceived, setAmountReceived] = useState("");
 const [paymentMode, setPaymentMode] = useState("Cash");
+  const [showPurchaseBillModal, setShowPurchaseBillModal] = useState(false);
+const [selectedPurchaseBillId, setSelectedPurchaseBillId] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
 const [editingProperty, setEditingProperty] = useState<any>(null);
 
