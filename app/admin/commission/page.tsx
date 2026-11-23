@@ -178,10 +178,76 @@ function editCommission(item: Commission) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
   async function saveCommission() {
-    if (!selected) {
-      alert("Please property select karein.");
-      return;
+  if (!selected) {
+    alert("Please property select karein.");
+    return;
+  }
+
+  const commissionAmount = Number(amount);
+
+  if (!amount || !Number.isFinite(commissionAmount) || commissionAmount <= 0) {
+    alert("Sahi commission amount enter karein.");
+    return;
+  }
+
+  setSaving(true);
+
+  const commissionData = {
+    property_id: selected.id || null,
+    property_code: selected.property_code,
+    property_title: selected.title,
+    area: selected.locality,
+    property_type: selected.property_type,
+    commission_amount: commissionAmount,
+    commission_month: Number(commissionMonth),
+    commission_year: Number(commissionYear),
+    remarks: remarks.trim() || null,
+  };
+
+  try {
+    if (editingCommissionId !== null) {
+      const { data, error } = await supabase
+        .from("property_commissions")
+        .update(commissionData)
+        .eq("id", editingCommissionId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setCommissions((previous) =>
+        previous.map((item) =>
+          item.id === editingCommissionId ? data : item
+        )
+      );
+
+      alert("Commission successfully update ho gaya.");
+    } else {
+      const { data, error } = await supabase
+        .from("property_commissions")
+        .insert(commissionData)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setCommissions((previous) => [data, ...previous]);
+
+      alert("Commission successfully save ho gaya.");
     }
+
+    setEditingCommissionId(null);
+    setAmount("");
+    setRemarks("");
+    setSelected(null);
+    setSearch("");
+  } catch (error) {
+    console.error("Commission save/update error:", error);
+    alert("Commission save/update nahi hua. Dobara try karein.");
+  } finally {
+    setSaving(false);
+  }
+}
 
     const commissionAmount = Number(amount);
 
