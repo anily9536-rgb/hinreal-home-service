@@ -1655,6 +1655,94 @@ function printBill() {
                 marginBottom: 8
               }}>
                 Selling Date
+                <label style={{
+  display: "block",
+  fontWeight: "bold",
+  marginBottom: 8
+}}>
+  Customer Name
+</label>
+
+<input
+  type="text"
+  value={customerName}
+  onChange={(e) => setCustomerName(e.target.value)}
+  placeholder="Customer ka naam"
+  style={{
+    width: "100%",
+    padding: 12,
+    marginBottom: 14,
+    boxSizing: "border-box"
+  }}
+/>
+
+<label style={{
+  display: "block",
+  fontWeight: "bold",
+  marginBottom: 8
+}}>
+  Customer Mobile Number
+</label>
+
+<input
+  type="tel"
+  value={customerPhone}
+  onChange={(e) => setCustomerPhone(e.target.value)}
+  placeholder="10 digit mobile number"
+  maxLength={10}
+  style={{
+    width: "100%",
+    padding: 12,
+    marginBottom: 14,
+    boxSizing: "border-box"
+  }}
+/>
+
+<label style={{
+  display: "block",
+  fontWeight: "bold",
+  marginBottom: 8
+}}>
+  Amount Received (₹)
+</label>
+
+<input
+  type="number"
+  min="0"
+  value={amountReceived}
+  onChange={(e) => setAmountReceived(e.target.value)}
+  placeholder="Kitna paisa mila"
+  style={{
+    width: "100%",
+    padding: 12,
+    marginBottom: 14,
+    boxSizing: "border-box"
+  }}
+/>
+
+<label style={{
+  display: "block",
+  fontWeight: "bold",
+  marginBottom: 8
+}}>
+  Payment Mode
+</label>
+
+<select
+  value={paymentMode}
+  onChange={(e) => setPaymentMode(e.target.value)}
+  style={{
+    width: "100%",
+    padding: 12,
+    marginBottom: 14,
+    boxSizing: "border-box"
+  }}
+>
+  <option value="Cash">Cash</option>
+  <option value="UPI">UPI</option>
+  <option value="Bank Transfer">Bank Transfer</option>
+  <option value="Cheque">Cheque</option>
+</select>
               </label>
 
               <input
