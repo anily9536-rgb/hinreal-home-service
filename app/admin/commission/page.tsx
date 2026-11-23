@@ -223,13 +223,172 @@ export default function CommissionPage() {
     });
   }
 
+  
   function printCommission() {
     const printWindow = window.open("", "_blank");
 
     if (!printWindow) {
-      alert("Print window block ho gayi. Browser popup allow karein.");
+      alert("Please allow popups to print the bill.");
       return;
     }
+
+    const monthLabel =
+      filterMonth === "all"
+        ? "All Months"
+        : months[Number(filterMonth) - 1];
+
+    const yearLabel =
+      filterYear === "all" ? "All Years" : filterYear;
+
+    const rows = filteredCommissions.map((item, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${escapeHtml(item.property_code)}</td>
+        <td>${escapeHtml(item.property_title || "-")}</td>
+        <td>${escapeHtml(item.area || "-")}</td>
+        <td>${escapeHtml(item.property_type || "-")}</td>
+        <td>${escapeHtml(months[item.commission_month - 1])} ${escapeHtml(item.commission_year)}</td>
+        <td>₹${Number(item.commission_amount).toLocaleString("en-IN")}</td>
+        <td>${escapeHtml(item.remarks || "-")}</td>
+      </tr>
+    `).join("");
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>REAL HOME SERVICE - Commission Bill</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 30px;
+              color: #222;
+            }
+
+            .company-header {
+              text-align: center;
+              border-bottom: 2px solid #222;
+              padding-bottom: 15px;
+            }
+
+            .company-header img {
+              width: 75px;
+              height: 75px;
+              object-fit: contain;
+            }
+
+            .company-header h1 {
+              margin: 8px 0;
+              font-size: 26px;
+            }
+
+            .bill-title {
+              text-align: center;
+              margin-top: 20px;
+            }
+
+            .details {
+              text-align: center;
+            }
+
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 25px;
+            }
+
+            th, td {
+              border: 1px solid #ccc;
+              padding: 10px;
+              text-align: left;
+              font-size: 12px;
+            }
+
+            th {
+              background: #eee;
+            }
+
+            .total {
+              text-align: right;
+              font-size: 20px;
+              font-weight: bold;
+              margin-top: 25px;
+            }
+
+            .authorised {
+              text-align: right;
+              font-weight: bold;
+              margin-top: 60px;
+              font-size: 14px;
+            }
+
+            @media print {
+              button {
+                display: none;
+              }
+            }
+          </style>
+        </head>
+
+        <body>
+          <div class="company-header">
+            <img src="${window.location.origin}/logo.png" alt="Company Logo">
+            <h1>REAL HOME SERVICE</h1>
+          </div>
+
+          <h2 class="bill-title">PROPERTY COMMISSION BILL</h2>
+
+          <p class="details">
+            Period: ${escapeHtml(monthLabel)} ${escapeHtml(yearLabel)}
+          </p>
+
+          <p class="details">
+            Total Commission Entries: ${filteredCommissions.length}
+          </p>
+
+          <p class="details">
+            Print Date: ${new Date().toLocaleDateString("en-IN")}
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Property ID</th>
+                <th>Property</th>
+                <th>Area</th>
+                <th>Type</th>
+                <th>Month</th>
+                <th>Commission</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              ${rows || '<tr><td colspan="8">No commission records found for this period.</td></tr>'}
+            </tbody>
+          </table>
+
+          <div class="total">
+            Total Commission: ₹${totalCommission.toLocaleString("en-IN")}
+          </div>
+
+          <div class="authorised">
+            AUTHORISED BILL
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          <\/script>
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+  }
+
 
     const monthLabel =
       filterMonth === "all"
