@@ -28,7 +28,7 @@ export default async function PropertyPage({
 
       <main className="container">
         <h1>{property.title}</h1>
-
+<p><strong>Property ID:</strong> {property.property_code}</p>
         {property.images?.length > 0 && (
           <div>
             {property.images.map((image: string, index: number) => (
