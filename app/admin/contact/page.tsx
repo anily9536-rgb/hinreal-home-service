@@ -7,7 +7,7 @@ import { supabase } from "@/lib/supabase";
 import AdminHeader from "@/components/AdminHeader";
 
 const companyEmail = "anily9536@gmail.com";
-const companyPhone = "9173086571";
+const companyPhone = "9173086572";
 
 export default function AdminContactPage() {
   const router = useRouter();
