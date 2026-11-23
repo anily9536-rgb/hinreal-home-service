@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 
 const companyName = "Real Home Service";
 const companyEmail = "anily9536@gmail.com";
-const companyPhone = "9173086571";
+const companyPhone = "9173086572";
 
 export default function ContactPage() {
   return (
