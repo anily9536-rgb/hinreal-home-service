@@ -577,6 +577,11 @@ if (
             status: "sold",
             sold_price: amount,
             sold_at: soldAt,
+            customer_name: customerName.trim(),
+customer_phone: customerPhone.trim(),
+amount_received: received,
+payment_mode: paymentMode,
+bill_date: saleDate,
           })
           .eq("id", selectedPropertyId)
       );
