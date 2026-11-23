@@ -40,6 +40,7 @@ export default function CommissionPage() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [editingCommissionId, setEditingCommissionId] = useState<number | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
   const [commissions, setCommissions] = useState<Commission[]>([]);
   const [search, setSearch] = useState("");
