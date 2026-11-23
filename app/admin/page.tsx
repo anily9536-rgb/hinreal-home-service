@@ -1169,6 +1169,49 @@ function printPurchaseBill() {
           margin: "25px 0",
           flexWrap: "wrap"
         }}>
+          <hr style={{ margin: "20px 0" }} />
+
+<h3>Customer Property Purchase Bill</h3>
+
+<label>Select Sold Property</label>
+
+<select
+  value={selectedPurchaseBillId}
+  onChange={(e) => setSelectedPurchaseBillId(e.target.value)}
+  style={{
+    width: "100%",
+    padding: 12,
+    margin: "10px 0 15px"
+  }}
+>
+  <option value="">Select Property</option>
+
+  {soldProperties
+    .filter((property: any) => property.customer_name)
+    .map((property: any) => (
+      <option key={property.id} value={String(property.id)}>
+        {property.title} - {property.customer_name}
+      </option>
+    ))}
+</select>
+
+<button
+  type="button"
+  onClick={printPurchaseBill}
+  disabled={!selectedPurchaseBillId}
+  style={{
+    width: "100%",
+    padding: 14,
+    background: "#2563eb",
+    color: "#fff",
+    border: 0,
+    borderRadius: 8,
+    cursor: "pointer",
+    marginBottom: 15
+  }}
+>
+  Print Customer Purchase Bill
+</button>
           <button
             type="button"
             onClick={() => router.push("/admin/properties")}
