@@ -177,6 +177,30 @@ function editCommission(item: Commission) {
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+  async function deleteCommission(item: Commission) {
+  const confirmDelete = window.confirm(
+    `Property ID ${item.property_code} ka commission record delete karna hai?`
+  );
+
+  if (!confirmDelete) return;
+
+  const { error } = await supabase
+    .from("property_commissions")
+    .delete()
+    .eq("id", item.id);
+
+  if (error) {
+    alert("Commission delete nahi hua.");
+    console.error(error);
+    return;
+  }
+
+  setCommissions((previous) =>
+    previous.filter((record) => record.id !== item.id)
+  );
+
+  alert("Commission record delete ho gaya.");
+}
   async function saveCommission() {
   if (!selected) {
     alert("Please property select karein.");
