@@ -1198,7 +1198,50 @@ function printPurchaseBill() {
       </option>
     ))}
 </select>
+{selectedPurchaseBillId && (() => {
+  const selectedProperty = properties.find(
+    (item: any) =>
+      String(item.id) === String(selectedPurchaseBillId)
+  );
 
+  if (!selectedProperty) return null;
+
+  const salePrice = Number(selectedProperty.sold_price || 0);
+  const received = Number(selectedProperty.amount_received || 0);
+  const balance = salePrice - received;
+
+  return (
+    <div style={{
+      border: "1px solid #d1d5db",
+      borderRadius: 10,
+      padding: 15,
+      margin: "0 0 15px",
+      background: "#f8fafc"
+    }}>
+      <h4 style={{ margin: "0 0 12px", color: "#1e3a8a" }}>
+        Customer Bill Details
+      </h4>
+
+      <p><b>Customer Name:</b> {selectedProperty.customer_name || "-"}</p>
+      <p><b>Mobile Number:</b> {selectedProperty.customer_phone || "-"}</p>
+      <p><b>Property:</b> {selectedProperty.title || "-"}</p>
+      <p><b>Property Address:</b> {selectedProperty.address || selectedProperty.locality || "-"}</p>
+      <p><b>Bill Date:</b> {selectedProperty.bill_date || "-"}</p>
+
+      <p><b>Total Selling Amount:</b> ₹{salePrice.toLocaleString("en-IN")}</p>
+      <p><b>Amount Received:</b> ₹{received.toLocaleString("en-IN")}</p>
+
+      <p style={{
+        color: balance > 0 ? "#b91c1c" : "#15803d",
+        fontWeight: "bold"
+      }}>
+        Balance Amount: ₹{balance.toLocaleString("en-IN")}
+      </p>
+
+      <p><b>Payment Mode:</b> {selectedProperty.payment_mode || "-"}</p>
+    </div>
+  );
+})()}
 <button
   type="button"
   onClick={printPurchaseBill}
