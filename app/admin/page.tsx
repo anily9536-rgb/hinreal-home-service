@@ -761,7 +761,88 @@ function printBill() {
 
   printWindow.document.close();
 }
+function printPurchaseBill() {
+  const property = properties.find(
+    (item) => String(item.id) === String(selectedPurchaseBillId)
+  );
 
+  if (!property) {
+    alert("Please select a sold property.");
+    return;
+  }
+
+  const escapeHtml = (value: unknown) =>
+    String(value ?? "-").replace(/[&<>"']/g, (char) => {
+      const entities: Record<string, string> = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+      return entities[char];
+    });
+
+  const salePrice = Number(property.sold_price || 0);
+  const received = Number(property.amount_received || 0);
+  const balance = salePrice - received;
+
+  const printWindow = window.open("", "_blank");
+
+  if (!printWindow) {
+    alert("Please allow popups to print the bill.");
+    return;
+  }
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Property Purchase Bill</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 30px; color: #222; }
+        .header { text-align: center; border-bottom: 2px solid #222; padding-bottom: 15px; }
+        .header img { width: 75px; height: 75px; object-fit: contain; }
+        h1 { margin: 8px 0; }
+        h2 { text-align: center; margin: 25px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        td { border: 1px solid #ccc; padding: 12px; }
+        td:first-child { font-weight: bold; width: 35%; }
+        .authorised { text-align: right; font-weight: bold; margin-top: 70px; }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <img src="${window.location.origin}/logo.png">
+        <h1>REAL HOME SERVICE</h1>
+      </div>
+
+      <h2>PROPERTY PURCHASE BILL</h2>
+
+      <table>
+        <tr><td>Customer Name</td><td>${escapeHtml(property.customer_name)}</td></tr>
+        <tr><td>Mobile Number</td><td>${escapeHtml(property.customer_phone)}</td></tr>
+        <tr><td>Property</td><td>${escapeHtml(property.title)}</td></tr>
+        <tr><td>Property ID</td><td>${escapeHtml(property.id)}</td></tr>
+        <tr><td>Address</td><td>${escapeHtml(property.address || property.locality)}</td></tr>
+        <tr><td>Bill Date</td><td>${escapeHtml(property.bill_date || "-")}</td></tr>
+        <tr><td>Final Sale Price</td><td>₹${salePrice.toLocaleString("en-IN")}</td></tr>
+        <tr><td>Amount Received</td><td>₹${received.toLocaleString("en-IN")}</td></tr>
+        <tr><td>Remaining Balance</td><td>₹${balance.toLocaleString("en-IN")}</td></tr>
+        <tr><td>Payment Mode</td><td>${escapeHtml(property.payment_mode)}</td></tr>
+      </table>
+
+      <div class="authorised">AUTHORISED BILL</div>
+
+      <script>
+        window.onload = function() { window.print(); };
+      <\/script>
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+}
   async function deleteProperty(id: string) {
     const property = properties.find(
       (item) => String(item.id) === String(id)
