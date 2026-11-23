@@ -569,11 +569,7 @@ async function submitPropertyEdit(
       setSaving(false);
     }
   }
-function printBill() {
-  if (!billStartDate || !billEndDate || billStartDate > billEndDate) {
-    alert("Please select a valid date range.");
-    return;
-  }
+function printBill()
 
   const printWindow = window.open("", "_blank");
 
