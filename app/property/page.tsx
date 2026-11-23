@@ -41,7 +41,8 @@ export default async function PropertyPage() {
               )}
 
               <h2>{property.title}</h2>
-              <p>{property.locality}</p>
+<p><strong>Property ID:</strong> {property.property_code}</p>
+<p>{property.locality}</p>
               <p>
                 {property.listing_type === "Rent"
                   ? "For Rent"
