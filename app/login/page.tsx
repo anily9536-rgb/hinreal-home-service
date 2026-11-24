@@ -50,8 +50,8 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="container">
-      <div
+    <main className="container public-auth-page">
+      <div className="public-auth-card"
         style={{
           maxWidth: "420px",
           margin: "60px auto",
