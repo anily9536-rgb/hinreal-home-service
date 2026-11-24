@@ -1002,7 +1002,7 @@ function printPurchaseBill() {
   color: "#fff",
 }}>
             <h3>Total Selling Amount</h3>
-            <h2 style={{ color: "#15803d" }}>
+            <h2 style={{ color: "#fff" }}>
               ₹{monthlySales.toLocaleString("en-IN")}
             </h2>
             <p style={{ marginBottom: 0 }}>
