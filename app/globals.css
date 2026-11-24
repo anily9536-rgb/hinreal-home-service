@@ -150,8 +150,28 @@ body.public-site header {
 }
 
 body.public-site .hero {
-  background: linear-gradient(120deg, #091a33, #174a85, #087e8b) !important;
-  color: white;
+  background: linear-gradient(
+    120deg,
+    #061a40 0%,
+    #1456a0 50%,
+    #1685c5 100%
+  ) !important;
+  color: #ffffff !important;
+  border-bottom: 4px solid #c9a34a;
+}
+
+body.public-site .hero h1,
+body.public-site .hero p {
+  color: #ffffff !important;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+}
+
+body.public-site .hero img {
+  background: #ffffff;
+  padding: 12px;
+  border: 2px solid #c9a34a;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
 body.public-site button,
