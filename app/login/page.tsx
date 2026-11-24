@@ -139,6 +139,10 @@ export default function LoginPage() {
           boxSizing: "border-box",
           background: "rgba(255,255,255,0.97)",
           padding: "clamp(24px, 6vw, 34px)",
+      minHeight: "68vh",
+display: "flex",
+flexDirection: "column",
+justifyContent: "center",
           borderRadius: "22px",
           boxShadow: "0 22px 60px rgba(0,0,0,0.28)",
           border: "1px solid rgba(255,255,255,0.55)"
