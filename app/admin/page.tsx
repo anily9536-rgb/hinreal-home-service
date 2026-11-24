@@ -6,6 +6,17 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import AdminHeader from "@/components/AdminHeader";
 import Footer from "@/components/Footer";
+const propertyInputStyle = {
+  width: "100%",
+  boxSizing: "border-box" as const,
+  padding: "13px 14px",
+  border: "1px solid #c49a35",
+  borderRadius: 9,
+  background: "#ffffff",
+  color: "#102b50",
+  fontSize: 15,
+  outline: "none"
+};
 
 export default function AdminPage() {
   const router = useRouter();
