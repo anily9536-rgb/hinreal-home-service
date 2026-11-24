@@ -37,6 +37,7 @@ export async function POST(request: Request) {
       .maybeSingle();
 
     if (lookupError) {
+      console.error("Registration username lookup failed:", lookupError);
       return NextResponse.json({ error: "अभी Registration संभव नहीं है।" }, { status: 500 });
     }
 
@@ -52,6 +53,7 @@ export async function POST(request: Request) {
       });
 
     if (authError || !authData.user) {
+      console.error("Registration auth creation failed:", authError);
       return NextResponse.json({ error: "Account नहीं बन पाया। कृपया दोबारा कोशिश करें।" }, { status: 400 });
     }
 
@@ -65,12 +67,14 @@ export async function POST(request: Request) {
       });
 
     if (profileError) {
+      console.error("Registration profile insert failed:", profileError);
       await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
       return NextResponse.json({ error: "Profile सेव नहीं हो पाई।" }, { status: 400 });
     }
 
     return NextResponse.json({ message: "Registration सफल हुआ। अब Login कर सकते हैं।" }, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error("Registration API error:", error);
     return NextResponse.json({ error: "कुछ गड़बड़ हुई। दोबारा कोशिश करें।" }, { status: 500 });
   }
 }
