@@ -1,123 +1,149 @@
-
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
-  const router = useRouter();
-
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleLogin(
-    e: React.FormEvent<HTMLFormElement>
-  ) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMessage("");
     setLoading(true);
 
     try {
-      const { data, error } =
-        await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password,
-        });
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setMessage(result.error || "Login नहीं हो पाया।");
+        return;
+      }
+
+      const { error } = await supabase.auth.setSession({
+        access_token: result.access_token,
+        refresh_token: result.refresh_token,
+      });
 
       if (error) {
-        setMessage(error.message);
+        setMessage("Login session शुरू नहीं हो पाया।");
         return;
       }
 
-      if (!data.user) {
-        setMessage("Login failed. Please try again.");
-        return;
-      }
-
-      setMessage("Login successful!");
-
-      router.replace("/");
-      router.refresh();
+      window.location.href = "/";
     } catch {
-      setMessage("Something went wrong. Please try again.");
+      setMessage("Network error। दोबारा कोशिश करें।");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main className="container public-auth-page">
-      <div className="public-auth-card"
-        style={{
-          maxWidth: "420px",
-          margin: "60px auto",
-          background: "white",
-          padding: "30px",
-          borderRadius: "12px",
-          boxShadow: "0 3px 15px rgba(0,0,0,0.1)",
-        }}
-      >
-        <h1 style={{ textAlign: "center", marginBottom: "25px" }}>
-          User Login
+    <main style={{
+      minHeight: "100vh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: "20px",
+      background: "#f1f5f9"
+    }}>
+      <form onSubmit={handleSubmit} style={{
+        width: "100%",
+        maxWidth: "420px",
+        background: "white",
+        padding: "28px",
+        borderRadius: "14px",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.08)"
+      }}>
+        <h1 style={{ textAlign: "center", marginBottom: "8px" }}>
+          Customer Login
         </h1>
 
-        <form onSubmit={handleLogin}>
-          <label>Email Address</label>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+        <p style={{
+          textAlign: "center",
+          color: "#64748b",
+          marginBottom: "24px"
+        }}>
+          Real Home Service
+        </p>
 
-          <label>Password</label>
-          <input
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+        <label style={{ display: "block", marginBottom: "6px", fontWeight: 600 }}>
+          Username
+        </label>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          autoComplete="username"
+          style={{
+            width: "100%",
+            padding: "12px",
+            border: "1px solid #cbd5e1",
+            borderRadius: "8px",
+            boxSizing: "border-box",
+            marginBottom: "16px"
+          }}
+        />
 
-          <button
-            type="submit"
-            disabled={loading}
-            style={{ width: "100%" }}
-          >
-            {loading ? "Please Wait..." : "Login"}
-          </button>
-        </form>
+        <label style={{ display: "block", marginBottom: "6px", fontWeight: 600 }}>
+          Password
+        </label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          autoComplete="current-password"
+          style={{
+            width: "100%",
+            padding: "12px",
+            border: "1px solid #cbd5e1",
+            borderRadius: "8px",
+            boxSizing: "border-box",
+            marginBottom: "16px"
+          }}
+        />
 
         {message && (
-          <p
-            role="status"
-            style={{
-              textAlign: "center",
-              marginTop: "15px",
-            }}
-          >
+          <p style={{ color: "#dc2626", marginBottom: "16px" }}>
             {message}
           </p>
         )}
 
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            width: "100%",
+            padding: "13px",
+            background: "#2563eb",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            fontWeight: 700,
+            cursor: "pointer"
+          }}
+        >
+          {loading ? "Please wait..." : "Login"}
+        </button>
+
         <p style={{ textAlign: "center", marginTop: "20px" }}>
-          Don't have an account?{" "}
-          <Link href="/register" style={{ color: "#2874a6" }}>
+          New customer?{" "}
+          <Link href="/register" style={{ color: "#2563eb", fontWeight: 600 }}>
             Register
           </Link>
         </p>
-
-        <p style={{ textAlign: "center", marginTop: "15px" }}>
-          <Link href="/" style={{ color: "#2874a6" }}>
-            Back to Home
-          </Link>
-        </p>
-      </div>
+      </form>
     </main>
   );
 }
