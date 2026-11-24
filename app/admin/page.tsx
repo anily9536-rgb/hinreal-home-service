@@ -1055,14 +1055,17 @@ function printPurchaseBill() {
   type="button"
   onClick={() => setShowBillModal(true)}
   style={{
-    padding: "20px",
-    borderRadius: "12px",
-    border: "1px solid #ddd",
-    background: "#fff",
-    cursor: "pointer",
-    minWidth: "180px",
-    textAlign: "left",
-  }}
+  padding: 20,
+  background: "linear-gradient(135deg, #ef4444, #991b1b)",
+  border: "none",
+  borderRadius: 12,
+  minWidth: 0,
+  minHeight: 145,
+  boxSizing: "border-box",
+  cursor: "pointer",
+  textAlign: "left",
+  color: "#fff",
+}}
 >
   <h3 style={{ margin: "0 0 10px" }}>Bill</h3>
   <p style={{ margin: 0 }}>₹{billTotal.toLocaleString("en-IN")}</p>
