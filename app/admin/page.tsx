@@ -975,8 +975,8 @@ function printPurchaseBill() {
   boxSizing: "border-box",
   color: "#fff",
 }}>
-            <h3>Total Properties</h3>
-            <h2>{visibleProperties.length}</h2>
+            <h3 style={{ color: "#fff" }}>Total Properties</h3>
+            <h2 style={{ color: "#fff" }}>{visibleProperties.length}</h2>
           </div>
 
           <div style={{
@@ -988,8 +988,8 @@ function printPurchaseBill() {
   boxSizing: "border-box",
   color: "#fff",
 }}>
-            <h3>Total Enquiries</h3>
-            <h2>{enquiries.length}</h2>
+            <h3 style={{ color: "#fff" }}>Total Enquiries</h3>
+            <h2 style={{ color: "#fff" }}>{enquiries.length}</h2>
           </div>
 
           <div style={{
@@ -1001,11 +1001,11 @@ function printPurchaseBill() {
   boxSizing: "border-box",
   color: "#fff",
 }}>
-            <h3>Total Selling Amount</h3>
+            <h3 style={{ color: "#fff" }}>Total Selling Amount</h3>
             <h2 style={{ color: "#fff" }}>
               ₹{monthlySales.toLocaleString("en-IN")}
             </h2>
-            <p style={{ marginBottom: 0 }}>
+            <p style={{ marginBottom: 0, color: "#fff" }}>
               {months[selectedMonth]} {selectedYear}
             </p>
           </div>
@@ -1026,11 +1026,11 @@ function printPurchaseBill() {
               color: "#fff",
             }}
           >
-            <h3 style={{ marginTop: 0 }}>Sold Properties</h3>
+            <h3 style={{ marginTop: 0, color: "#fff" }}>Sold Properties</h3>
             <h2 style={{ color: "#fff" }}>
               {soldProperties.length}
             </h2>
-            <p style={{ marginBottom: 0 }}>View All Sold Properties →</p>
+            <p style={{ marginBottom: 0, color: "#fff" }}>View All Sold Properties →</p>
           </button>
           
       <button
@@ -1048,10 +1048,9 @@ function printPurchaseBill() {
   textAlign: "left",
   color: "#fff",
 }}
-      >
-        <h3 style={{ margin: "0 0 10px" }}>Commission</h3>
-        <p style={{ margin: 0 }}>Property Commission</p>
-        <p style={{ marginBottom: 0 }}>Add / View / Print →</p>
+      ><h3 style={{ margin: "0 0 10px", color: "#fff" }}>Commission</h3>
+        <p style={{ margin: 0, color: "#fff" }}>Property Commission</p>
+        <p style={{ marginBottom: 0, color: "#fff" }}>Add / View / Print →</p>
       </button>
 
       <button
@@ -1070,9 +1069,9 @@ function printPurchaseBill() {
   color: "#fff",
 }}
 >
-  <h3 style={{ margin: "0 0 10px" }}>Bill</h3>
-  <p style={{ margin: 0 }}>₹{billTotal.toLocaleString("en-IN")}</p>
-  <p style={{ marginBottom: 0 }}>Print / Download Bill →</p>
+  <h3 style={{ margin: "0 0 10px", color: "#fff" }}>Bill</h3>
+  <p style={{ margin: 0, color: "#fff" }}>₹{billTotal.toLocaleString("en-IN")}</p>
+  <p style={{ marginBottom: 0, color: "#fff" }}>Print / Download Bill →</p>
 </button>  </div>
 
         <div style={{
