@@ -1,121 +1,141 @@
-
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
 
 export default function RegisterPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState({
+    fullName: "",
+    username: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleRegister(
-    e: React.FormEvent<HTMLFormElement>
-  ) {
+  function updateField(e: React.ChangeEvent<HTMLInputElement>) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMessage("");
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          name,
-          phone,
-        },
-      },
-    });
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    setLoading(false);
+      const result = await response.json();
 
-    if (error) {
-      setMessage(error.message);
-      return;
+      if (!response.ok) {
+        setMessage(result.error || "Registration नहीं हो पाया।");
+      } else {
+        setMessage("Registration सफल हुआ! अब Login करें।");
+        setForm({
+          fullName: "",
+          username: "",
+          phone: "",
+          password: "",
+          confirmPassword: "",
+        });
+      }
+    } catch {
+      setMessage("Network error। कृपया दोबारा कोशिश करें।");
+    } finally {
+      setLoading(false);
     }
-
-    setMessage(
-      "Registration successful! Please check your email for verification."
-    );
   }
 
   return (
-    <main className="container public-auth-page">
-      <div className="public-auth-card"
-        style={{
-          maxWidth: "450px",
-          margin: "50px auto",
-          padding: "30px",
-          background: "white",
-          borderRadius: "12px",
-          boxShadow: "0 3px 15px rgba(0,0,0,0.1)",
-        }}
-      >
-        <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
+    <main style={{
+      minHeight: "100vh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: "20px",
+      background: "#f1f5f9"
+    }}>
+      <form onSubmit={handleSubmit} style={{
+        width: "100%",
+        maxWidth: "420px",
+        background: "white",
+        padding: "28px",
+        borderRadius: "14px",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.08)"
+      }}>
+        <h1 style={{ textAlign: "center", marginBottom: "8px" }}>
           Create Account
         </h1>
 
-        <form onSubmit={handleRegister}>
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+        <p style={{ textAlign: "center", color: "#64748b", marginBottom: "24px" }}>
+          Real Home Service
+        </p>
 
-          <input
-            type="email"
-            placeholder="Email Address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-          <input
-            type="tel"
-            placeholder="Phone Number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
-          />
-
-          <input
-            type="password"
-            placeholder="Create Password (minimum 6 characters)"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            minLength={6}
-            required
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            style={{ width: "100%" }}
-          >
-            {loading ? "Please Wait..." : "Register"}
-          </button>
-        </form>
+        {[
+          { name: "fullName", label: "Full Name", type: "text" },
+          { name: "username", label: "Username", type: "text" },
+          { name: "phone", label: "Mobile Number", type: "tel" },
+          { name: "password", label: "Password", type: "password" },
+          { name: "confirmPassword", label: "Confirm Password", type: "password" },
+        ].map((field) => (
+          <div key={field.name} style={{ marginBottom: "16px" }}>
+            <label style={{ display: "block", marginBottom: "6px", fontWeight: 600 }}>
+              {field.label}
+            </label>
+            <input
+              name={field.name}
+              type={field.type}
+              value={form[field.name as keyof typeof form]}
+              onChange={updateField}
+              required
+              autoComplete="off"
+              style={{
+                width: "100%",
+                padding: "12px",
+                border: "1px solid #cbd5e1",
+                borderRadius: "8px",
+                boxSizing: "border-box"
+              }}
+            />
+          </div>
+        ))}
 
         {message && (
-          <p style={{ marginTop: "15px", textAlign: "center" }}>
+          <p style={{ color: "#2563eb", marginBottom: "16px" }}>
             {message}
           </p>
         )}
 
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            width: "100%",
+            padding: "13px",
+            background: "#2563eb",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            fontWeight: 700,
+            cursor: "pointer"
+          }}
+        >
+          {loading ? "Please wait..." : "Register"}
+        </button>
+
         <p style={{ textAlign: "center", marginTop: "20px" }}>
           Already have an account?{" "}
-          <Link href="/login" style={{ color: "#2874a6" }}>
+          <Link href="/login" style={{ color: "#2563eb", fontWeight: 600 }}>
             Login
           </Link>
         </p>
-      </div>
+      </form>
     </main>
   );
 }
-
