@@ -1505,10 +1505,7 @@ function printPurchaseBill() {
           </button>
         </form>
 
-          >
-            {saving ? "Uploading Property..." : "Add Property"}
-          </button>
-        </form>
+          
 
         {/* FIND PROPERTY BUTTON */}
         <div style={{ marginBottom: 30 }}>
