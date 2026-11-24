@@ -980,11 +980,14 @@ function printPurchaseBill() {
           </div>
 
           <div style={{
-            padding: 20,
-            background: "#eee",
-            borderRadius: 10,
-            minWidth: 180
-          }}>
+  padding: 20,
+  background: "linear-gradient(135deg, #0f766e, #134e4a)",
+  borderRadius: 12,
+  minWidth: 0,
+  minHeight: 145,
+  boxSizing: "border-box",
+  color: "#fff",
+}}>
             <h3>Total Enquiries</h3>
             <h2>{enquiries.length}</h2>
           </div>
