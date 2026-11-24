@@ -967,11 +967,14 @@ function printPurchaseBill() {
   width: "100%",
 }}>
           <div style={{
-            padding: 20,
-            background: "#eee",
-            borderRadius: 10,
-            minWidth: 180
-          }}>
+  padding: 20,
+  background: "linear-gradient(135deg, #2563eb, #1e3a8a)",
+  borderRadius: 12,
+  minWidth: 0,
+  minHeight: 145,
+  boxSizing: "border-box",
+  color: "#fff",
+}}>
             <h3>Total Properties</h3>
             <h2>{visibleProperties.length}</h2>
           </div>
