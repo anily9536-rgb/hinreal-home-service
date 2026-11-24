@@ -37,7 +37,7 @@ useEffect(() => {
   }
 
   const linkStyle = {
-    color: "#222",
+    color: "#ffffff",
     textDecoration: "none",
     fontSize: "16px",
     fontWeight: 500,
@@ -46,7 +46,7 @@ useEffect(() => {
 
   const customerLinkStyle = {
     ...linkStyle,
-    color: "#0b57d0",
+    color: "#f0d58a",
     fontWeight: "bold" as const,
   };
 
