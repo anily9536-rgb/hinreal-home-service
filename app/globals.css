@@ -193,3 +193,41 @@ body.public-site h2,
 body.public-site h3 {
   color: #10264a;
 }
+/* PUBLIC LOGIN AND REGISTER DESIGN */
+
+body:has(.public-auth-page) {
+  background: linear-gradient(135deg, #091a33, #174a85, #087e8b);
+  min-height: 100vh;
+}
+
+.public-auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25px 15px;
+}
+
+.public-auth-card {
+  width: 100%;
+  background: linear-gradient(145deg, #ffffff, #edf5ff) !important;
+  border: 2px solid #c9a34a;
+  border-radius: 18px !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.22) !important;
+}
+
+.public-auth-card h1 {
+  color: #10264a;
+}
+
+.public-auth-card input {
+  border: 1px solid #b8c9df;
+  border-radius: 9px;
+}
+
+.public-auth-card button {
+  background: linear-gradient(110deg, #c9a34a, #f0d58a);
+  color: #091a33;
+  border: none;
+  font-weight: bold;
+}
