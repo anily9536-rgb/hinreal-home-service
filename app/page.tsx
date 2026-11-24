@@ -101,11 +101,12 @@ export default function Home() {
       }
 
       if (area.trim()) {
-        query = query.ilike(
-          "locality",
-          `%${area.trim()}%`
-        );
-      }
+  const searchText = area.trim();
+
+  query = query.or(
+    `locality.ilike.%${searchText}%,address.ilike.%${searchText}%,property_code.ilike.%${searchText}%`
+  );
+}
 
       const { data, error } = await query;
 
