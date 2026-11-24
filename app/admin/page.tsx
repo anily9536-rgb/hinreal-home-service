@@ -1539,7 +1539,7 @@ function printPurchaseBill() {
                 </div>
               ))}
 
-
+</div>
           <button
             type="submit"
             disabled={saving}
