@@ -1010,19 +1010,18 @@ function printPurchaseBill() {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => router.push("/admin/sold")}
-            style={{
-              padding: 20,
-              background: "#e0f2fe",
-              border: "1px solid #7dd3fc",
-              borderRadius: 10,
-              minWidth: 220,
-              cursor: "pointer",
-              textAlign: "left",
-              color: "#0c4a6e"
-            }}
+          style={{
+  padding: 20,
+  background: "linear-gradient(135deg, #7c3aed, #4c1d95)",
+  border: "none",
+  borderRadius: 12,
+  minWidth: 0,
+  minHeight: 145,
+  boxSizing: "border-box",
+  cursor: "pointer",
+  textAlign: "left",
+  color: "#fff",
+}}
           >
             <h3 style={{ marginTop: 0 }}>Sold Properties</h3>
             <h2 style={{ color: "#0369a1" }}>
