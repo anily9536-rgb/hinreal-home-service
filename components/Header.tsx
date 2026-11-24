@@ -29,7 +29,7 @@ useEffect(() => {
     document.body.classList.remove("public-site");
   };
 }, []);
-  async function handleLogout() {
+  
   
 async function handleLogout() {
   await fetch("/api/logout", {
