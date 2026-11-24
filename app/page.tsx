@@ -300,14 +300,14 @@ export default function Home() {
                   margin: "16px 0 7px",
                 }}
               >
-                Area / Location
+                Area / Location / Property Code
               </label>
 
               <input
                 type="text"
                 value={area}
                 onChange={(e) => setArea(e.target.value)}
-                placeholder="Enter area name"
+                placeholder="Enter Area, Location or Property Code"
                 style={{
                   width: "100%",
                   padding: 13,
