@@ -57,7 +57,7 @@ export default function LoginPage() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      padding: "24px 16px",
+      padding: "12px 10px"
       background: "linear-gradient(135deg, #071b49 0%, #123c80 48%, #6d28a8 100%)",
       position: "relative",
       overflow: "hidden"
@@ -86,7 +86,7 @@ export default function LoginPage() {
 
       <section style={{
         width: "100%",
-        maxWidth: "460px",
+        maxWidth: "560px"
         position: "relative",
         zIndex: 1
       }}>
@@ -138,7 +138,7 @@ export default function LoginPage() {
           width: "100%",
           boxSizing: "border-box",
           background: "rgba(255,255,255,0.97)",
-          padding: "clamp(24px, 6vw, 34px)",
+          padding: "clamp(30px, 8vw, 48px)",
       minHeight: "68vh",
 display: "flex",
 flexDirection: "column",
@@ -215,7 +215,7 @@ justifyContent: "center",
             placeholder="अपना password डालें"
             style={{
               width: "100%",
-              padding: "14px 15px",
+              padding: "18px 16px",
               border: "1px solid #cbd5e1",
               borderRadius: "11px",
               boxSizing: "border-box",
@@ -243,7 +243,7 @@ justifyContent: "center",
             disabled={loading}
             style={{
               width: "100%",
-              padding: "15px",
+              padding: "18px",
               background: loading
                 ? "#64748b"
                 : "linear-gradient(90deg, #1d4ed8, #6d28d9)",
