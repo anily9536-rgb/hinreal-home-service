@@ -57,7 +57,7 @@ export default function LoginPage() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      padding: "12px 10px"
+      padding: "12px 10px",
       background: "linear-gradient(135deg, #071b49 0%, #123c80 48%, #6d28a8 100%)",
       position: "relative",
       overflow: "hidden"
@@ -86,7 +86,7 @@ export default function LoginPage() {
 
       <section style={{
         width: "100%",
-        maxWidth: "560px"
+        maxWidth: "560px",
         position: "relative",
         zIndex: 1
       }}>
@@ -185,7 +185,7 @@ justifyContent: "center",
             placeholder="अपना username डालें"
             style={{
               width: "100%",
-              padding: "14px 15px",
+              padding: "18px 16px",
               border: "1px solid #cbd5e1",
               borderRadius: "11px",
               boxSizing: "border-box",
