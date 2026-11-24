@@ -1536,10 +1536,9 @@ function printPurchaseBill() {
                   <small style={{ color: "#17375e" }}>
                     {photo.name}
                   </small>
-                </div>
-              ))}
-
-</div>
+                </div>              ))}
+            </div>
+          </div>
           <button
             type="submit"
             disabled={saving}
