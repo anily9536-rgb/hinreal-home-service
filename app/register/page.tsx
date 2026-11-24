@@ -44,8 +44,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="container">
-      <div
+    <main className="container public-auth-page">
+      <div className="public-auth-card"
         style={{
           maxWidth: "450px",
           margin: "50px auto",
