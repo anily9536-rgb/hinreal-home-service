@@ -22,7 +22,13 @@ export default function Header() {
 
     return () => subscription.unsubscribe();
   }, []);
+useEffect(() => {
+  document.body.classList.add("public-site");
 
+  return () => {
+    document.body.classList.remove("public-site");
+  };
+}, []);
   async function handleLogout() {
     await supabase.auth.signOut();
     setUser(null);
