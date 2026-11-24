@@ -231,3 +231,19 @@ body:has(.public-auth-page) {
   border: none;
   font-weight: bold;
 }
+/* PUBLIC FOOTER TEXT VISIBILITY */
+
+body.public-site footer,
+body.public-site footer h2,
+body.public-site footer p,
+body.public-site footer a {
+  color: #ffffff !important;
+}
+
+body.public-site footer a {
+  text-decoration: none;
+}
+
+body.public-site footer a:hover {
+  color: #f0d58a !important;
+}
