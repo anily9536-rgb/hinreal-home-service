@@ -1478,7 +1478,7 @@ function printPurchaseBill() {
                 gap: 10
               }}
             >
-              {photos.map((photo, index) => (
+              
               
               {photos.map((photo, index) => (
                 <div
