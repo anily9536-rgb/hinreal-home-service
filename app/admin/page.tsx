@@ -961,10 +961,11 @@ function printPurchaseBill() {
         <h2>Dashboard Overview</h2>
 
         <div style={{
-          display: "flex",
-          gap: 20,
-          flexWrap: "wrap"
-        }}>
+  display: "grid",
+  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+  gap: 16,
+  width: "100%",
+}}>
           <div style={{
             padding: 20,
             background: "#eee",
