@@ -1401,23 +1401,159 @@ function printPurchaseBill() {
               Property Photos (Maximum 10)
             </label>
 
+        <h2
+          style={{
+            marginTop: 30,
+            marginBottom: 18,
+            padding: "18px 20px",
+            color: "#ffffff",
+            fontSize: 24,
+            fontWeight: 800,
+            borderRadius: 14,
+            background: "linear-gradient(110deg, #071a35, #123d70, #b8860b)",
+            border: "1px solid #d4af37",
+            boxShadow: "0 8px 24px rgba(7,26,53,0.2)"
+          }}
+        >
+          ✦ Add New Property
+        </h2>
+
+        <form
+          onSubmit={handleAddProperty}
+          style={{
+            display: "grid",
+            gap: 15,
+            maxWidth: 650,
+            padding: 22,
+            border: "2px solid #d4af37",
+            borderRadius: 16,
+            marginBottom: 25,
+            background: "linear-gradient(145deg, #ffffff, #eef4fb)",
+            boxShadow: "0 12px 30px rgba(7,26,53,0.14)"
+          }}
+        >
+          <input
+            type="text"
+            placeholder="Property Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            style={propertyInputStyle}
+          />
+
+          <input
+            type="text"
+            placeholder="Property Location / Locality"
+            value={locality}
+            onChange={(e) => setLocality(e.target.value)}
+            required
+            style={propertyInputStyle}
+          />
+
+          <input
+            type="text"
+            placeholder="Full Property Address (Optional)"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            style={propertyInputStyle}
+          />
+
+          <select
+            value={listingType}
+            onChange={(e) => setListingType(e.target.value)}
+            style={propertyInputStyle}
+          >
+            <option value="Buy">For Sale</option>
+            <option value="Rent">For Rent</option>
+          </select>
+
+          <select
+            value={propertyType}
+            onChange={(e) => setPropertyType(e.target.value)}
+            style={propertyInputStyle}
+          >
+            <option value="Residential">Residential</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Land">Land</option>
+            <option value="Apartment">Apartment</option>
+            <option value="Villa">Villa</option>
+          </select>
+
+          <input
+            type="number"
+            placeholder="Property Price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            min="1"
+            required
+            style={propertyInputStyle}
+          />
+
+          <input
+            type="tel"
+            placeholder="Contact Phone (Optional)"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            style={propertyInputStyle}
+          />
+
+          <textarea
+            placeholder="Property Description"
+            rows={5}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            style={{
+              ...propertyInputStyle,
+              resize: "vertical",
+              minHeight: 110
+            }}
+          />
+
+          <div
+            style={{
+              padding: 16,
+              borderRadius: 12,
+              background: "#eaf1fa",
+              border: "1px solid #c49a35"
+            }}
+          >
+            <label
+              style={{
+                display: "block",
+                fontWeight: 800,
+                color: "#102b50",
+                marginBottom: 10
+              }}
+            >
+              📸 Property Photos (Maximum 10)
+            </label>
+
             <input
               key={photoInputKey}
               type="file"
               accept="image/jpeg,image/png,image/webp"
               multiple
               onChange={handlePhotoChange}
+              style={{
+                width: "100%",
+                padding: 10,
+                background: "#ffffff",
+                borderRadius: 8,
+                border: "1px solid #c49a35"
+              }}
             />
 
-            <p>
+            <p style={{ color: "#17375e", fontWeight: 600 }}>
               {photos.length}/10 photos selected. Maximum 5 MB per photo.
             </p>
 
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
-              gap: 10
-            }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
+                gap: 10
+              }}
+            >
               {photos.map((photo, index) => (
                 <div key={index}>
                   <img
@@ -1427,10 +1563,11 @@ function printPurchaseBill() {
                       width: "100%",
                       height: 90,
                       objectFit: "cover",
-                      borderRadius: 8
+                      borderRadius: 8,
+                      border: "2px solid #c49a35"
                     }}
                   />
-                  <small>{photo.name}</small>
+                  <small style={{ color: "#17375e" }}>{photo.name}</small>
                 </div>
               ))}
             </div>
@@ -1440,13 +1577,21 @@ function printPurchaseBill() {
             type="submit"
             disabled={saving}
             style={{
-              padding: 14,
-              background: "#111827",
-              color: "#fff",
-              border: 0,
-              borderRadius: 8,
-              cursor: saving ? "wait" : "pointer"
+              padding: 15,
+              background: "linear-gradient(110deg, #09264b, #1764a5, #c49a35)",
+              color: "#ffffff",
+              border: "1px solid #d4af37",
+              borderRadius: 10,
+              fontSize: 16,
+              fontWeight: 800,
+              cursor: saving ? "wait" : "pointer",
+              boxShadow: "0 6px 16px rgba(7,26,53,0.22)"
             }}
+          >
+            {saving ? "Uploading Property..." : "✦ Add Property"}
+          </button>
+        </form>
+
           >
             {saving ? "Uploading Property..." : "Add Property"}
           </button>
