@@ -30,11 +30,18 @@ useEffect(() => {
   };
 }, []);
   async function handleLogout() {
-    await supabase.auth.signOut();
-    setUser(null);
-    setMenuOpen(false);
-    window.location.href = "/";
-  }
+  
+async function handleLogout() {
+  await fetch("/api/logout", {
+    method: "POST",
+  });
+
+  await supabase.auth.signOut();
+  setUser(null);
+  setMenuOpen(false);
+  window.location.href = "/login";
+}
+
 
   const linkStyle = {
     color: "#ffffff",
