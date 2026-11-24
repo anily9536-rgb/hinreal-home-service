@@ -1479,7 +1479,49 @@ function printPurchaseBill() {
               }}
             >
               {photos.map((photo, index) => (
-                <div key={index}>
+              
+              {photos.map((photo, index) => (
+                <div
+                  key={index}
+                  style={{
+                    position: "relative",
+                    padding: 4,
+                    background: "#ffffff",
+                    borderRadius: 10,
+                    border: "1px solid #c49a35"
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPhotos((current) =>
+                        current.filter((_, photoIndex) => photoIndex !== index)
+                      );
+                      setPhotoInputKey((key) => key + 1);
+                      setMessage("Photo removed.");
+                    }}
+                    style={{
+                      position: "absolute",
+                      top: 7,
+                      right: 7,
+                      width: 26,
+                      height: 26,
+                      borderRadius: "50%",
+                      background: "#dc2626",
+                      color: "#ffffff",
+                      border: "2px solid #ffffff",
+                      fontSize: 18,
+                      fontWeight: 900,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      zIndex: 2
+                    }}
+                  >
+                    ×
+                  </button>
+
                   <img
                     src={URL.createObjectURL(photo)}
                     alt={photo.name}
@@ -1487,15 +1529,16 @@ function printPurchaseBill() {
                       width: "100%",
                       height: 90,
                       objectFit: "cover",
-                      borderRadius: 8,
-                      border: "2px solid #c49a35"
+                      borderRadius: 8
                     }}
                   />
-                  <small style={{ color: "#17375e" }}>{photo.name}</small>
+
+                  <small style={{ color: "#17375e" }}>
+                    {photo.name}
+                  </small>
                 </div>
               ))}
-            </div>
-          </div>
+
 
           <button
             type="submit"
