@@ -993,11 +993,14 @@ function printPurchaseBill() {
           </div>
 
           <div style={{
-            padding: 20,
-            background: "#e8f5e9",
-            borderRadius: 10,
-            minWidth: 220
-          }}>
+  padding: 20,
+  background: "linear-gradient(135deg, #15803d, #14532d)",
+  borderRadius: 12,
+  minWidth: 0,
+  minHeight: 145,
+  boxSizing: "border-box",
+  color: "#fff",
+}}>
             <h3>Total Selling Amount</h3>
             <h2 style={{ color: "#15803d" }}>
               ₹{monthlySales.toLocaleString("en-IN")}
