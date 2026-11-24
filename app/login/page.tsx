@@ -39,7 +39,7 @@ export default function LoginPage() {
         return;
       }
 
-      window.location.href = "/property";
+      window.location.href = "/";
     } catch {
       setMessage("Network error। दोबारा कोशिश करें।");
     } finally {
