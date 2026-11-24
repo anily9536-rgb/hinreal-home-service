@@ -1,3 +1,4 @@
+
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { supabaseAdmin } from "@/lib/supabase-admin";
@@ -63,10 +64,30 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       access_token: data.session.access_token,
       refresh_token: data.session.refresh_token,
     });
+
+    const secure = process.env.NODE_ENV === "production";
+
+    response.cookies.set("rhs_access_token", data.session.access_token, {
+      httpOnly: true,
+      secure,
+      sameSite: "lax",
+      path: "/",
+      maxAge: data.session.expires_in || 3600,
+    });
+
+    response.cookies.set("rhs_refresh_token", data.session.refresh_token, {
+      httpOnly: true,
+      secure,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
+
+    return response;
   } catch {
     return NextResponse.json(
       { error: "Login नहीं हो पाया। दोबारा कोशिश करें।" },
