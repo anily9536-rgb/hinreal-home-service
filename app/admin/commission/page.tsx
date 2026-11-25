@@ -220,7 +220,11 @@ export default function CommissionPage() {
 
     const commissionAmount = Number(amount);
 
-    if (!amount || !Number.isFinite(commissionAmount) || commissionAmount <= 0) {
+    if (
+      !amount ||
+      !Number.isFinite(commissionAmount) ||
+      commissionAmount <= 0
+    ) {
       alert("Sahi commission amount enter karein.");
       return;
     }
@@ -328,15 +332,15 @@ export default function CommissionPage() {
         <head>
           <title>REAL HOME SERVICE - Commission Bill</title>
           <style>
-            body { font-family: Arial, sans-serif; padding: 30px; color: #222; }
-            .company-header { text-align: center; border-bottom: 2px solid #222; padding-bottom: 15px; }
+            body { font-family: Arial, sans-serif; padding: 30px; color: #1e293b; }
+            .company-header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 15px; }
             .company-header img { width: 75px; height: 75px; object-fit: contain; }
             .company-header h1 { margin: 8px 0; font-size: 26px; }
             .bill-title, .details { text-align: center; }
             table { width: 100%; border-collapse: collapse; margin-top: 25px; }
-            th, td { border: 1px solid #ccc; padding: 10px; text-align: left; font-size: 12px; }
-            th { background: #eee; }
-            .total { text-align: right; font-size: 20px; font-weight: bold; margin-top: 25px; }
+            th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: left; font-size: 12px; }
+            th { background: #e2e8f0; color: #0f172a; }
+            .total { text-align: right; font-size: 20px; font-weight: bold; margin-top: 25px; color: #047857; }
             .authorised { text-align: right; font-weight: bold; margin-top: 60px; font-size: 14px; }
             @media print { button { display: none; } }
           </style>
@@ -390,15 +394,15 @@ export default function CommissionPage() {
         <head>
           <title>REAL HOME SERVICE - Property Commission Bill</title>
           <style>
-            body { font-family: Arial, sans-serif; padding: 30px; color: #222; }
-            .company-header { text-align: center; border-bottom: 2px solid #222; padding-bottom: 15px; }
+            body { font-family: Arial, sans-serif; padding: 30px; color: #1e293b; }
+            .company-header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 15px; }
             .company-header img { width: 75px; height: 75px; object-fit: contain; }
             .company-header h1 { margin: 8px 0; font-size: 26px; }
             h2, .details { text-align: center; }
             table { width: 100%; border-collapse: collapse; margin-top: 25px; }
-            th, td { border: 1px solid #ccc; padding: 12px; text-align: left; }
-            th { background: #eee; }
-            .total { text-align: right; font-size: 20px; font-weight: bold; margin-top: 25px; }
+            th, td { border: 1px solid #cbd5e1; padding: 12px; text-align: left; }
+            th { background: #e2e8f0; }
+            .total { text-align: right; font-size: 20px; font-weight: bold; margin-top: 25px; color: #047857; }
             .authorised { text-align: right; font-weight: bold; margin-top: 60px; }
           </style>
         </head>
@@ -445,13 +449,13 @@ export default function CommissionPage() {
   const inputStyle = {
     width: "100%",
     padding: "13px 14px",
-    border: "1px solid #d97706",
+    border: "1px solid #cbd5e1",
     borderRadius: "10px",
     marginTop: "7px",
     boxSizing: "border-box" as const,
-    background: "#fffaf2",
-    color: "#431407",
-    outlineColor: "#f97316",
+    background: "#ffffff",
+    color: "#1e293b",
+    outlineColor: "#2563eb",
     fontSize: "14px",
   };
 
@@ -465,77 +469,92 @@ export default function CommissionPage() {
   };
 
   const cardStyle = {
-    background: "linear-gradient(145deg, #fffaf0, #ffedd5)",
-    border: "1px solid #fdba74",
-    borderRadius: "18px",
+    background: "#ffffff",
+    border: "1px solid #e2e8f0",
+    borderRadius: "16px",
     padding: "20px",
     marginTop: "22px",
-    boxShadow: "0 8px 24px rgba(124,45,18,0.10)",
+    boxShadow: "0 6px 20px rgba(15,23,42,0.06)",
   };
 
-  const orangeButton = {
+  const primaryButton = {
     ...buttonStyle,
-    background: "linear-gradient(135deg, #f97316, #c2410c)",
-    color: "#fff",
-    boxShadow: "0 4px 12px rgba(194,65,12,0.22)",
+    background: "linear-gradient(135deg, #2563eb, #1e40af)",
+    color: "#ffffff",
+    boxShadow: "0 4px 12px rgba(37,99,235,0.18)",
   };
 
   return (
-    <main className="commission-page" style={{
-      maxWidth: "1100px",
-      margin: "auto",
-      padding: "20px",
-      fontFamily: "Arial, sans-serif",
-      minHeight: "100vh",
-      color: "#431407",
-      background: "linear-gradient(135deg, #fff7ed, #ffedd5, #fed7aa)",
-    }}>
+    <main
+      className="commission-page"
+      style={{
+        maxWidth: "1100px",
+        margin: "auto",
+        padding: "20px",
+        fontFamily: "Arial, sans-serif",
+        minHeight: "100vh",
+        color: "#1e293b",
+        background: "#f8fafc",
+      }}
+    >
       <style jsx>{`
         .commission-page h1 {
-          color: #7c2d12;
+          color: #0f172a;
           font-size: clamp(27px, 5vw, 36px);
           font-weight: 900;
           letter-spacing: -0.7px;
         }
+
         .commission-page h2 {
-          color: #9a3412;
+          color: #0f172a;
           font-weight: 800;
         }
+
         .commission-page label {
-          color: #7c2d12;
+          color: #334155;
           font-weight: 700;
           font-size: 14px;
         }
+
         .commission-page input:focus,
         .commission-page select:focus {
-          border-color: #ea580c;
-          box-shadow: 0 0 0 3px rgba(249,115,22,0.15);
+          border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+          outline: none;
         }
+
         .commission-page button {
           transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
+
         .commission-page button:hover {
           transform: translateY(-1px);
         }
+
         .commission-page table {
           border-radius: 12px;
           overflow: hidden;
         }
+
         .commission-page th {
-          background: linear-gradient(135deg, #9a3412, #ea580c);
-          color: white;
+          background: #0f172a;
+          color: #ffffff;
           white-space: nowrap;
         }
+
         .commission-page td {
-          background: #fffaf2;
-          color: #431407;
+          background: #ffffff;
+          color: #1e293b;
         }
+
         .commission-page tbody tr:nth-child(even) td {
-          background: #ffedd5;
+          background: #f8fafc;
         }
+
         .commission-page tbody tr:hover td {
-          background: #fed7aa;
+          background: #eff6ff;
         }
+
         @media (max-width: 600px) {
           .commission-page {
             padding: 12px !important;
@@ -544,28 +563,31 @@ export default function CommissionPage() {
       `}</style>
 
       <button
+        type="button"
         onClick={() => router.push("/admin")}
         style={{
           ...buttonStyle,
-          background: "linear-gradient(135deg, #7c2d12, #431407)",
-          color: "#fff",
+          background: "#0f172a",
+          color: "#ffffff",
           marginBottom: "18px",
         }}
       >
         ← Back to Admin
       </button>
 
-      <div style={{
-        background: "linear-gradient(135deg, #7c2d12, #c2410c, #f97316)",
-        padding: "24px",
-        borderRadius: "18px",
-        color: "#fff",
-        boxShadow: "0 10px 25px rgba(124,45,18,0.22)",
-      }}>
-        <h1 style={{ color: "#fff", margin: "0 0 8px" }}>
+      <div
+        style={{
+          background: "linear-gradient(135deg, #0f172a, #1e3a8a)",
+          padding: "26px",
+          borderRadius: "18px",
+          color: "#ffffff",
+          boxShadow: "0 10px 25px rgba(15,23,42,0.16)",
+        }}
+      >
+        <h1 style={{ color: "#ffffff", margin: "0 0 8px" }}>
           Property Commission
         </h1>
-        <p style={{ margin: 0, color: "#ffedd5" }}>
+        <p style={{ margin: 0, color: "#dbeafe" }}>
           Property commission add, manage aur monthly bill print karein.
         </p>
       </div>
@@ -595,14 +617,16 @@ export default function CommissionPage() {
             />
 
             {search.trim() && !selected && (
-              <div style={{
-                border: "1px solid #fdba74",
-                borderRadius: "10px",
-                marginTop: "8px",
-                maxHeight: "220px",
-                overflowY: "auto",
-                background: "#fffaf2",
-              }}>
+              <div
+                style={{
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "10px",
+                  marginTop: "8px",
+                  maxHeight: "220px",
+                  overflowY: "auto",
+                  background: "#ffffff",
+                }}
+              >
                 {filteredProperties.length === 0 ? (
                   <p style={{ padding: "12px" }}>Property nahi mili.</p>
                 ) : (
@@ -622,9 +646,9 @@ export default function CommissionPage() {
                         textAlign: "left",
                         padding: "13px",
                         border: "none",
-                        borderBottom: "1px solid #fed7aa",
-                        background: "#fffaf2",
-                        color: "#431407",
+                        borderBottom: "1px solid #e2e8f0",
+                        background: "#ffffff",
+                        color: "#1e293b",
                         cursor: "pointer",
                       }}
                     >
@@ -640,37 +664,46 @@ export default function CommissionPage() {
             )}
 
             {selected && (
-              <div style={{
-                background: "linear-gradient(135deg, #ffedd5, #fed7aa)",
-                border: "1px solid #fb923c",
-                padding: "15px",
-                borderRadius: "12px",
-                marginTop: "12px",
-              }}>
-                <b>Selected Property</b>
+              <div
+                style={{
+                  background: "#eff6ff",
+                  border: "1px solid #bfdbfe",
+                  padding: "15px",
+                  borderRadius: "12px",
+                  marginTop: "12px",
+                }}
+              >
+                <b style={{ color: "#1e40af" }}>Selected Property</b>
                 <p>Property ID: {selected.property_code}</p>
                 <p>Property: {selected.title || "-"}</p>
                 <p>Area: {selected.locality || "-"}</p>
                 <p>Type: {selected.property_type || "-"}</p>
+
                 <button
                   type="button"
                   onClick={() => {
                     setSelected(null);
                     setSearch("");
                   }}
-                  style={{ ...orangeButton, background: "#9a3412" }}
+                  style={{
+                    ...buttonStyle,
+                    background: "#475569",
+                    color: "#ffffff",
+                  }}
                 >
                   Change Property
                 </button>
               </div>
             )}
 
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-              gap: "12px",
-              marginTop: "18px",
-            }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                gap: "12px",
+                marginTop: "18px",
+              }}
+            >
               <div>
                 <label>Commission Amount (₹)</label>
                 <input
@@ -719,20 +752,22 @@ export default function CommissionPage() {
               />
             </div>
 
-            <div style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "10px",
-              marginTop: "18px",
-            }}>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "10px",
+                marginTop: "18px",
+              }}
+            >
               <button
                 type="button"
                 onClick={saveCommission}
                 disabled={!selected || saving}
                 style={{
-                  ...orangeButton,
-                  opacity: (!selected || saving) ? 0.6 : 1,
-                  cursor: (!selected || saving) ? "not-allowed" : "pointer",
+                  ...primaryButton,
+                  opacity: !selected || saving ? 0.6 : 1,
+                  cursor: !selected || saving ? "not-allowed" : "pointer",
                 }}
               >
                 {saving
@@ -748,8 +783,8 @@ export default function CommissionPage() {
                   onClick={resetForm}
                   style={{
                     ...buttonStyle,
-                    background: "#57534e",
-                    color: "#fff",
+                    background: "#475569",
+                    color: "#ffffff",
                   }}
                 >
                   Cancel Edit
@@ -761,11 +796,13 @@ export default function CommissionPage() {
           <section style={cardStyle}>
             <h2 style={{ marginTop: 0 }}>Commission Records</h2>
 
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-              gap: "12px",
-            }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+                gap: "12px",
+              }}
+            >
               <div>
                 <label>Select Month</label>
                 <select
@@ -799,22 +836,26 @@ export default function CommissionPage() {
               </div>
             </div>
 
-            <div style={{
-              background: "linear-gradient(135deg, #7c2d12, #c2410c, #f97316)",
-              borderRadius: "14px",
-              padding: "20px",
-              marginTop: "18px",
-              color: "#fff",
-              boxShadow: "0 7px 18px rgba(194,65,12,0.2)",
-            }}>
-              <p style={{ margin: 0, color: "#ffedd5" }}>
+            <div
+              style={{
+                background: "linear-gradient(135deg, #065f46, #047857)",
+                borderRadius: "14px",
+                padding: "20px",
+                marginTop: "18px",
+                color: "#ffffff",
+                boxShadow: "0 7px 18px rgba(4,120,87,0.16)",
+              }}
+            >
+              <p style={{ margin: 0, color: "#d1fae5" }}>
                 Total Commission
               </p>
-              <h2 style={{
-                margin: "8px 0 0",
-                color: "#fff",
-                fontSize: "30px",
-              }}>
+              <h2
+                style={{
+                  margin: "8px 0 0",
+                  color: "#ffffff",
+                  fontSize: "30px",
+                }}
+              >
                 ₹{totalCommission.toLocaleString("en-IN")}
               </h2>
               <small>{filteredCommissions.length} commission records</small>
@@ -824,7 +865,7 @@ export default function CommissionPage() {
               type="button"
               onClick={printCommission}
               style={{
-                ...orangeButton,
+                ...primaryButton,
                 marginTop: "16px",
               }}
             >
@@ -832,11 +873,13 @@ export default function CommissionPage() {
             </button>
 
             <div style={{ overflowX: "auto", marginTop: "18px" }}>
-              <table style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                minWidth: "650px",
-              }}>
+              <table
+                style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                  minWidth: "650px",
+                }}
+              >
                 <thead>
                   <tr>
                     {[
@@ -847,11 +890,14 @@ export default function CommissionPage() {
                       "Remarks",
                       "Actions",
                     ].map((heading) => (
-                      <th key={heading} style={{
-                        padding: "12px",
-                        border: "1px solid #c2410c",
-                        textAlign: "left",
-                      }}>
+                      <th
+                        key={heading}
+                        style={{
+                          padding: "12px",
+                          border: "1px solid #334155",
+                          textAlign: "left",
+                        }}
+                      >
                         {heading}
                       </th>
                     ))}
@@ -861,73 +907,91 @@ export default function CommissionPage() {
                 <tbody>
                   {filteredCommissions.length === 0 ? (
                     <tr>
-                      <td colSpan={6} style={{
-                        padding: "18px",
-                        textAlign: "center",
-                        border: "1px solid #fdba74",
-                      }}>
+                      <td
+                        colSpan={6}
+                        style={{
+                          padding: "18px",
+                          textAlign: "center",
+                          border: "1px solid #e2e8f0",
+                        }}
+                      >
                         No commission records found.
                       </td>
                     </tr>
                   ) : (
                     filteredCommissions.map((item) => (
                       <tr key={item.id}>
-                        <td style={{
-                          padding: "10px",
-                          border: "1px solid #fdba74",
-                        }}>
+                        <td
+                          style={{
+                            padding: "10px",
+                            border: "1px solid #e2e8f0",
+                          }}
+                        >
                           {item.property_code}
                         </td>
 
-                        <td style={{
-                          padding: "10px",
-                          border: "1px solid #fdba74",
-                        }}>
+                        <td
+                          style={{
+                            padding: "10px",
+                            border: "1px solid #e2e8f0",
+                          }}
+                        >
                           {item.property_title || "-"}
                           <br />
                           <small>{item.area || "-"}</small>
                         </td>
 
-                        <td style={{
-                          padding: "10px",
-                          border: "1px solid #fdba74",
-                        }}>
+                        <td
+                          style={{
+                            padding: "10px",
+                            border: "1px solid #e2e8f0",
+                          }}
+                        >
                           {months[item.commission_month - 1]} {item.commission_year}
                         </td>
 
-                        <td style={{
-                          padding: "10px",
-                          border: "1px solid #fdba74",
-                          fontWeight: "bold",
-                        }}>
+                        <td
+                          style={{
+                            padding: "10px",
+                            border: "1px solid #e2e8f0",
+                            fontWeight: "bold",
+                            color: "#047857",
+                          }}
+                        >
                           ₹{Number(item.commission_amount).toLocaleString("en-IN")}
                         </td>
 
-                        <td style={{
-                          padding: "10px",
-                          border: "1px solid #fdba74",
-                        }}>
+                        <td
+                          style={{
+                            padding: "10px",
+                            border: "1px solid #e2e8f0",
+                          }}
+                        >
                           {item.remarks || "-"}
                         </td>
 
-                        <td style={{
-                          padding: "10px",
-                          border: "1px solid #fdba74",
-                          minWidth: "230px",
-                        }}>
-                          <div style={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            gap: "6px",
-                          }}>
+                        <td
+                          style={{
+                            padding: "10px",
+                            border: "1px solid #e2e8f0",
+                            minWidth: "230px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexWrap: "wrap",
+                              gap: "6px",
+                            }}
+                          >
                             <button
                               type="button"
                               onClick={() => printSingleCommission(item)}
                               style={{
                                 ...buttonStyle,
                                 padding: "8px 11px",
-                                background: "#15803d",
-                                color: "#fff",
+                                background: "#047857",
+                                color: "#ffffff",
                               }}
                             >
                               Print / PDF
@@ -939,8 +1003,8 @@ export default function CommissionPage() {
                               style={{
                                 ...buttonStyle,
                                 padding: "8px 11px",
-                                background: "#ea580c",
-                                color: "#fff",
+                                background: "#2563eb",
+                                color: "#ffffff",
                               }}
                             >
                               Edit
@@ -953,7 +1017,7 @@ export default function CommissionPage() {
                                 ...buttonStyle,
                                 padding: "8px 11px",
                                 background: "#dc2626",
-                                color: "#fff",
+                                color: "#ffffff",
                               }}
                             >
                               Delete
