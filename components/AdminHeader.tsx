@@ -74,7 +74,9 @@ export default function AdminHeader() {
           <Link href="/admin/contact" style={linkStyle}>
             Admin Contact
           </Link>
-
+<Link href="/admin/customers" style={linkStyle}>
+  Customers
+</Link>
           <button type="button" onClick={handleLogout}>
             Logout
           </button>
