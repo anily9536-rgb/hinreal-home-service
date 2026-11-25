@@ -130,7 +130,13 @@ export default function AdminHeader() {
           >
             Admin Contact
           </Link>
-
+<Link
+  href="/admin/customers"
+  style={linkStyle}
+  onClick={() => setMenuOpen(false)}
+>
+  Customers
+</Link>
           <button type="button" onClick={handleLogout}>
             Logout
           </button>
