@@ -434,24 +434,6 @@ export default function Home() {
           height: 420px;
           object-fit: cover;
           display: block;
-          border: 1px solid #66532f;
-        }
-
-        .image-caption {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: 22px;
-          background: linear-gradient(transparent, rgba(0,0,0,.9));
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .image-caption span {
-          color: #d6b56d;
-          font-size: 10px;
 
     </>
   );
