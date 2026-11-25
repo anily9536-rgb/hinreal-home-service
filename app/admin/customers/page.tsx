@@ -25,39 +25,41 @@ export default function CustomersPage() {
   useEffect(() => {
     async function loadCustomers() {
       try {
-        const { data: auth, error: authError } =
-          await supabase.auth.getUser();
+        const { data: sessionData, error: sessionError } =
+          await supabase.auth.getSession();
 
-        if (authError || !auth.user) {
+        const session = sessionData.session;
+
+        if (sessionError || !session) {
           router.replace("/admin/login");
           return;
         }
 
-        const { data: profile, error: profileError } =
-          await supabase
-            .from("profiles")
-            .select("role")
-            .eq("id", auth.user.id)
-            .single();
+        const response = await fetch("/api/admin/customers", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          cache: "no-store",
+        });
 
-        if (profileError || profile?.role !== "admin") {
+        const result = await response.json();
+
+        if (response.status === 401 || response.status === 403) {
           router.replace("/admin/login");
           return;
         }
 
-        const { data, error } = await supabase
-          .from("customer_profiles")
-          .select("user_id, full_name, username, phone, created_at")
-          .order("created_at", { ascending: false });
-
-        if (error) {
-          setMessage("Customer data load nahi hua: " + error.message);
+        if (!response.ok) {
+          setMessage(
+            result.error || "Customer records load nahi ho paaye."
+          );
           return;
         }
 
-        setCustomers(data || []);
+        setCustomers(result.customers || []);
       } catch {
-        setMessage("Kuch gadbad hui. Dobara try karein.");
+        setMessage("Server se data load nahi hua. Dobara try karein.");
       } finally {
         setLoading(false);
       }
@@ -157,7 +159,8 @@ export default function CustomersPage() {
 
                     <p><b>Username:</b> {customer.username || "-"}</p>
                     <p><b>Mobile:</b> {customer.phone || "Not provided"}</p>
-                    <p><b>Registration Date:</b>{" "}
+                    <p>
+                      <b>Registration Date:</b>{" "}
                       {customer.created_at
                         ? new Date(customer.created_at).toLocaleString("en-IN")
                         : "Not available"}
