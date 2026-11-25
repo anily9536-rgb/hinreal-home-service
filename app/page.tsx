@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
@@ -8,31 +7,31 @@ const categories = [
     name: "Residential",
     slug: "residential",
     icon: "🏠",
-    description: "Beautiful homes for comfortable living.",
+    description: "Residential Properties",
   },
   {
     name: "Commercial",
     slug: "commercial",
     icon: "🏢",
-    description: "Shops, offices and business spaces.",
+    description: "Shops, Offices & Commercial Spaces",
   },
   {
-    name: "Land & Plots",
+    name: "Land",
     slug: "land",
     icon: "🌳",
-    description: "Find the right land for your future.",
+    description: "Plots & Land Properties",
   },
   {
-    name: "Apartments",
+    name: "Apartment",
     slug: "apartment",
     icon: "🏬",
-    description: "Modern flats in your preferred location.",
+    description: "Flats & Apartments",
   },
   {
-    name: "Luxury Villas",
+    name: "Villa",
     slug: "villa",
     icon: "🏡",
-    description: "Premium independent homes and villas.",
+    description: "Independent Homes & Villas",
   },
 ];
 
@@ -41,157 +40,78 @@ export default function Home() {
     <>
       <Header />
 
-      <main className="luxury-home">
-        <section className="luxury-hero">
-          <div className="hero-overlay" />
+      <main>
+        <section className="hero">
+          <img
+            src="/file_0000000045d0821180988036e39a5ebd.png"
+            alt="Real Home Service Logo"
+            style={{
+              display: "block",
+              width: "min(90%, 600px)",
+              maxHeight: 200,
+              objectFit: "contain",
+              margin: "0 auto 20px",
+            }}
+          />
 
-          <div className="hero-content">
-            <span className="hero-tag">
-              YOUR PROPERTY. YOUR FUTURE.
-            </span>
-
-            <h1>
-              Discover a Place
-              <br />
-              <span>You’ll Love</span>
-            </h1>
-
-            <p>
-              Find your perfect property with Real Home Service.
-              Explore homes, apartments, commercial spaces and land.
-            </p>
-
-            <div className="hero-actions">
-              <Link href="/category/residential" className="gold-btn">
-                Explore Properties
-              </Link>
-
-              <Link href="/register" className="outline-btn">
-                Get Started
-              </Link>
-            </div>
-
-            <div className="hero-trust">
-              <span>✦ Trusted Property Platform</span>
-              <span>✦ Your Property Partner</span>
-            </div>
-          </div>
-
-          <div className="hero-bottom">
-            <span>REAL HOME SERVICE</span>
-            <span>FIND YOUR PLACE IN THE WORLD</span>
-          </div>
+          <h1>Find Your Dream Property</h1>
+          <p>Explore verified properties for sale and rent.</p>
         </section>
 
-        <section className="luxury-categories">
-          <div className="section-heading">
-            <span className="section-label">EXPLORE WITH US</span>
-            <h2>
-              Find Your <span>Perfect Property</span>
-            </h2>
-            <p>
-              Explore property options designed around your needs.
-            </p>
-          </div>
+        <section className="container">
+          <h2 style={{ textAlign: "center", marginBottom: 10 }}>
+            Explore Property Categories
+          </h2>
 
-          <div className="luxury-category-grid">
+          <p style={{ textAlign: "center", marginBottom: 25 }}>
+            Select a category to explore available properties.
+          </p>
+
+          <div
+            className="property-grid"
+            style={{
+              gridTemplateColumns:
+                "repeat(auto-fit, minmax(220px, 1fr))",
+            }}
+          >
             {categories.map((category) => (
               <Link
                 key={category.slug}
                 href={`/category/${category.slug}`}
-                className="luxury-category-card"
+                className="property-card"
+                style={{
+                  display: "block",
+                  textAlign: "center",
+                  padding: 30,
+                  minHeight: 190,
+                  border: "1px solid #dce5ee",
+                  borderRadius: 12,
+                  background: "#fff",
+                  boxShadow: "0 4px 14px rgba(0,0,0,0.08)",
+                }}
               >
-                <div className="category-icon">
+                <div style={{ fontSize: 48, marginBottom: 12 }}>
                   {category.icon}
                 </div>
 
-                <h3>{category.name}</h3>
+                <h2 style={{ marginBottom: 10 }}>
+                  {category.name}
+                </h2>
+
                 <p>{category.description}</p>
 
-                <span className="category-link">
-                  Explore Category <span>→</span>
+                <span
+                  style={{
+                    display: "inline-block",
+                    marginTop: 15,
+                    color: "#2874a6",
+                    fontWeight: "bold",
+                  }}
+                >
+                  View Properties →
                 </span>
               </Link>
             ))}
-          </div>
-        </section>
-
-        <section className="luxury-about">
-          <div className="about-image">
-            <img
-              src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=85"
-              alt="Luxury modern property"
-            />
-            <div className="image-caption">
-              <span>REAL HOME SERVICE</span>
-              <strong>Your Property Journey Starts Here</strong>
-            </div>
-          </div>
-
-          <div className="about-content">
-            <span className="section-label">WHY CHOOSE US</span>
-            <h2>
-              More Than Just
-              <br />
-              <span>A Property Platform</span>
-            </h2>
-
-            <p>
-              Finding the right property is an important decision.
-              Real Home Service helps you explore property options
-              through a simple and convenient platform.
-            </p>
-
-            <div className="feature-list">
-              <div className="feature-item">
-                <span>01</span>
-                <div>
-                  <h3>Multiple Categories</h3>
-                  <p>Explore residential, commercial, land and more.</p>
-                </div>
-              </div>
-
-              <div className="feature-item">
-                <span>02</span>
-                <div>
-                  <h3>Simple Experience</h3>
-                  <p>Browse property categories with easy navigation.</p>
-                </div>
-              </div>
-
-              <div className="feature-item">
-                <span>03</span>
-                <div>
-                  <h3>Customer Support</h3>
-                  <p>Connect with us whenever you need assistance.</p>
-                </div>
-              </div>
-            </div>
-
-            <Link href="/about" className="gold-btn">
-              Know More About Us
-            </Link>
-          </div>
-        </section>
-
-        <section className="luxury-cta">
-          <span className="section-label">LET’S FIND YOUR PLACE</span>
-          <h2>
-            Your Dream Property
-            <br />
-            <span>Could Be One Click Away.</span>
-          </h2>
-          <p>
-            Join Real Home Service and start exploring property options.
-          </p>
-
-          <div className="cta-actions">
-            <Link href="/register" className="gold-btn">
-              Create Customer Account
-            </Link>
-            <Link href="/login" className="outline-btn">
-              Customer Login
-            </Link>
           </div>
         </section>
       </main>
@@ -200,4 +120,3 @@ export default function Home() {
     </>
   );
 }
-      
