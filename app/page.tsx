@@ -104,8 +104,8 @@ export default function Home() {
   const searchText = area.trim();
 
   const filters = [
-    `locality.ilike.%$DIL1%`,
-    `address.ilike.%$DIL2%`,
+    `locality.ilike.%${searchText}%`,
+`address.ilike.%${searchText}%`,
   ];
   if (/^\d+$/.test(searchText)) {
     filters.push(`property_code.eq.${searchText}`);
