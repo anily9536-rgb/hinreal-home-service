@@ -326,48 +326,5 @@ export default function Home() {
 
         .hero-bottom {
           position: absolute;
-          bottom: 20px;
-          left: 8%;
-          right: 8%;
-          display: flex;
-          justify-content: space-between;
-          gap: 15px;
-          color: #d6b56d;
-          font-size: 10px;
-          letter-spacing: 2px;
-          z-index: 2;
-        }
 
-        .luxury-categories {
-          padding: 85px 7%;
-          background: #111;
-        }
-
-        .section-heading {
-          text-align: center;
-          margin-bottom: 45px;
-        }
-
-        .section-heading h2,
-        .about-content h2,
-        .luxury-cta h2 {
-          font-family: Georgia, serif;
-          font-size: clamp(32px, 4vw, 48px);
-          font-weight: 500;
-          line-height: 1.2;
-          margin: 15px 0;
-          color: #fff;
-        }
-
-        .section-heading p,
-        .luxury-cta > p {
-          color: #aaa49a;
-          line-height: 1.7;
-        }
-
-        .luxury-category-grid {
-          display: grid;
-          grid-template-columns: repeat(5, minmax(0, 1fr));
-          gap: 18px;
-          max-width: 1250px;
 
