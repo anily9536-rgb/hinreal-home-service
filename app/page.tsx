@@ -107,7 +107,12 @@ export default function Home() {
     `locality.ilike.%$DIL1%`,
     `address.ilike.%$DIL2%`,
   ];
+  if (/^\d+$/.test(searchText)) {
+    filters.push(`property_code.eq.${searchText}`);
+  }
 
+  query = query.or(filters.join(","));
+}
       const { data, error } = await query;
 
       if (error) {
