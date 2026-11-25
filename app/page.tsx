@@ -104,7 +104,7 @@ export default function Home() {
   const searchText = area.trim();
 
   query = query.or(
-    `locality.ilike.%${searchText}%,address.ilike.%${searchText}%,property_code.ilike.%${searchText}%`
+    `locality.ilike.%${searchText}%,address.ilike.%${searchText}%,property_code.eq.${searchText}
   );
 }
 
