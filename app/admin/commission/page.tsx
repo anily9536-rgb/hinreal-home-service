@@ -35,12 +35,13 @@ const months = [
 
 export default function CommissionPage() {
   const router = useRouter();
-
   const today = new Date();
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [editingCommissionId, setEditingCommissionId] = useState<number | null>(null);
+  const [editingCommissionId, setEditingCommissionId] =
+    useState<number | null>(null);
+
   const [properties, setProperties] = useState<Property[]>([]);
   const [commissions, setCommissions] = useState<Commission[]>([]);
   const [search, setSearch] = useState("");
@@ -94,13 +95,8 @@ export default function CommissionPage() {
             .order("created_at", { ascending: false }),
         ]);
 
-        if (propertyResult.error) {
-          throw propertyResult.error;
-        }
-
-        if (commissionResult.error) {
-          throw commissionResult.error;
-        }
+        if (propertyResult.error) throw propertyResult.error;
+        if (commissionResult.error) throw commissionResult.error;
 
         if (active) {
           setProperties(propertyResult.data || []);
@@ -161,119 +157,128 @@ export default function CommissionPage() {
       ...commissions.map((item) => item.commission_year),
     ])
   ).sort((a, b) => b - a);
-function editCommission(item: Commission) {
-  setEditingCommissionId(item.id);
-  setSelected({
-    id: item.property_id || "",
-    property_code: item.property_code,
-    title: item.property_title,
-    locality: item.area,
-    property_type: item.property_type,
-  });
-  setAmount(String(item.commission_amount));
-  setCommissionMonth(String(item.commission_month));
-  setCommissionYear(String(item.commission_year));
-  setRemarks(item.remarks || "");
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-  async function deleteCommission(item: Commission) {
-  const confirmDelete = window.confirm(
-    `Property ID ${item.property_code} ka commission record delete karna hai?`
-  );
-
-  if (!confirmDelete) return;
-
-  const { error } = await supabase
-    .from("property_commissions")
-    .delete()
-    .eq("id", item.id);
-
-  if (error) {
-    alert("Commission delete nahi hua.");
-    console.error(error);
-    return;
-  }
-
-  setCommissions((previous) =>
-    previous.filter((record) => record.id !== item.id)
-  );
-
-  alert("Commission record delete ho gaya.");
-}
-  async function saveCommission() {
-  if (!selected) {
-    alert("Please property select karein.");
-    return;
-  }
-
-  const commissionAmount = Number(amount);
-
-  if (!amount || !Number.isFinite(commissionAmount) || commissionAmount <= 0) {
-    alert("Sahi commission amount enter karein.");
-    return;
-  }
-
-  setSaving(true);
-
-  const commissionData = {
-    property_id: selected.id || null,
-    property_code: selected.property_code,
-    property_title: selected.title,
-    area: selected.locality,
-    property_type: selected.property_type,
-    commission_amount: commissionAmount,
-    commission_month: Number(commissionMonth),
-    commission_year: Number(commissionYear),
-    remarks: remarks.trim() || null,
-  };
-
-  try {
-    if (editingCommissionId !== null) {
-      const { data, error } = await supabase
-        .from("property_commissions")
-        .update(commissionData)
-        .eq("id", editingCommissionId)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setCommissions((previous) =>
-        previous.map((item) =>
-          item.id === editingCommissionId ? data : item
-        )
-      );
-
-      alert("Commission successfully update ho gaya.");
-    } else {
-      const { data, error } = await supabase
-        .from("property_commissions")
-        .insert(commissionData)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setCommissions((previous) => [data, ...previous]);
-
-      alert("Commission successfully save ho gaya.");
-    }
-
+  function resetForm() {
     setEditingCommissionId(null);
+    setSelected(null);
     setAmount("");
     setRemarks("");
-    setSelected(null);
     setSearch("");
-  } catch (error) {
-    console.error("Commission save/update error:", error);
-    alert("Commission save/update nahi hua. Dobara try karein.");
-  } finally {
-    setSaving(false);
+    setCommissionMonth(String(today.getMonth() + 1));
+    setCommissionYear(String(today.getFullYear()));
   }
-}
 
-    
+  function editCommission(item: Commission) {
+    setEditingCommissionId(item.id);
+
+    setSelected({
+      id: item.property_id || "",
+      property_code: item.property_code,
+      title: item.property_title,
+      locality: item.area,
+      property_type: item.property_type,
+    });
+
+    setAmount(String(item.commission_amount));
+    setCommissionMonth(String(item.commission_month));
+    setCommissionYear(String(item.commission_year));
+    setRemarks(item.remarks || "");
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function deleteCommission(item: Commission) {
+    const confirmDelete = window.confirm(
+      `Property ID ${item.property_code} ka commission record delete karna hai?`
+    );
+
+    if (!confirmDelete) return;
+
+    const { error } = await supabase
+      .from("property_commissions")
+      .delete()
+      .eq("id", item.id);
+
+    if (error) {
+      alert("Commission delete nahi hua.");
+      console.error(error);
+      return;
+    }
+
+    setCommissions((previous) =>
+      previous.filter((record) => record.id !== item.id)
+    );
+
+    alert("Commission record delete ho gaya.");
+  }
+
+  async function saveCommission() {
+    if (!selected) {
+      alert("Please property select karein.");
+      return;
+    }
+
+    const commissionAmount = Number(amount);
+
+    if (!amount || !Number.isFinite(commissionAmount) || commissionAmount <= 0) {
+      alert("Sahi commission amount enter karein.");
+      return;
+    }
+
+    setSaving(true);
+
+    const commissionData = {
+      property_id: selected.id || null,
+      property_code: selected.property_code,
+      property_title: selected.title,
+      area: selected.locality,
+      property_type: selected.property_type,
+      commission_amount: commissionAmount,
+      commission_month: Number(commissionMonth),
+      commission_year: Number(commissionYear),
+      remarks: remarks.trim() || null,
+    };
+
+    try {
+      if (editingCommissionId !== null) {
+        const { data, error } = await supabase
+          .from("property_commissions")
+          .update(commissionData)
+          .eq("id", editingCommissionId)
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        setCommissions((previous) =>
+          previous.map((item) =>
+            item.id === editingCommissionId ? data : item
+          )
+        );
+
+        alert("Commission successfully update ho gaya.");
+      } else {
+        const { data, error } = await supabase
+          .from("property_commissions")
+          .insert(commissionData)
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        setCommissions((previous) => [data, ...previous]);
+
+        alert("Commission successfully save ho gaya.");
+      }
+
+      resetForm();
+    } catch (error) {
+      console.error("Commission save/update error:", error);
+      alert("Commission save/update nahi hua. Dobara try karein.");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   function escapeHtml(value: unknown) {
     return String(value ?? "").replace(/[&<>"']/g, (character) => {
@@ -288,7 +293,6 @@ function editCommission(item: Commission) {
     });
   }
 
-  
   function printCommission() {
     const printWindow = window.open("", "_blank");
 
@@ -324,128 +328,43 @@ function editCommission(item: Commission) {
         <head>
           <title>REAL HOME SERVICE - Commission Bill</title>
           <style>
-            body {
-              font-family: Arial, sans-serif;
-              padding: 30px;
-              color: #222;
-            }
-
-            .company-header {
-              text-align: center;
-              border-bottom: 2px solid #222;
-              padding-bottom: 15px;
-            }
-
-            .company-header img {
-              width: 75px;
-              height: 75px;
-              object-fit: contain;
-            }
-
-            .company-header h1 {
-              margin: 8px 0;
-              font-size: 26px;
-            }
-
-            .bill-title {
-              text-align: center;
-              margin-top: 20px;
-            }
-
-            .details {
-              text-align: center;
-            }
-
-            table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-top: 25px;
-            }
-
-            th, td {
-              border: 1px solid #ccc;
-              padding: 10px;
-              text-align: left;
-              font-size: 12px;
-            }
-
-            th {
-              background: #eee;
-            }
-
-            .total {
-              text-align: right;
-              font-size: 20px;
-              font-weight: bold;
-              margin-top: 25px;
-            }
-
-            .authorised {
-              text-align: right;
-              font-weight: bold;
-              margin-top: 60px;
-              font-size: 14px;
-            }
-
-            @media print {
-              button {
-                display: none;
-              }
-            }
+            body { font-family: Arial, sans-serif; padding: 30px; color: #222; }
+            .company-header { text-align: center; border-bottom: 2px solid #222; padding-bottom: 15px; }
+            .company-header img { width: 75px; height: 75px; object-fit: contain; }
+            .company-header h1 { margin: 8px 0; font-size: 26px; }
+            .bill-title, .details { text-align: center; }
+            table { width: 100%; border-collapse: collapse; margin-top: 25px; }
+            th, td { border: 1px solid #ccc; padding: 10px; text-align: left; font-size: 12px; }
+            th { background: #eee; }
+            .total { text-align: right; font-size: 20px; font-weight: bold; margin-top: 25px; }
+            .authorised { text-align: right; font-weight: bold; margin-top: 60px; font-size: 14px; }
+            @media print { button { display: none; } }
           </style>
         </head>
-
         <body>
           <div class="company-header">
             <img src="${window.location.origin}/logo.png" alt="Company Logo">
             <h1>REAL HOME SERVICE</h1>
           </div>
-
           <h2 class="bill-title">PROPERTY COMMISSION BILL</h2>
-
-          <p class="details">
-            Period: ${escapeHtml(monthLabel)} ${escapeHtml(yearLabel)}
-          </p>
-
-          <p class="details">
-            Total Commission Entries: ${filteredCommissions.length}
-          </p>
-
-          <p class="details">
-            Print Date: ${new Date().toLocaleDateString("en-IN")}
-          </p>
-
+          <p class="details">Period: ${escapeHtml(monthLabel)} ${escapeHtml(yearLabel)}</p>
+          <p class="details">Total Commission Entries: ${filteredCommissions.length}</p>
+          <p class="details">Print Date: ${new Date().toLocaleDateString("en-IN")}</p>
           <table>
             <thead>
               <tr>
-                <th>No.</th>
-                <th>Property ID</th>
-                <th>Property</th>
-                <th>Area</th>
-                <th>Type</th>
-                <th>Month</th>
-                <th>Commission</th>
-                <th>Remarks</th>
+                <th>No.</th><th>Property ID</th><th>Property</th><th>Area</th>
+                <th>Type</th><th>Month</th><th>Commission</th><th>Remarks</th>
               </tr>
             </thead>
-
             <tbody>
               ${rows || '<tr><td colspan="8">No commission records found for this period.</td></tr>'}
             </tbody>
           </table>
-
-          <div class="total">
-            Total Commission: ₹${totalCommission.toLocaleString("en-IN")}
-          </div>
-
-          <div class="authorised">
-            AUTHORISED BILL
-          </div>
-
+          <div class="total">Total Commission: ₹${totalCommission.toLocaleString("en-IN")}</div>
+          <div class="authorised">AUTHORISED BILL</div>
           <script>
-            window.onload = function() {
-              window.print();
-            };
+            window.onload = function() { window.print(); };
           <\/script>
         </body>
       </html>
@@ -453,9 +372,6 @@ function editCommission(item: Commission) {
 
     printWindow.document.close();
   }
-
-
-    
 
   function printSingleCommission(item: Commission) {
     const printWindow = window.open("", "_blank");
@@ -466,7 +382,7 @@ function editCommission(item: Commission) {
     }
 
     const monthName = months[item.commission_month - 1];
-    const amount = Number(item.commission_amount);
+    const singleAmount = Number(item.commission_amount);
 
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -474,52 +390,16 @@ function editCommission(item: Commission) {
         <head>
           <title>REAL HOME SERVICE - Property Commission Bill</title>
           <style>
-            body {
-              font-family: Arial, sans-serif;
-              padding: 30px;
-              color: #222;
-            }
-            .company-header {
-              text-align: center;
-              border-bottom: 2px solid #222;
-              padding-bottom: 15px;
-            }
-            .company-header img {
-              width: 75px;
-              height: 75px;
-              object-fit: contain;
-            }
-            .company-header h1 {
-              margin: 8px 0;
-              font-size: 26px;
-            }
-            h2, .details {
-              text-align: center;
-            }
-            table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-top: 25px;
-            }
-            th, td {
-              border: 1px solid #ccc;
-              padding: 12px;
-              text-align: left;
-            }
-            th {
-              background: #eee;
-            }
-            .total {
-              text-align: right;
-              font-size: 20px;
-              font-weight: bold;
-              margin-top: 25px;
-            }
-            .authorised {
-              text-align: right;
-              font-weight: bold;
-              margin-top: 60px;
-            }
+            body { font-family: Arial, sans-serif; padding: 30px; color: #222; }
+            .company-header { text-align: center; border-bottom: 2px solid #222; padding-bottom: 15px; }
+            .company-header img { width: 75px; height: 75px; object-fit: contain; }
+            .company-header h1 { margin: 8px 0; font-size: 26px; }
+            h2, .details { text-align: center; }
+            table { width: 100%; border-collapse: collapse; margin-top: 25px; }
+            th, td { border: 1px solid #ccc; padding: 12px; text-align: left; }
+            th { background: #eee; }
+            .total { text-align: right; font-size: 20px; font-weight: bold; margin-top: 25px; }
+            .authorised { text-align: right; font-weight: bold; margin-top: 60px; }
           </style>
         </head>
         <body>
@@ -527,23 +407,15 @@ function editCommission(item: Commission) {
             <img src="${window.location.origin}/logo.png" alt="Company Logo">
             <h1>REAL HOME SERVICE</h1>
           </div>
-
           <h2>PROPERTY COMMISSION BILL</h2>
-
           <p class="details">Property ID: ${escapeHtml(item.property_code)}</p>
           <p class="details">Period: ${escapeHtml(monthName)} ${escapeHtml(item.commission_year)}</p>
           <p class="details">Print Date: ${new Date().toLocaleDateString("en-IN")}</p>
-
           <table>
             <thead>
               <tr>
-                <th>Property ID</th>
-                <th>Property</th>
-                <th>Area</th>
-                <th>Type</th>
-                <th>Month</th>
-                <th>Commission</th>
-                <th>Remarks</th>
+                <th>Property ID</th><th>Property</th><th>Area</th>
+                <th>Type</th><th>Month</th><th>Commission</th><th>Remarks</th>
               </tr>
             </thead>
             <tbody>
@@ -553,22 +425,15 @@ function editCommission(item: Commission) {
                 <td>${escapeHtml(item.area || "-")}</td>
                 <td>${escapeHtml(item.property_type || "-")}</td>
                 <td>${escapeHtml(monthName)} ${escapeHtml(item.commission_year)}</td>
-                <td>₹${amount.toLocaleString("en-IN")}</td>
+                <td>₹${singleAmount.toLocaleString("en-IN")}</td>
                 <td>${escapeHtml(item.remarks || "-")}</td>
               </tr>
             </tbody>
           </table>
-
-          <div class="total">
-            Total Commission: ₹${amount.toLocaleString("en-IN")}
-          </div>
-
+          <div class="total">Total Commission: ₹${singleAmount.toLocaleString("en-IN")}</div>
           <div class="authorised">AUTHORISED BILL</div>
-
           <script>
-            window.onload = function() {
-              window.print();
-            };
+            window.onload = function() { window.print(); };
           <\/script>
         </body>
       </html>
@@ -579,53 +444,144 @@ function editCommission(item: Commission) {
 
   const inputStyle = {
     width: "100%",
-    padding: "12px",
-    border: "1px solid #ccc",
-    borderRadius: "8px",
-    marginTop: "6px",
+    padding: "13px 14px",
+    border: "1px solid #d97706",
+    borderRadius: "10px",
+    marginTop: "7px",
     boxSizing: "border-box" as const,
+    background: "#fffaf2",
+    color: "#431407",
+    outlineColor: "#f97316",
+    fontSize: "14px",
   };
 
   const buttonStyle = {
     padding: "12px 18px",
     border: "none",
-    borderRadius: "8px",
+    borderRadius: "10px",
     cursor: "pointer",
     fontWeight: "bold" as const,
+    transition: "0.2s",
+  };
+
+  const cardStyle = {
+    background: "linear-gradient(145deg, #fffaf0, #ffedd5)",
+    border: "1px solid #fdba74",
+    borderRadius: "18px",
+    padding: "20px",
+    marginTop: "22px",
+    boxShadow: "0 8px 24px rgba(124,45,18,0.10)",
+  };
+
+  const orangeButton = {
+    ...buttonStyle,
+    background: "linear-gradient(135deg, #f97316, #c2410c)",
+    color: "#fff",
+    boxShadow: "0 4px 12px rgba(194,65,12,0.22)",
   };
 
   return (
-    <main style={{
+    <main className="commission-page" style={{
       maxWidth: "1100px",
       margin: "auto",
       padding: "20px",
       fontFamily: "Arial, sans-serif",
+      minHeight: "100vh",
+      color: "#431407",
+      background: "linear-gradient(135deg, #fff7ed, #ffedd5, #fed7aa)",
     }}>
+      <style jsx>{`
+        .commission-page h1 {
+          color: #7c2d12;
+          font-size: clamp(27px, 5vw, 36px);
+          font-weight: 900;
+          letter-spacing: -0.7px;
+        }
+        .commission-page h2 {
+          color: #9a3412;
+          font-weight: 800;
+        }
+        .commission-page label {
+          color: #7c2d12;
+          font-weight: 700;
+          font-size: 14px;
+        }
+        .commission-page input:focus,
+        .commission-page select:focus {
+          border-color: #ea580c;
+          box-shadow: 0 0 0 3px rgba(249,115,22,0.15);
+        }
+        .commission-page button {
+          transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+        .commission-page button:hover {
+          transform: translateY(-1px);
+        }
+        .commission-page table {
+          border-radius: 12px;
+          overflow: hidden;
+        }
+        .commission-page th {
+          background: linear-gradient(135deg, #9a3412, #ea580c);
+          color: white;
+          white-space: nowrap;
+        }
+        .commission-page td {
+          background: #fffaf2;
+          color: #431407;
+        }
+        .commission-page tbody tr:nth-child(even) td {
+          background: #ffedd5;
+        }
+        .commission-page tbody tr:hover td {
+          background: #fed7aa;
+        }
+        @media (max-width: 600px) {
+          .commission-page {
+            padding: 12px !important;
+          }
+        }
+      `}</style>
+
       <button
         onClick={() => router.push("/admin")}
         style={{
           ...buttonStyle,
-          background: "#eee",
+          background: "linear-gradient(135deg, #7c2d12, #431407)",
+          color: "#fff",
           marginBottom: "18px",
         }}
       >
         ← Back to Admin
       </button>
 
-      <h1>Property Commission</h1>
-      <p>Property commission add, manage aur monthly bill print karein.</p>
+      <div style={{
+        background: "linear-gradient(135deg, #7c2d12, #c2410c, #f97316)",
+        padding: "24px",
+        borderRadius: "18px",
+        color: "#fff",
+        boxShadow: "0 10px 25px rgba(124,45,18,0.22)",
+      }}>
+        <h1 style={{ color: "#fff", margin: "0 0 8px" }}>
+          Property Commission
+        </h1>
+        <p style={{ margin: 0, color: "#ffedd5" }}>
+          Property commission add, manage aur monthly bill print karein.
+        </p>
+      </div>
 
       {loading ? (
-        <p>Loading commission data...</p>
+        <div style={cardStyle}>
+          <p>Loading commission data...</p>
+        </div>
       ) : (
         <>
-          <section style={{
-            border: "1px solid #ddd",
-            borderRadius: "12px",
-            padding: "18px",
-            marginTop: "20px",
-          }}>
-            <h2>Add Commission</h2>
+          <section style={cardStyle}>
+            <h2 style={{ marginTop: 0 }}>
+              {editingCommissionId !== null
+                ? "Edit Commission"
+                : "Add Commission"}
+            </h2>
 
             <label>Search Property by ID / Name / Area</label>
             <input
@@ -640,17 +596,19 @@ function editCommission(item: Commission) {
 
             {search.trim() && !selected && (
               <div style={{
-                border: "1px solid #ddd",
-                borderRadius: "8px",
+                border: "1px solid #fdba74",
+                borderRadius: "10px",
                 marginTop: "8px",
                 maxHeight: "220px",
                 overflowY: "auto",
+                background: "#fffaf2",
               }}>
                 {filteredProperties.length === 0 ? (
                   <p style={{ padding: "12px" }}>Property nahi mili.</p>
                 ) : (
                   filteredProperties.map((property) => (
                     <button
+                      type="button"
                       key={property.id}
                       onClick={() => {
                         setSelected(property);
@@ -662,10 +620,11 @@ function editCommission(item: Commission) {
                         display: "block",
                         width: "100%",
                         textAlign: "left",
-                        padding: "12px",
+                        padding: "13px",
                         border: "none",
-                        borderBottom: "1px solid #eee",
-                        background: "#fff",
+                        borderBottom: "1px solid #fed7aa",
+                        background: "#fffaf2",
+                        color: "#431407",
                         cursor: "pointer",
                       }}
                     >
@@ -682,9 +641,10 @@ function editCommission(item: Commission) {
 
             {selected && (
               <div style={{
-                background: "#eff6ff",
-                padding: "14px",
-                borderRadius: "8px",
+                background: "linear-gradient(135deg, #ffedd5, #fed7aa)",
+                border: "1px solid #fb923c",
+                padding: "15px",
+                borderRadius: "12px",
                 marginTop: "12px",
               }}>
                 <b>Selected Property</b>
@@ -693,11 +653,12 @@ function editCommission(item: Commission) {
                 <p>Area: {selected.locality || "-"}</p>
                 <p>Type: {selected.property_type || "-"}</p>
                 <button
+                  type="button"
                   onClick={() => {
                     setSelected(null);
                     setSearch("");
                   }}
-                  style={{ ...buttonStyle, background: "#ddd" }}
+                  style={{ ...orangeButton, background: "#9a3412" }}
                 >
                   Change Property
                 </button>
@@ -730,7 +691,9 @@ function editCommission(item: Commission) {
                   style={inputStyle}
                 >
                   {months.map((month, index) => (
-                    <option key={month} value={index + 1}>{month}</option>
+                    <option key={month} value={index + 1}>
+                      {month}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -756,47 +719,47 @@ function editCommission(item: Commission) {
               />
             </div>
 
-            <button
-              onClick={saveCommission}
-              disabled={!selected || saving}
-              style={{
-                ...buttonStyle,
-                background: "#2563eb",
-                color: "#fff",
-                marginTop: "18px",
-                opacity: (!selected || saving) ? 0.6 : 1,
-              }}
-            >
-              {saving
-  ? "Saving..."
-  : editingCommissionId !== null
-    ? "Update Commission"
-    : "Save Commission"}
+            <div style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "10px",
+              marginTop: "18px",
+            }}>
+              <button
+                type="button"
+                onClick={saveCommission}
+                disabled={!selected || saving}
+                style={{
+                  ...orangeButton,
+                  opacity: (!selected || saving) ? 0.6 : 1,
+                  cursor: (!selected || saving) ? "not-allowed" : "pointer",
+                }}
+              >
+                {saving
+                  ? "Saving..."
+                  : editingCommissionId !== null
+                    ? "Update Commission"
+                    : "Save Commission"}
+              </button>
+
               {editingCommissionId !== null && (
-  <button
-    type="button"
-    onClick={() => {
-      setEditingCommissionId(null);
-      setSelected(null);
-      setAmount("");
-      setRemarks("");
-      setSearch("");
-    }}
-    style={{ ...buttonStyle, background: "#6b7280", color: "#fff", marginTop: "10px" }}
-  >
-    Cancel Edit
-  </button>
-)}
-            </button>
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  style={{
+                    ...buttonStyle,
+                    background: "#57534e",
+                    color: "#fff",
+                  }}
+                >
+                  Cancel Edit
+                </button>
+              )}
+            </div>
           </section>
 
-          <section style={{
-            border: "1px solid #ddd",
-            borderRadius: "12px",
-            padding: "18px",
-            marginTop: "24px",
-          }}>
-            <h2>Commission Records</h2>
+          <section style={cardStyle}>
+            <h2 style={{ marginTop: 0 }}>Commission Records</h2>
 
             <div style={{
               display: "grid",
@@ -812,7 +775,9 @@ function editCommission(item: Commission) {
                 >
                   <option value="all">All Months</option>
                   {months.map((month, index) => (
-                    <option key={month} value={index + 1}>{month}</option>
+                    <option key={month} value={index + 1}>
+                      {month}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -826,30 +791,40 @@ function editCommission(item: Commission) {
                 >
                   <option value="all">All Years</option>
                   {years.map((year) => (
-                    <option key={year} value={year}>{year}</option>
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
                   ))}
                 </select>
               </div>
             </div>
 
             <div style={{
-              background: "#eff6ff",
-              borderRadius: "10px",
-              padding: "16px",
-              marginTop: "16px",
+              background: "linear-gradient(135deg, #7c2d12, #c2410c, #f97316)",
+              borderRadius: "14px",
+              padding: "20px",
+              marginTop: "18px",
+              color: "#fff",
+              boxShadow: "0 7px 18px rgba(194,65,12,0.2)",
             }}>
-              <p style={{ margin: 0 }}>Total Commission</p>
-              <h2 style={{ margin: "8px 0 0", color: "#1d4ed8" }}>
+              <p style={{ margin: 0, color: "#ffedd5" }}>
+                Total Commission
+              </p>
+              <h2 style={{
+                margin: "8px 0 0",
+                color: "#fff",
+                fontSize: "30px",
+              }}>
                 ₹{totalCommission.toLocaleString("en-IN")}
               </h2>
+              <small>{filteredCommissions.length} commission records</small>
             </div>
 
             <button
+              type="button"
               onClick={printCommission}
               style={{
-                ...buttonStyle,
-                background: "#15803d",
-                color: "#fff",
+                ...orangeButton,
                 marginTop: "16px",
               }}
             >
@@ -863,11 +838,18 @@ function editCommission(item: Commission) {
                 minWidth: "650px",
               }}>
                 <thead>
-                  <tr style={{ background: "#f3f4f6" }}>
-                    {["Property ID", "Property", "Month", "Commission", "Remarks", "Print Bill"].map((heading) => (
+                  <tr>
+                    {[
+                      "Property ID",
+                      "Property",
+                      "Month",
+                      "Commission",
+                      "Remarks",
+                      "Actions",
+                    ].map((heading) => (
                       <th key={heading} style={{
-                        padding: "10px",
-                        border: "1px solid #ddd",
+                        padding: "12px",
+                        border: "1px solid #c2410c",
                         textAlign: "left",
                       }}>
                         {heading}
@@ -875,84 +857,109 @@ function editCommission(item: Commission) {
                     ))}
                   </tr>
                 </thead>
+
                 <tbody>
                   {filteredCommissions.length === 0 ? (
                     <tr>
-                      <td colSpan={5} style={{ padding: "14px", textAlign: "center" }}>
+                      <td colSpan={6} style={{
+                        padding: "18px",
+                        textAlign: "center",
+                        border: "1px solid #fdba74",
+                      }}>
                         No commission records found.
                       </td>
                     </tr>
                   ) : (
                     filteredCommissions.map((item) => (
                       <tr key={item.id}>
-                        <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+                        <td style={{
+                          padding: "10px",
+                          border: "1px solid #fdba74",
+                        }}>
                           {item.property_code}
                         </td>
-                        <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+
+                        <td style={{
+                          padding: "10px",
+                          border: "1px solid #fdba74",
+                        }}>
                           {item.property_title || "-"}
                           <br />
                           <small>{item.area || "-"}</small>
                         </td>
-                        <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+
+                        <td style={{
+                          padding: "10px",
+                          border: "1px solid #fdba74",
+                        }}>
                           {months[item.commission_month - 1]} {item.commission_year}
                         </td>
-                        <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+
+                        <td style={{
+                          padding: "10px",
+                          border: "1px solid #fdba74",
+                          fontWeight: "bold",
+                        }}>
                           ₹{Number(item.commission_amount).toLocaleString("en-IN")}
                         </td>
-                        <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+
+                        <td style={{
+                          padding: "10px",
+                          border: "1px solid #fdba74",
+                        }}>
                           {item.remarks || "-"}
                         </td>
-                        
-  <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-    <button
-      type="button"
-      onClick={() => printSingleCommission(item)}
-      style={{
-        padding: "8px 12px",
-        background: "#15803d",
-        color: "#fff",
-        border: "none",
-        borderRadius: "6px",
-        cursor: "pointer",
-        fontWeight: "bold",
-      }}
-    >
-      Print / PDF
-    </button>
-    <button
-  type="button"
-  onClick={() => editCommission(item)}
-  style={{
-    padding: "8px 12px",
-    background: "#2563eb",
-    color: "#fff",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontWeight: "bold",
-    marginLeft: "6px",
-  }}
->
-  Edit
-</button>
-    <button
-  type="button"
-  onClick={() => deleteCommission(item)}
-  style={{
-    padding: "8px 12px",
-    background: "#dc2626",
-    color: "#fff",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontWeight: "bold",
-    marginLeft: "6px",
-  }}
->
-  Delete
-</button>
-  </td>
 
+                        <td style={{
+                          padding: "10px",
+                          border: "1px solid #fdba74",
+                          minWidth: "230px",
+                        }}>
+                          <div style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: "6px",
+                          }}>
+                            <button
+                              type="button"
+                              onClick={() => printSingleCommission(item)}
+                              style={{
+                                ...buttonStyle,
+                                padding: "8px 11px",
+                                background: "#15803d",
+                                color: "#fff",
+                              }}
+                            >
+                              Print / PDF
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => editCommission(item)}
+                              style={{
+                                ...buttonStyle,
+                                padding: "8px 11px",
+                                background: "#ea580c",
+                                color: "#fff",
+                              }}
+                            >
+                              Edit
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => deleteCommission(item)}
+                              style={{
+                                ...buttonStyle,
+                                padding: "8px 11px",
+                                background: "#dc2626",
+                                color: "#fff",
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))
                   )}
@@ -965,4 +972,3 @@ function editCommission(item: Commission) {
     </main>
   );
 }
-
