@@ -550,42 +550,7 @@ export default function Home() {
           .luxury-category-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 12px;
-          }
 
-          .luxury-category-card {
-            min-height: 220px;
-            padding: 20px 14px;
-          }
-
-          .luxury-about {
-            grid-template-columns: 1fr;
-            padding: 65px 6%;
-          }
-
-          .about-image,
-          .about-image img {
-            min-height: 300px;
-            height: 300px;
-          }
-
-          .luxury-cta {
-            padding: 65px 6%;
-          }
-        }
-
-        @media (max-width: 390px) {
-          .luxury-category-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .hero-actions .gold-btn,
-          .hero-actions .outline-btn,
-          .cta-actions .gold-btn,
-          .cta-actions .outline-btn {
-            width: 100%;
-          }
-        }
-      `}</style>
     </>
   );
 }
