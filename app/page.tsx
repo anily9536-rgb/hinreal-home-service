@@ -103,10 +103,10 @@ export default function Home() {
       if (area.trim()) {
   const searchText = area.trim();
 
-  query = query.or(
-    `locality.ilike.%${searchText}%,address.ilike.%${searchText}%,property_code.eq.${searchText}
-  );
-}
+  const filters = [
+    `locality.ilike.%$DIL1%`,
+    `address.ilike.%$DIL2%`,
+  ];
 
       const { data, error } = await query;
 
