@@ -46,9 +46,13 @@ export default function CustomersPage() {
         const result = await response.json();
 
         if (response.status === 401 || response.status === 403) {
-          router.replace("/admin/login");
-          return;
-        }
+  setMessage(
+    `Access Error (${response.status}): ${
+      result.error || "Admin permission verify nahi hui."
+    }`
+  );
+  return;
+}
 
         if (!response.ok) {
           setMessage(
