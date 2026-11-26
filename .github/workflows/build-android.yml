@@ -33,11 +33,7 @@ jobs:
         uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407
         with:
           packages: platform-tools
-      - name: Rename APK files
-        run: |
-          mkdir -p release-apks
-          cp android-app/app/build/outputs/apk/customer/debug/*.apk release-apks/Real-Home-Service.apk
-          cp android-app/app/build/outputs/apk/admin/debug/*.apk release-apks/Admin.apk
+      - 
       - name: Accept Android SDK licenses
         run: yes | sdkmanager --licenses
 
@@ -46,7 +42,11 @@ jobs:
 
       - name: Build Customer and Admin APKs
         run: gradle -p android-app assembleCustomerDebug assembleAdminDebug
-
+name: Rename APK files
+        run: |
+          mkdir -p release-apks
+          cp android-app/app/build/outputs/apk/customer/debug/*.apk release-apks/Real-Home-Service.apk
+          cp android-app/app/build/outputs/apk/admin/debug/*.apk release-apks/Admin.apk
       - name: Upload APKs
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
