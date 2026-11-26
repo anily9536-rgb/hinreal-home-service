@@ -33,7 +33,11 @@ jobs:
         uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407
         with:
           packages: platform-tools
-
+      - name: Rename APK files
+        run: |
+          mkdir -p release-apks
+          cp android-app/app/build/outputs/apk/customer/debug/*.apk release-apks/Real-Home-Service.apk
+          cp android-app/app/build/outputs/apk/admin/debug/*.apk release-apks/Admin.apk
       - name: Accept Android SDK licenses
         run: yes | sdkmanager --licenses
 
@@ -48,5 +52,4 @@ jobs:
         with:
           name: Real-Home-Service-APKs
           path: |
-            android-app/app/build/outputs/apk/customer/debug/*.apk
-            android-app/app/build/outputs/apk/admin/debug/*.apk
+            release-apks/*.apk
