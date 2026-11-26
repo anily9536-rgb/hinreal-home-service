@@ -42,6 +42,7 @@ const categories = [
 
 export default function Home() {
   const [propertyType, setPropertyType] = useState("");
+  const [listingType, setListingType] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [area, setArea] = useState("");
@@ -87,7 +88,9 @@ export default function Home() {
         .select("*")
         .eq("status", "approved")
         .order("created_at", { ascending: false });
-
+if (listingType) {
+  query = query.eq("listing_type", listingType);
+}
       if (propertyType) {
         query = query.eq("property_type", propertyType);
       }
@@ -195,6 +198,32 @@ export default function Home() {
             </h2>
 
             <form onSubmit={searchProperties}>
+              <label
+  style={{
+    display: "block",
+    fontWeight: "bold",
+    marginBottom: 7,
+  }}
+>
+  Select Buy or Rent
+</label>
+
+<select
+  value={listingType}
+  onChange={(e) => setListingType(e.target.value)}
+  style={{
+    width: "100%",
+    padding: 13,
+    marginBottom: 16,
+    border: "1px solid #ccc",
+    borderRadius: 8,
+    boxSizing: "border-box",
+  }}
+>
+  <option value="">All Properties</option>
+  <option value="Buy">Buy / For Sale</option>
+  <option value="Rent">Rent / For Rent</option>
+</select>
               <label
                 style={{
                   display: "block",
