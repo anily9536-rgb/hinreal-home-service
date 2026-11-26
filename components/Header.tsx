@@ -128,7 +128,7 @@ async function handleLogout() {
               border: "2px solid #d6a52c",
             }}
           />
-          <span>Real Home Service</span>
+          <span style={{ color: "#ffffff" }}>Real Home Service</span>
         </a>
 
         <div
