@@ -49,7 +49,7 @@ export default function AdminHeader() {
           fontSize: 20
         }}>
           <img
-            src="/logo.png"
+            src="/admin-logo.png"
             alt="Real Home Service"
             style={{
               width: 46,
