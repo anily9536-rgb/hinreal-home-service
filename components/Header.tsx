@@ -234,31 +234,21 @@ async function handleLogout() {
 
         <hr />
 
-        {!user && (
-          <>
-            <Link
-              href="/login"
-              style={customerLinkStyle}
-              onClick={() => setMenuOpen(false)}
-            >
-              Customer Login
-            </Link>
-
-            <Link
-              href="/register"
-              style={customerLinkStyle}
-              onClick={() => setMenuOpen(false)}
-            >
-              Register
-            </Link>
-          </>
-        )}
-
-        {user && (
-          <button type="button" onClick={handleLogout}>
-            Logout
-          </button>
-        )}
+                <button
+          type="button"
+          onClick={handleLogout}
+          style={{
+            background: "#c9a34a",
+            color: "#10264a",
+            border: "none",
+            borderRadius: "7px",
+            padding: "10px 14px",
+            fontWeight: 700,
+            cursor: "pointer",
+          }}
+        >
+          Logout
+        </button>
       </div>
     </header>
   );
