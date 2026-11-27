@@ -71,12 +71,12 @@ export async function POST(request: Request) {
 
     const secure = process.env.NODE_ENV === "production";
 
+    // Session cookies: no 30-day maxAge
     response.cookies.set("rhs_access_token", data.session.access_token, {
       httpOnly: true,
       secure,
       sameSite: "lax",
       path: "/",
-      maxAge: data.session.expires_in || 3600,
     });
 
     response.cookies.set("rhs_refresh_token", data.session.refresh_token, {
@@ -84,7 +84,6 @@ export async function POST(request: Request) {
       secure,
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24 * 30,
     });
 
     return response;
