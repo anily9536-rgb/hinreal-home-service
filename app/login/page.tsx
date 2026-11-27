@@ -95,7 +95,7 @@ export default function LoginPage() {
           }}
         >
           <img
-            src="/logo.png"
+            src="/customer-logo.png"
             alt="Real Home Service Logo"
             style={{
               width: "76px",
