@@ -829,7 +829,7 @@ function printPurchaseBill() {
     </head>
     <body>
       <div class="header">
-        <img src="${window.location.origin}/logo.png">
+        <img src="${window.location.origin}/admin-logo.png">
         <h1>REAL HOME SERVICE</h1>
       </div>
 
