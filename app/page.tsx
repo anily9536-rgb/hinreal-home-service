@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
@@ -51,7 +51,28 @@ export default function Home() {
   const [searched, setSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [latestProperties, setLatestProperties] = useState<any[]>([]);
 
+  useEffect(() => {
+    async function loadLatestProperties() {
+      const thirtyDaysAgo = new Date(
+        Date.now() - 30 * 24 * 60 * 60 * 1000
+      ).toISOString();
+
+      const { data, error } = await supabase
+        .from("properties")
+        .select("*")
+        .eq("status", "approved")
+        .gte("created_at", thirtyDaysAgo)
+        .order("created_at", { ascending: false });
+
+      if (!error) {
+        setLatestProperties(data || []);
+      }
+    }
+
+    loadLatestProperties();
+  }, []);
   async function searchProperties(
     event: React.FormEvent<HTMLFormElement>
   ) {
