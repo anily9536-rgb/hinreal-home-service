@@ -296,7 +296,7 @@ feels like your own. Your dream lifestyle begins here.
 </section>
 
 {/* PREMIUM PROPERTY SHOWCASE 4 - COMMERCIAL */}
-<section style={{ maxWidth: 1100, margin: "40px auto", padding: 18, background: "#EAF1EB", border: "1.5px solid #C9A34A", borderRadius: 20, boxShadow: "0 8px 25px rgba(16,38,74,0.10)" }}>
+<section style={{ maxWidth: 1100,width: "100%", flex: "0 0 100%", scrollSnapAlign: "start", margin: "40px auto", padding: 18, background: "#EAF1EB", border: "1.5px solid #C9A34A", borderRadius: 20, boxShadow: "0 8px 25px rgba(16,38,74,0.10)" }}>
   <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1400" alt="Commercial Property" style={{ width: "100%", height: 330, objectFit: "cover", borderRadius: 14, display: "block" }} />
   <div style={{ textAlign: "center", padding: "25px 15px" }}>
     <h2 style={{ color: "#10264A", fontSize: 29, fontWeight: 800, margin: "0 0 10px" }}>The Perfect Space for Your Business</h2>
