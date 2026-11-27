@@ -266,45 +266,53 @@ if (listingType) {
   <div style={{ textAlign: "center", padding: "25px 12px" }}>
     <h2 style={{ color: "#10264A", fontSize: 30, fontWeight: 800 }}>Experience Luxury Living</h2>
     <h3 style={{ color: "#B88625", fontSize: 21, fontStyle: "italic" }}>Your Own Private Paradise</h3>
-    <p style={{ color: "#26364B", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>
-      Discover beautiful luxury villas designed for comfort, privacy and elegance. Enjoy spacious interiors, attractive architecture and peaceful surroundings. Find a villa that brings together your dream lifestyle and the perfect place for your family.
-    </p>
+{/* PREMIUM PROPERTY SHOWCASE 1 */}
+<section style={{ maxWidth: 1100, margin: "40px auto", padding: 18, background: "#EAF1EB", border: "1.5px solid #C9A34A", borderRadius: 20, boxShadow: "0 8px 25px rgba(16,38,74,0.10)" }}>
+  <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400" alt="Luxury Dream Property" style={{ width: "100%", height: 330, objectFit: "cover", borderRadius: 14, display: "block" }} />
+  <div style={{ textAlign: "center", padding: "25px 15px" }}>
+    <h2 style={{ color: "#10264A", fontSize: 29, fontWeight: 800, margin: "0 0 10px" }}>Your Dream Property, Our Priority</h2>
+    <h3 style={{ color: "#A77B25", fontSize: 20, fontStyle: "italic", margin: "0 0 15px" }}>Find Your Perfect Place to Call Home</h3>
+    <p style={{ color: "#344456", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>Discover beautiful homes, premium apartments, commercial spaces and valuable land opportunities. Whether you are searching for your dream home or planning your next property purchase, Real Home Service helps you explore possibilities and find a property that suits your needs.</p>
   </div>
 </section>
 
-{/* SHOWCASE 3 - MODERN APARTMENTS */}
-<section style={{ maxWidth: 1100, margin: "35px auto", padding: 20, background: "#F8F3E9", border: "2px solid #D4AF37", borderRadius: 18, boxShadow: "0 6px 20px rgba(0,0,0,0.10)" }}>
-  <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1400" alt="Modern Apartment" style={{ width: "100%", height: 350, objectFit: "cover", borderRadius: 12 }} />
-  <div style={{ textAlign: "center", padding: "25px 12px" }}>
-    <h2 style={{ color: "#10264A", fontSize: 30, fontWeight: 800 }}>Modern Homes for Modern Living</h2>
-    <h3 style={{ color: "#B88625", fontSize: 21, fontStyle: "italic" }}>Comfort, Convenience & Style</h3>
-    <p style={{ color: "#26364B", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>
-      Explore thoughtfully designed apartments with modern layouts, comfortable spaces and convenient locations. Whether you are buying your first home or looking for a new place to live, discover options that suit your lifestyle and budget.
-    </p>
+{/* PREMIUM PROPERTY SHOWCASE 2 - VILLA */}
+<section style={{ maxWidth: 1100, margin: "40px auto", padding: 18, background: "#EAF1EB", border: "1.5px solid #C9A34A", borderRadius: 20, boxShadow: "0 8px 25px rgba(16,38,74,0.10)" }}>
+  <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1400" alt="Luxury Villa" style={{ width: "100%", height: 330, objectFit: "cover", borderRadius: 14, display: "block" }} />
+  <div style={{ textAlign: "center", padding: "25px 15px" }}>
+    <h2 style={{ color: "#10264A", fontSize: 29, fontWeight: 800, margin: "0 0 10px" }}>Experience the Art of Luxury Living</h2>
+    <h3 style={{ color: "#A77B25", fontSize: 20, fontStyle: "italic", margin: "0 0 15px" }}>A Beautiful Villa for a Beautiful Life</h3>
+    <p style={{ color: "#344456", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>Discover elegant villas that offer privacy, spacious living and timeless beauty. Explore impressive architecture, peaceful surroundings and thoughtfully designed spaces. Find a place where your family can create wonderful memories and enjoy a lifestyle you have always imagined.</p>
   </div>
 </section>
 
-{/* SHOWCASE 4 - COMMERCIAL PROPERTIES */}
-<section style={{ maxWidth: 1100, margin: "35px auto", padding: 20, background: "#F8F3E9", border: "2px solid #D4AF37", borderRadius: 18, boxShadow: "0 6px 20px rgba(0,0,0,0.10)" }}>
-  <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1400" alt="Commercial Property" style={{ width: "100%", height: 350, objectFit: "cover", borderRadius: 12 }} />
-  <div style={{ textAlign: "center", padding: "25px 12px" }}>
-    <h2 style={{ color: "#10264A", fontSize: 30, fontWeight: 800 }}>The Right Space for Your Business</h2>
-    <h3 style={{ color: "#B88625", fontSize: 21, fontStyle: "italic" }}>Build Your Business in the Right Location</h3>
-    <p style={{ color: "#26364B", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>
-      Find commercial spaces that help your business grow. Explore offices, shops and business properties in promising locations. Choose a space that matches your business requirements and gives your next big idea the right place to begin.
-    </p>
+{/* PREMIUM PROPERTY SHOWCASE 3 - APARTMENT */}
+<section style={{ maxWidth: 1100, margin: "40px auto", padding: 18, background: "#EAF1EB", border: "1.5px solid #C9A34A", borderRadius: 20, boxShadow: "0 8px 25px rgba(16,38,74,0.10)" }}>
+  <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1400" alt="Modern Apartment" style={{ width: "100%", height: 330, objectFit: "cover", borderRadius: 14, display: "block" }} />
+  <div style={{ textAlign: "center", padding: "25px 15px" }}>
+    <h2 style={{ color: "#10264A", fontSize: 29, fontWeight: 800, margin: "0 0 10px" }}>Modern Apartments, Better Living</h2>
+    <h3 style={{ color: "#A77B25", fontSize: 20, fontStyle: "italic", margin: "0 0 15px" }}>Designed Around Your Lifestyle</h3>
+    <p style={{ color: "#344456", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>Step into modern living with apartments designed for comfort, convenience and everyday elegance. Explore attractive homes, smart layouts and locations close to essential facilities. Find an apartment that makes daily life comfortable and gives you a place to truly belong.</p>
   </div>
 </section>
 
-{/* SHOWCASE 5 - PREMIUM LAND */}
-<section style={{ maxWidth: 1100, margin: "35px auto", padding: 20, background: "#F8F3E9", border: "2px solid #D4AF37", borderRadius: 18, boxShadow: "0 6px 20px rgba(0,0,0,0.10)" }}>
-  <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1400" alt="Premium Land" style={{ width: "100%", height: 350, objectFit: "cover", borderRadius: 12 }} />
-  <div style={{ textAlign: "center", padding: "25px 12px" }}>
-    <h2 style={{ color: "#10264A", fontSize: 30, fontWeight: 800 }}>A Valuable Place to Build Your Future</h2>
-    <h3 style={{ color: "#B88625", fontSize: 21, fontStyle: "italic" }}>Discover the Possibilities of Land Ownership</h3>
-    <p style={{ color: "#26364B", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>
-      Explore land opportunities for your future home, commercial project or long-term plans. Discover different locations and property possibilities with the guidance of Real Home Service. Take the first step towards finding land that matches your vision.
-    </p>
+{/* PREMIUM PROPERTY SHOWCASE 4 - COMMERCIAL */}
+<section style={{ maxWidth: 1100, margin: "40px auto", padding: 18, background: "#EAF1EB", border: "1.5px solid #C9A34A", borderRadius: 20, boxShadow: "0 8px 25px rgba(16,38,74,0.10)" }}>
+  <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1400" alt="Commercial Property" style={{ width: "100%", height: 330, objectFit: "cover", borderRadius: 14, display: "block" }} />
+  <div style={{ textAlign: "center", padding: "25px 15px" }}>
+    <h2 style={{ color: "#10264A", fontSize: 29, fontWeight: 800, margin: "0 0 10px" }}>The Perfect Space for Your Business</h2>
+    <h3 style={{ color: "#A77B25", fontSize: 20, fontStyle: "italic", margin: "0 0 15px" }}>Where Business Meets Opportunity</h3>
+    <p style={{ color: "#344456", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>Give your business the right place to grow. Explore commercial properties, office spaces and retail locations that match your business vision. Discover spaces with potential, convenient surroundings and the flexibility to support your next business milestone.</p>
+  </div>
+</section>
+
+{/* PREMIUM PROPERTY SHOWCASE 5 - LAND */}
+<section style={{ maxWidth: 1100, margin: "40px auto", padding: 18, background: "#EAF1EB", border: "1.5px solid #C9A34A", borderRadius: 20, boxShadow: "0 8px 25px rgba(16,38,74,0.10)" }}>
+  <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1400" alt="Premium Land" style={{ width: "100%", height: 330, objectFit: "cover", borderRadius: 14, display: "block" }} />
+  <div style={{ textAlign: "center", padding: "25px 15px" }}>
+    <h2 style={{ color: "#10264A", fontSize: 29, fontWeight: 800, margin: "0 0 10px" }}>Build Your Future on the Right Land</h2>
+    <h3 style={{ color: "#A77B25", fontSize: 20, fontStyle: "italic", margin: "0 0 15px" }}>Discover a Place Full of Possibilities</h3>
+    <p style={{ color: "#344456", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>Every great project begins with the right piece of land. Explore land opportunities for your dream home, future development or business plans. Discover different locations and possibilities with Real Home Service and take a confident step towards your property goals.</p>
   </div>
 </section>
         {/* PROPERTY SEARCH */}
