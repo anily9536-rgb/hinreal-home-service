@@ -175,6 +175,7 @@ if (listingType) {
             Explore verified properties for sale and rent.
           </p>
         </section>
+        <div style={{ display: "flex", overflowX: "auto", scrollSnapType: "x mandatory", gap: 20, maxWidth: 1100, margin: "35px auto", padding: "10px 5px", WebkitOverflowScrolling: "touch" }}>
 {/* PREMIUM PROPERTY SHOWCASE */}
 <section
   style={{
@@ -308,6 +309,7 @@ feels like your own. Your dream lifestyle begins here.
     <h2 style={{ color: "#10264A", fontSize: 29, fontWeight: 800, margin: "0 0 10px" }}>Build Your Future on the Right Land</h2>
     <h3 style={{ color: "#A77B25", fontSize: 20, fontStyle: "italic", margin: "0 0 15px" }}>Discover a Place Full of Possibilities</h3>
     <p style={{ color: "#344456", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>Every great project begins with the right piece of land. Explore land opportunities for your dream home, future development or business plans. Discover different locations and possibilities with Real Home Service and take a confident step towards your property goals.</p>
+  </div>
   </div>
 </section>
         {/* PROPERTY SEARCH */}
