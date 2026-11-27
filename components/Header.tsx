@@ -117,7 +117,7 @@ async function handleLogout() {
           }}
         >
           <img
-            src="/logo.png"
+            src="/customer-logo.png"
             alt="Real Home Service logo"
             style={{
               width: "46px",
