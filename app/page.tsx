@@ -187,7 +187,9 @@ if (listingType) {
     boxShadow: "0 6px 20px rgba(0,0,0,0.10)",
   }}
 >
-  <imghttps://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1400"
+  <img
+    
+    https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1400"
     alt="Luxury Dream Property"
     style={{
       width: "100%",
