@@ -164,8 +164,7 @@ async function handleLogout() {
             >
               Logout
             </button>
-  Logout
-</button>
+  
           </div>
 
           <button
