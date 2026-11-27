@@ -337,6 +337,65 @@ feels like your own. Your dream lifestyle begins here.
   
 </section>
           </div>
+                {/* LATEST PROPERTIES SLIDER */}
+        <section style={{ maxWidth: 1100, margin: "35px auto", padding: 18 }}>
+          <h2 style={{ color: "#10264A", textAlign: "center", fontSize: 30, fontWeight: 800, marginBottom: 8 }}>
+            Latest Properties
+          </h2>
+
+          <p style={{ textAlign: "center", color: "#344456", marginBottom: 22 }}>
+            Explore our newest approved properties
+          </p>
+
+          {latestProperties.length > 0 ? (
+            <div style={{ display: "flex", overflowX: "auto", scrollSnapType: "x mandatory", gap: 18, padding: "8px 4px 18px", WebkitOverflowScrolling: "touch" }}>
+              {latestProperties.map((property) => (
+                <Link
+                  key={property.id}
+                  href={`/property/${property.id}`}
+                  style={{ flex: "0 0 280px", scrollSnapAlign: "start", display: "block", background: "#fff", border: "1.5px solid #C9A34A", borderRadius: 14, padding: 12, color: "#10264A", textDecoration: "none", boxShadow: "0 5px 16px rgba(16,38,74,0.10)" }}
+                >
+                  {property.images?.[0] ? (
+                    <img
+                      src={property.images[0]}
+                      alt={property.title || "Property"}
+                      style={{ width: "100%", height: 180, objectFit: "cover", borderRadius: 10 }}
+                    />
+                  ) : (
+                    <div style={{ width: "100%", height: 180, borderRadius: 10, background: "#EAF1EB", display: "grid", placeItems: "center", color: "#667" }}>
+                      No Image Available
+                    </div>
+                  )}
+
+                  <h3 style={{ margin: "12px 0 8px", fontSize: 18 }}>
+                    {property.title || property.property_type || "Property"}
+                  </h3>
+
+                  <p style={{ margin: "5px 0", fontWeight: 700, color: "#8A641C" }}>
+                    Property Code: {property.property_code || "N/A"}
+                  </p>
+
+                  <p style={{ margin: "5px 0" }}>
+                    {property.property_type || "Property"}
+                  </p>
+
+                  <p style={{ margin: "5px 0" }}>
+                    📍 {property.locality || property.address || "Location not provided"}
+                  </p>
+
+                  <p style={{ margin: "8px 0 2px", fontWeight: 800, fontSize: 19 }}>
+                    {property.listing_type === "Rent" ? "Rent: " : "Price: "}
+                    ₹{Number(property.price || 0).toLocaleString("en-IN")}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p style={{ textAlign: "center", color: "#667", padding: 20 }}>
+              No new approved properties in the last 30 days.
+            </p>
+          )}
+        </section>
         {/* PROPERTY SEARCH */}
         <section
           className="container"
