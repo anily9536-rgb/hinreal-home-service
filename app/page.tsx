@@ -154,7 +154,7 @@ if (listingType) {
             borderBottom: "4px solid #C9A34A",
           }}
         >
-          <img
+          
             <div
   style={{
     width: "min(90%, 420px)",
