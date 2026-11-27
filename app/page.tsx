@@ -188,8 +188,7 @@ if (listingType) {
   }}
 >
   <img
-    
-    https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1400"
+        src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1400"
     alt="Luxury Dream Property"
     style={{
       width: "100%",
