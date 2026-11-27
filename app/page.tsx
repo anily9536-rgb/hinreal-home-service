@@ -11,31 +11,31 @@ const categories = [
   {
     name: "Residential",
     slug: "residential",
-    icon: "🏠",
+    logo: "/Residential Logo.png",
     description: "Residential Properties",
   },
   {
     name: "Commercial",
     slug: "commercial",
-    icon: "🏢",
+    logo: "/commercial Logo.png",
     description: "Shops, Offices & Commercial Spaces",
   },
   {
     name: "Land",
     slug: "land",
-    icon: "🌳",
+    logo: "/land logo.png",
     description: "Plots & Land Properties",
   },
   {
     name: "Apartment",
     slug: "apartment",
-    icon: "🏬",
+    logo: "/Apartment Logo.png",
     description: "Flats & Apartments",
   },
   {
     name: "Villa",
     slug: "villa",
-    icon: "🏡",
+    logo: "/Villa Logo.png",
     description: "Independent Homes & Villas",
   },
 ];
