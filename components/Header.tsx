@@ -155,17 +155,21 @@ async function handleLogout() {
                   Customer Login
                 </Link>
 
-                <Link href="/register" style={customerLinkStyle}>
-                  Register
-                </Link>
-              </>
-            )}
-
-            {user && (
-              <button type="button" onClick={handleLogout}>
-                Logout
-              </button>
-            )}
+                <button
+  type="button"
+  onClick={handleLogout}
+  style={{
+    background: "#c9a34a",
+    color: "#10264a",
+    border: "none",
+    borderRadius: "7px",
+    padding: "9px 15px",
+    fontWeight: 700,
+    cursor: "pointer",
+  }}
+>
+  Logout
+</button>
           </div>
 
           <button
