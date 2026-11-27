@@ -180,6 +180,9 @@ if (listingType) {
 <section
   style={{
     maxWidth: 1100,
+    width: "100%",
+flex: "0 0 100%",
+scrollSnapAlign: "start",
     margin: "35px auto",
     padding: 20,
     background: "#F8F3E9",
