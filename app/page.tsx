@@ -489,7 +489,12 @@ if (listingType) {
                   minWidth: 0,
                   border: "2px solid #D4AF37",
                   borderRadius: 12,
-                  background: "#fff",
+                  background:
+  category.slug === "residential" ? "#E8F0E8" :
+  category.slug === "commercial" ? "#E8EFF8" :
+  category.slug === "land" ? "#EAF3E5" :
+  category.slug === "apartment" ? "#F8F0DF" :
+  "#F0EAF8",
                   boxShadow: "0 4px 14px rgba(0,0,0,0.08)",
                 }}
               >
