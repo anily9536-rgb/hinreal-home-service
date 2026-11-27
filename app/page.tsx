@@ -175,7 +175,91 @@ if (listingType) {
             Explore verified properties for sale and rent.
           </p>
         </section>
+{/* PREMIUM PROPERTY SHOWCASE */}
+<section
+  style={{
+    maxWidth: 1100,
+    margin: "35px auto",
+    padding: 20,
+    background: "#F8F3E9",
+    border: "2px solid #D4AF37",
+    borderRadius: 18,
+    boxShadow: "0 6px 20px rgba(0,0,0,0.10)",
+  }}
+>
+  <img
+    src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400"
+    alt="Luxury Dream Property"
+    style={{
+      width: "100%",
+      height: 350,
+      objectFit: "cover",
+      borderRadius: 12,
+      display: "block",
+    }}
+  />
 
+  <div style={{ textAlign: "center", padding: "25px 12px" }}>
+    <h2
+      style={{
+        color: "#10264A",
+        fontSize: 30,
+        fontWeight: 800,
+        marginBottom: 8,
+      }}
+    >
+      Your Dream Property, Our Priority
+    </h2>
+
+    <h3
+      style={{
+        color: "#B88625",
+        fontSize: 21,
+        fontStyle: "italic",
+        marginBottom: 15,
+      }}
+    >
+      Find Your Perfect Place to Call Home
+    </h3>
+
+    <p
+      style={{
+        color: "#26364B",
+        fontSize: 16,
+        fontWeight: 500,
+        lineHeight: 1.9,
+        maxWidth: 850,
+        margin: "0 auto",
+      }}
+    >
+      Discover a world of beautiful homes, premium apartments,
+      commercial spaces and valuable land opportunities.
+      Whether you are looking for your dream home or a
+      promising property investment, Real Home Service is
+      here to guide you. Explore great locations, discover
+      exciting opportunities and find a property that
+      perfectly matches your needs and budget.
+      Your dream property journey starts here!
+    </p>
+
+    <Link
+      href="/"
+      style={{
+        display: "inline-block",
+        marginTop: 22,
+        padding: "14px 30px",
+        background: "#C9A34A",
+        color: "#10264A",
+        fontSize: 17,
+        fontWeight: "bold",
+        borderRadius: 8,
+        textDecoration: "none",
+      }}
+    >
+      Explore Properties →
+    </Link>
+  </div>
+</section>
         {/* PROPERTY SEARCH */}
         <section
           className="container"
