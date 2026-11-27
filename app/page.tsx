@@ -155,16 +155,31 @@ if (listingType) {
           }}
         >
           <img
-            src="/customer-logo.png"
-            alt="Real Home Service Logo"
-            style={{
-              display: "block",
-              width: "min(90%, 600px)",
-              maxHeight: 200,
-              objectFit: "contain",
-              margin: "0 auto 20px",
-            }}
-          />
+            <div
+  style={{
+    width: "min(90%, 420px)",
+    height: 140,
+    background: "#FFFFFF",
+    borderRadius: 12,
+    border: "1px solid #C9A34A",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto 14px",
+    boxSizing: "border-box",
+  }}
+>
+  <img
+    src="/logo.png"
+    alt="Real Home Service Logo"
+    style={{
+      display: "block",
+      width: 120,
+      height: 120,
+      objectFit: "contain",
+    }}
+  />
+</div>
 
           <h1 style={{ color: "#10264A" }}>
             Find Your Dream Property
