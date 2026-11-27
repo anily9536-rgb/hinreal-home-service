@@ -493,18 +493,18 @@ if (listingType) {
                   boxShadow: "0 4px 14px rgba(0,0,0,0.08)",
                 }}
               >
-                <div
-                  style={{
-                    fontSize: 48,
-                    marginBottom: 12,
-                  }}
-                >
-                  {category.icon}
-                </div>
-
-                <h2 style={{ marginBottom: 10 }}>
-                  {category.name}
-                </h2>
+                <img
+  src={category.logo}
+  alt={category.name}
+  style={{
+    display: "block",
+    width: "100%",
+    maxWidth: 230,
+    height: 150,
+    objectFit: "contain",
+    margin: "0 auto 12px",
+  }}
+/>
 
                 <p>{category.description}</p>
 
