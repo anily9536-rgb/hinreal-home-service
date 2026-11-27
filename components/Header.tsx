@@ -9,7 +9,7 @@ export default function Header() {
   
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
+  
   
 useEffect(() => {
   document.body.classList.add("public-site");
