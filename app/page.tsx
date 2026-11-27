@@ -260,6 +260,53 @@ if (listingType) {
     </Link>
   </div>
 </section>
+        {/* SHOWCASE 2 - LUXURY VILLAS */}
+<section style={{ maxWidth: 1100, margin: "35px auto", padding: 20, background: "#F8F3E9", border: "2px solid #D4AF37", borderRadius: 18, boxShadow: "0 6px 20px rgba(0,0,0,0.10)" }}>
+  <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1400" alt="Luxury Villa" style={{ width: "100%", height: 350, objectFit: "cover", borderRadius: 12 }} />
+  <div style={{ textAlign: "center", padding: "25px 12px" }}>
+    <h2 style={{ color: "#10264A", fontSize: 30, fontWeight: 800 }}>Experience Luxury Living</h2>
+    <h3 style={{ color: "#B88625", fontSize: 21, fontStyle: "italic" }}>Your Own Private Paradise</h3>
+    <p style={{ color: "#26364B", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>
+      Discover beautiful luxury villas designed for comfort, privacy and elegance. Enjoy spacious interiors, attractive architecture and peaceful surroundings. Find a villa that brings together your dream lifestyle and the perfect place for your family.
+    </p>
+  </div>
+</section>
+
+{/* SHOWCASE 3 - MODERN APARTMENTS */}
+<section style={{ maxWidth: 1100, margin: "35px auto", padding: 20, background: "#F8F3E9", border: "2px solid #D4AF37", borderRadius: 18, boxShadow: "0 6px 20px rgba(0,0,0,0.10)" }}>
+  <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1400" alt="Modern Apartment" style={{ width: "100%", height: 350, objectFit: "cover", borderRadius: 12 }} />
+  <div style={{ textAlign: "center", padding: "25px 12px" }}>
+    <h2 style={{ color: "#10264A", fontSize: 30, fontWeight: 800 }}>Modern Homes for Modern Living</h2>
+    <h3 style={{ color: "#B88625", fontSize: 21, fontStyle: "italic" }}>Comfort, Convenience & Style</h3>
+    <p style={{ color: "#26364B", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>
+      Explore thoughtfully designed apartments with modern layouts, comfortable spaces and convenient locations. Whether you are buying your first home or looking for a new place to live, discover options that suit your lifestyle and budget.
+    </p>
+  </div>
+</section>
+
+{/* SHOWCASE 4 - COMMERCIAL PROPERTIES */}
+<section style={{ maxWidth: 1100, margin: "35px auto", padding: 20, background: "#F8F3E9", border: "2px solid #D4AF37", borderRadius: 18, boxShadow: "0 6px 20px rgba(0,0,0,0.10)" }}>
+  <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1400" alt="Commercial Property" style={{ width: "100%", height: 350, objectFit: "cover", borderRadius: 12 }} />
+  <div style={{ textAlign: "center", padding: "25px 12px" }}>
+    <h2 style={{ color: "#10264A", fontSize: 30, fontWeight: 800 }}>The Right Space for Your Business</h2>
+    <h3 style={{ color: "#B88625", fontSize: 21, fontStyle: "italic" }}>Build Your Business in the Right Location</h3>
+    <p style={{ color: "#26364B", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>
+      Find commercial spaces that help your business grow. Explore offices, shops and business properties in promising locations. Choose a space that matches your business requirements and gives your next big idea the right place to begin.
+    </p>
+  </div>
+</section>
+
+{/* SHOWCASE 5 - PREMIUM LAND */}
+<section style={{ maxWidth: 1100, margin: "35px auto", padding: 20, background: "#F8F3E9", border: "2px solid #D4AF37", borderRadius: 18, boxShadow: "0 6px 20px rgba(0,0,0,0.10)" }}>
+  <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1400" alt="Premium Land" style={{ width: "100%", height: 350, objectFit: "cover", borderRadius: 12 }} />
+  <div style={{ textAlign: "center", padding: "25px 12px" }}>
+    <h2 style={{ color: "#10264A", fontSize: 30, fontWeight: 800 }}>A Valuable Place to Build Your Future</h2>
+    <h3 style={{ color: "#B88625", fontSize: 21, fontStyle: "italic" }}>Discover the Possibilities of Land Ownership</h3>
+    <p style={{ color: "#26364B", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>
+      Explore land opportunities for your future home, commercial project or long-term plans. Discover different locations and property possibilities with the guidance of Real Home Service. Take the first step towards finding land that matches your vision.
+    </p>
+  </div>
+</section>
         {/* PROPERTY SEARCH */}
         <section
           className="container"
