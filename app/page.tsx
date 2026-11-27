@@ -310,8 +310,9 @@ feels like your own. Your dream lifestyle begins here.
     <h3 style={{ color: "#A77B25", fontSize: 20, fontStyle: "italic", margin: "0 0 15px" }}>Discover a Place Full of Possibilities</h3>
     <p style={{ color: "#344456", fontSize: 16, lineHeight: 1.9, maxWidth: 850, margin: "0 auto" }}>Every great project begins with the right piece of land. Explore land opportunities for your dream home, future development or business plans. Discover different locations and possibilities with Real Home Service and take a confident step towards your property goals.</p>
   </div>
-  </div>
+  
 </section>
+          </div>
         {/* PROPERTY SEARCH */}
         <section
           className="container"
