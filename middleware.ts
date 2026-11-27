@@ -69,7 +69,9 @@ export async function middleware(request: NextRequest) {
     path === "/" ||
     protectedPrefixes.some((prefix) => path.startsWith(prefix));
 
-  if (!protectedPage) return NextResponse.next();
+  if (!protectedPage) {
+    return NextResponse.next();
+  }
 
   const session = await checkSession(request);
 
@@ -77,8 +79,10 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.redirect(
       new URL("/login", request.url)
     );
+
     response.cookies.delete("rhs_access_token");
     response.cookies.delete("rhs_refresh_token");
+
     return response;
   }
 
@@ -92,7 +96,6 @@ export async function middleware(request: NextRequest) {
       secure,
       sameSite: "lax",
       path: "/",
-      maxAge: session.expiresIn,
     });
 
     response.cookies.set("rhs_refresh_token", session.refreshToken, {
@@ -100,7 +103,6 @@ export async function middleware(request: NextRequest) {
       secure,
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24 * 30,
     });
   }
 
