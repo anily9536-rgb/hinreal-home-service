@@ -155,7 +155,7 @@ if (listingType) {
           }}
         >
           <img
-            src="/file_0000000045d0821180988036e39a5ebd.png"
+            src="/customer-logo.png"
             alt="Real Home Service Logo"
             style={{
               display: "block",
