@@ -1,7 +1,6 @@
-
-
 import type { Metadata } from "next";
 import "./globals.css";
+import SessionExitHandler from "@/components/SessionExitHandler";
 
 export const metadata: Metadata = {
   title: "Real Home Service",
@@ -15,7 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <SessionExitHandler />
+        {children}
+      </body>
     </html>
   );
 }
