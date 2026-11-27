@@ -40,11 +40,7 @@ async function handleLogout() {
     padding: "8px 4px",
   };
 
-  const customerLinkStyle = {
-    ...linkStyle,
-    color: "#f0d58a",
-    fontWeight: "bold" as const,
-  };
+  
 
   return (
     <header
