@@ -511,7 +511,17 @@ if (listingType) {
   }}
 />
 
-                <p>{category.description}</p>
+                <p
+  style={{
+    color: "#24344D",
+    fontSize: 15,
+    fontWeight: 600,
+    lineHeight: 1.5,
+    margin: "10px 0",
+  }}
+>
+  {category.description}
+</p>
 
                 <span
                   style={{
