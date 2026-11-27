@@ -187,8 +187,7 @@ if (listingType) {
     boxShadow: "0 6px 20px rgba(0,0,0,0.10)",
   }}
 >
-  <img
-    src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400"
+  <imghttps://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1400"
     alt="Luxury Dream Property"
     style={{
       width: "100%",
@@ -232,14 +231,14 @@ if (listingType) {
         margin: "0 auto",
       }}
     >
-      Discover a world of beautiful homes, premium apartments,
-      commercial spaces and valuable land opportunities.
-      Whether you are looking for your dream home or a
-      promising property investment, Real Home Service is
-      here to guide you. Explore great locations, discover
-      exciting opportunities and find a property that
-      perfectly matches your needs and budget.
-      Your dream property journey starts here!
+      Step into a world where elegance meets comfort. At Real
+Home Service, we bring you carefully selected residential
+homes, luxurious villas, modern apartments and premium
+commercial spaces. Every property represents an opportunity
+to build your future, create lasting memories and make a
+smart investment. Discover exceptional spaces, explore
+prime locations and let us help you find a place that truly
+feels like your own. Your dream lifestyle begins here.
     </p>
 
     <Link
