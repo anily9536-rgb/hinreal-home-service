@@ -729,7 +729,7 @@ function printBill() {
 
       <body>
         <div class="company-header">
-          <img src="${window.location.origin}/logo.png" alt="Company Logo">
+          <img src="${window.location.origin}/admin-logo.png" alt="Company Logo">
           <h1>REAL HOME SERVICE</h1>
         </div>
 
