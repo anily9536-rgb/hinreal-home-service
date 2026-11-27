@@ -260,12 +260,7 @@ if (listingType) {
     </Link>
   </div>
 </section>
-        {/* SHOWCASE 2 - LUXURY VILLAS */}
-<section style={{ maxWidth: 1100, margin: "35px auto", padding: 20, background: "#F8F3E9", border: "2px solid #D4AF37", borderRadius: 18, boxShadow: "0 6px 20px rgba(0,0,0,0.10)" }}>
-  <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1400" alt="Luxury Villa" style={{ width: "100%", height: 350, objectFit: "cover", borderRadius: 12 }} />
-  <div style={{ textAlign: "center", padding: "25px 12px" }}>
-    <h2 style={{ color: "#10264A", fontSize: 30, fontWeight: 800 }}>Experience Luxury Living</h2>
-    <h3 style={{ color: "#B88625", fontSize: 21, fontStyle: "italic" }}>Your Own Private Paradise</h3>
+        
 {/* PREMIUM PROPERTY SHOWCASE 1 */}
 <section style={{ maxWidth: 1100, margin: "40px auto", padding: 18, background: "#EAF1EB", border: "1.5px solid #C9A34A", borderRadius: 20, boxShadow: "0 8px 25px rgba(16,38,74,0.10)" }}>
   <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400" alt="Luxury Dream Property" style={{ width: "100%", height: 330, objectFit: "cover", borderRadius: 14, display: "block" }} />
