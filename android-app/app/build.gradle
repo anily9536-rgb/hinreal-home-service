@@ -31,7 +31,7 @@ android {
         admin {
             dimension 'edition'
             applicationId 'com.realhomeservice.admin'
-            resValue 'string', 'app_name', 'Real Home Service Admin'
+            resValue 'string', 'app_name', 'Admin'
             manifestPlaceholders = [
                 appIcon: '@drawable/admin_app_logo'
             ]
