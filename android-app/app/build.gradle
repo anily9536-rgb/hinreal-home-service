@@ -1,3 +1,4 @@
+
 plugins {
     id 'com.android.application'
 }
@@ -21,13 +22,19 @@ android {
             dimension 'edition'
             applicationId 'com.realhomeservice.customer'
             resValue 'string', 'app_name', 'Real Home Service'
+            manifestPlaceholders = [
+                appIcon: '@drawable/customer_app_logo'
+            ]
             buildConfigField 'String', 'START_URL', '"https://real-home-service.vercel.app/"'
         }
 
         admin {
             dimension 'edition'
             applicationId 'com.realhomeservice.admin'
-            resValue 'string', 'app_name', 'Admin'
+            resValue 'string', 'app_name', 'Real Home Service Admin'
+            manifestPlaceholders = [
+                appIcon: '@drawable/admin_app_logo'
+            ]
             buildConfigField 'String', 'START_URL', '"https://real-home-service.vercel.app/admin/login"'
         }
     }
@@ -41,23 +48,47 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 }
+
 def generatedLogoResDir = layout.buildDirectory.dir("generated/res/logo")
 
 android.sourceSets.main.res.srcDir(generatedLogoResDir)
 
-tasks.register("downloadAppLogo") {
-    outputs.file(generatedLogoResDir.map { it.file("drawable/app_logo.png") })
+tasks.register("downloadAppLogos") {
+    outputs.files(
+        generatedLogoResDir.map {
+            it.file("drawable-nodpi/customer_app_logo.png")
+        },
+        generatedLogoResDir.map {
+            it.file("drawable-nodpi/admin_app_logo.png")
+        }
+    )
 
     doLast {
-        def logoFile = generatedLogoResDir.get().file("drawable/app_logo.png").asFile
-        logoFile.parentFile.mkdirs()
+        def logoDir = generatedLogoResDir.get()
+            .dir("drawable-nodpi").asFile
 
-        new URL("https://raw.githubusercontent.com/anily9536-rgb/hinreal-home-service/main/public/file_0000000045d0821180988036e39a5ebd.png").withInputStream { input ->
-            logoFile.withOutputStream { output -> output << input }
+        logoDir.mkdirs()
+
+        def logos = [
+            "customer_app_logo.png":
+                "https://raw.githubusercontent.com/anily9536-rgb/hinreal-home-service/main/public/customer-logo.png",
+
+            "admin_app_logo.png":
+                "https://raw.githubusercontent.com/anily9536-rgb/hinreal-home-service/main/public/admin-logo.png"
+        ]
+
+        logos.each { fileName, imageUrl ->
+            def logoFile = new File(logoDir, fileName)
+
+            new URL(imageUrl).withInputStream { input ->
+                logoFile.withOutputStream { output ->
+                    output << input
+                }
+            }
         }
     }
 }
 
 tasks.named("preBuild").configure {
-    dependsOn("downloadAppLogo")
+    dependsOn("downloadAppLogos")
 }
