@@ -527,7 +527,7 @@ if (listingType) {
                   style={{
                     display: "inline-block",
                     marginTop: 15,
-                    color: "#2874a6",
+                    color: "#8A641C",
                     fontWeight: "bold",
                   }}
                 >
