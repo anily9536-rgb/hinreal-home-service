@@ -487,7 +487,7 @@ if (listingType) {
                   padding: 30,
                   minHeight: 190,
                   minWidth: 0,
-                  border: "1px solid #dce5ee",
+                  border: "2px solid #D4AF37",
                   borderRadius: 12,
                   background: "#fff",
                   boxShadow: "0 4px 14px rgba(0,0,0,0.08)",
