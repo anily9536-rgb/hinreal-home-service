@@ -105,7 +105,7 @@ export default function AdminLoginPage() {
           }}
         >
           <img
-            src="/logo.png"
+            src="/admin-logo.png"
             alt="Real Home Service Logo"
             style={{
               width: "76px",
