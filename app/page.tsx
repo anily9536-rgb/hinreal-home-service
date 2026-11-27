@@ -266,7 +266,7 @@ feels like your own. Your dream lifestyle begins here.
 </section>
         
 {/* PREMIUM PROPERTY SHOWCASE 1 */}
-<section style={{ maxWidth: 1100, margin: "40px auto", padding: 18, background: "#EAF1EB", border: "1.5px solid #C9A34A", borderRadius: 20, boxShadow: "0 8px 25px rgba(16,38,74,0.10)" }}>
+<section style={{ maxWidth: 1100,width: "100%", flex: "0 0 100%", scrollSnapAlign: "start", margin: "40px auto", padding: 18, background: "#EAF1EB", border: "1.5px solid #C9A34A", borderRadius: 20, boxShadow: "0 8px 25px rgba(16,38,74,0.10)" }}>
   <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400" alt="Luxury Dream Property" style={{ width: "100%", height: 330, objectFit: "cover", borderRadius: 14, display: "block" }} />
   <div style={{ textAlign: "center", padding: "25px 15px" }}>
     <h2 style={{ color: "#10264A", fontSize: 29, fontWeight: 800, margin: "0 0 10px" }}>Your Dream Property, Our Priority</h2>
