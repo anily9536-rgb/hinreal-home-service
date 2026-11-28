@@ -161,11 +161,16 @@ export default function SellYourProperty() {
           .remove(uploaded);
       }
 
-      setMessage(
-        error instanceof Error
-          ? error.message
-          : "Submission failed."
-      );
+      const errorMessage =
+  error instanceof Error
+    ? error.message
+    : typeof error === "object" &&
+      error !== null &&
+      "message" in error
+    ? String((error as { message?: unknown }).message ?? "")
+    : "";
+
+setMessage(errorMessage || "Submission failed. Please try again.");
     } finally {
       setSaving(false);
     }
