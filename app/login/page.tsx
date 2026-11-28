@@ -260,7 +260,24 @@ export default function LoginPage() {
                 outlineColor: "#1d4ed8",
               }}
             />
-
+<p
+  style={{
+    textAlign: "right",
+    margin: "-12px 0 22px",
+    fontSize: "14px",
+  }}
+>
+  <Link
+    href="/forgot-password"
+    style={{
+      color: "#174b91",
+      fontWeight: 900,
+      textDecoration: "underline",
+    }}
+  >
+    Forgot Password?
+  </Link>
+</p>
             {message && (
               <p
                 style={{
