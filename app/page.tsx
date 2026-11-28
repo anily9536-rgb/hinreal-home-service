@@ -358,9 +358,23 @@ feels like your own. Your dream lifestyle begins here.
 <SellYourProperty />
                 {/* LATEST PROPERTIES SLIDER */}
         <section style={{ maxWidth: 1100, margin: "35px auto", padding: 18 }}>
-          <h2 style={{ color: "#10264A", textAlign: "center", fontSize: 30, fontWeight: 800, marginBottom: 8 }}>
-            Latest Properties
-          </h2>
+          <div style={{ textAlign: "center", margin: "0 auto 22px" }}>
+  <p style={{ color: "#A77B25", letterSpacing: "5px", fontWeight: 800, fontSize: 13 }}>
+    DISCOVER YOUR NEXT ADDRESS
+  </p>
+  <h2 style={{
+    color: "#10264A",
+    fontFamily: "Georgia, serif",
+    fontSize: "clamp(30px, 5vw, 46px)",
+    fontWeight: 900,
+    textTransform: "uppercase",
+    letterSpacing: "1.5px",
+    margin: "12px 0 0"
+  }}>
+    Buy Property <span style={{ color: "#B88625", fontStyle: "italic" }}>Section</span>
+  </h2>
+  <div style={{ width: 105, height: 4, background: "#C9A34A", margin: "12px auto" }} />
+</div>
 
           <p style={{ textAlign: "center", color: "#344456", marginBottom: 22 }}>
             Explore our newest approved properties
