@@ -29,7 +29,6 @@ export default function SellYourProperty() {
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // Photo preview URLs create and cleanup
   useEffect(() => {
     const urls = photos.map(photo => URL.createObjectURL(photo));
     setPreviewUrls(urls);
@@ -43,8 +42,8 @@ export default function SellYourProperty() {
     const selected = Array.from(e.target.files || []);
     e.target.value = "";
 
-    if (photos.length + selected.length > 20) {
-      setMessage("Maximum 20 photos allowed.");
+    if (photos.length + selected.length > 10) {
+      setMessage("Maximum 10 photos allowed.");
       return;
     }
 
@@ -70,8 +69,13 @@ export default function SellYourProperty() {
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (photos.length < 10) {
-      setMessage("Minimum 10 photos upload karein.");
+    if (photos.length < 5) {
+      setMessage("Minimum 5 photos upload karein.");
+      return;
+    }
+
+    if (photos.length > 10) {
+      setMessage("Maximum 10 photos allowed.");
       return;
     }
 
@@ -348,7 +352,7 @@ export default function SellYourProperty() {
                 fontWeight: 800,
               }}
             >
-              Property Photos (Minimum 10)
+              Property Photos (Minimum 5, Maximum 10)
             </label>
 
             <input
@@ -360,10 +364,9 @@ export default function SellYourProperty() {
             />
 
             <p>
-              {photos.length} photos selected (minimum 10)
+              {photos.length} photos selected (minimum 5, maximum 10)
             </p>
 
-            {/* PHOTO PREVIEW WITH REMOVE BUTTON */}
             <div
               style={{
                 display: "grid",
@@ -434,13 +437,13 @@ export default function SellYourProperty() {
 
             <button
               type="submit"
-              disabled={saving || photos.length < 10}
+              disabled={saving || photos.length < 5 || photos.length > 10}
               style={{
                 width: "100%",
                 padding: 16,
                 marginTop: 15,
                 background:
-                  saving || photos.length < 10
+                  saving || photos.length < 5 || photos.length > 10
                     ? "#999"
                     : "#C9A34A",
                 color: "#10264A",
