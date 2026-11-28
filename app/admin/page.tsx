@@ -1044,7 +1044,7 @@ function printPurchaseBill() {
             <p style={{ marginBottom: 0, color: "#fff" }}>View All Sold Properties →</p>
           </button>
           
-      <button
+      
             {/* COMMISSION BUTTON */}
       <button
         type="button"
