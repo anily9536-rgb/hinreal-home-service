@@ -375,9 +375,26 @@ feels like your own. Your dream lifestyle begins here.
                     Property Code: {property.property_code || "N/A"}
                   </p>
 
-                  <p style={{ margin: "5px 0" }}>
-                    {property.property_type || "Property"}
-                  </p>
+                  <p style={{ margin: "5px 0", fontWeight: 800 }}>
+  {property.property_type || "Property"}
+</p>
+
+<p
+  style={{
+    margin: "8px 0",
+    display: "inline-block",
+    padding: "6px 14px",
+    borderRadius: 20,
+    background:
+      property.listing_type === "Rent" ? "#E5F0FF" : "#EAF5E9",
+    color:
+      property.listing_type === "Rent" ? "#1557A0" : "#237A36",
+    fontWeight: 800,
+    fontSize: 14,
+  }}
+>
+  {property.listing_type === "Rent" ? "FOR RENT" : "FOR SALE"}
+</p>
 
                   <p style={{ margin: "5px 0" }}>
                     📍 {property.locality || property.address || "Location not provided"}
