@@ -338,6 +338,8 @@ feels like your own. Your dream lifestyle begins here.
   
 </section>
           </div>
+        {/* SELL YOUR PROPERTY SECTION */}
+<SellYourProperty />
                 {/* LATEST PROPERTIES SLIDER */}
         <section style={{ maxWidth: 1100, margin: "35px auto", padding: 18 }}>
           <h2 style={{ color: "#10264A", textAlign: "center", fontSize: 30, fontWeight: 800, marginBottom: 8 }}>
