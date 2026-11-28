@@ -14,6 +14,7 @@ export default function RegisterPage() {
   });
 
   const [message, setMessage] = useState("");
+  const [customerId, setCustomerId] = useState("");
   const [loading, setLoading] = useState(false);
 
   function updateField(e: React.ChangeEvent<HTMLInputElement>) {
@@ -23,6 +24,7 @@ export default function RegisterPage() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMessage("");
+    setCustomerId("");
     setLoading(true);
 
     try {
@@ -37,7 +39,8 @@ export default function RegisterPage() {
       if (!response.ok) {
         setMessage(result.error || "Registration नहीं हो पाया।");
       } else {
-        setMessage("Registration सफल हुआ! अब Login करें।");
+        setCustomerId(String(result.customerId || ""));
+        setMessage("Registration सफल हुआ!");
         setForm({
           fullName: "",
           username: "",
@@ -62,36 +65,28 @@ export default function RegisterPage() {
   ] as const;
 
   return (
-    <main
-      style={{
-        minHeight: "100svh",
-        width: "100%",
-        boxSizing: "border-box",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "18px 14px",
-        position: "relative",
-        overflow: "auto",
-        backgroundImage:
-          "linear-gradient(rgba(3,17,48,0.72), rgba(3,17,48,0.82)), url('/login-bg.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <section style={{ width: "100%", maxWidth: "500px", margin: "auto", position: "relative", zIndex: 1 }}>
-        <header
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "13px",
-            marginBottom: "22px",
-            color: "#ffffff",
-          }}
-        >
+    <main style={{
+      minHeight: "100svh",
+      width: "100%",
+      boxSizing: "border-box",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "18px 14px",
+      backgroundImage: "linear-gradient(rgba(3,17,48,0.72), rgba(3,17,48,0.82)), url('/login-bg.png')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    }}>
+      <section style={{ width: "100%", maxWidth: "500px", margin: "auto" }}>
+        <header style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "13px",
+          marginBottom: "22px",
+          color: "#ffffff",
+        }}>
           <img
             src="/customer-logo.png"
             alt="Real Home Service Logo"
@@ -102,34 +97,34 @@ export default function RegisterPage() {
               borderRadius: "15px",
               background: "#ffffff",
               padding: "5px",
-              boxSizing: "border-box",
               border: "2px solid #e7bd62",
-              boxShadow: "0 5px 20px rgba(0,0,0,0.35)",
             }}
           />
           <div>
-            <h1 style={{ margin: 0, fontSize: "clamp(21px, 5vw, 29px)", fontWeight: 900, color: "#ffffff", lineHeight: 1.2 }}>
+            <h1 style={{ margin: 0, fontSize: "clamp(21px, 5vw, 29px)", fontWeight: 900 }}>
               Real Home Service
             </h1>
-            <p style={{ margin: "6px 0 0", color: "#f6d68a", fontSize: "11px", letterSpacing: "2px", fontWeight: 700 }}>
+            <p style={{ margin: "6px 0 0", color: "#f6d68a", fontSize: "11px", letterSpacing: "2px" }}>
               FIND YOUR DREAM PROPERTY
             </p>
           </div>
         </header>
 
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            width: "100%",
-            boxSizing: "border-box",
-            background: "linear-gradient(145deg, #ffffff, #f2f6ff)",
-            border: "3px solid #d9ad50",
-            borderRadius: "22px",
-            overflow: "hidden",
-            boxShadow: "0 18px 55px rgba(0,0,0,0.42)",
-          }}
-        >
-          <div style={{ background: "linear-gradient(90deg, #071d49, #174b91)", padding: "21px 15px", textAlign: "center", borderBottom: "3px solid #d9ad50" }}>
+        <form onSubmit={handleSubmit} style={{
+          width: "100%",
+          boxSizing: "border-box",
+          background: "linear-gradient(145deg, #ffffff, #f2f6ff)",
+          border: "3px solid #d9ad50",
+          borderRadius: "22px",
+          overflow: "hidden",
+          boxShadow: "0 18px 55px rgba(0,0,0,0.42)",
+        }}>
+          <div style={{
+            background: "linear-gradient(90deg, #071d49, #174b91)",
+            padding: "21px 15px",
+            textAlign: "center",
+            borderBottom: "3px solid #d9ad50",
+          }}>
             <h2 style={{ margin: 0, color: "#ffffff", fontSize: "27px", fontWeight: 900 }}>
               CUSTOMER REGISTER
             </h2>
@@ -145,7 +140,13 @@ export default function RegisterPage() {
 
             {fields.map((field) => (
               <div key={field.name} style={{ marginBottom: "16px" }}>
-                <label htmlFor={field.name} style={{ display: "block", marginBottom: "8px", fontWeight: 800, color: "#102b59", fontSize: "14px" }}>
+                <label htmlFor={field.name} style={{
+                  display: "block",
+                  marginBottom: "8px",
+                  fontWeight: 800,
+                  color: "#102b59",
+                  fontSize: "14px",
+                }}>
                   {field.label}
                 </label>
                 <input
@@ -166,16 +167,65 @@ export default function RegisterPage() {
                     background: "#ffffff",
                     color: "#0f172a",
                     fontSize: "16px",
-                    outlineColor: "#1d4ed8",
                   }}
                 />
               </div>
             ))}
 
             {message && (
-              <p style={{ color: message.includes("सफल") ? "#166534" : "#b91c1c", background: message.includes("सफल") ? "#dcfce7" : "#fee2e2", padding: "12px", borderRadius: "9px", margin: "0 0 16px", fontSize: "14px" }}>
+              <p style={{
+                color: customerId ? "#166534" : "#b91c1c",
+                background: customerId ? "#dcfce7" : "#fee2e2",
+                padding: "12px",
+                borderRadius: "9px",
+                margin: "0 0 16px",
+                fontSize: "14px",
+                textAlign: "center",
+              }}>
                 {message}
               </p>
+            )}
+
+            {customerId && (
+              <div style={{
+                padding: "20px",
+                marginBottom: "18px",
+                background: "#fff8e7",
+                border: "2px solid #d9ad50",
+                borderRadius: "14px",
+                textAlign: "center",
+              }}>
+                <h3 style={{ color: "#102b59", margin: "0 0 10px", fontSize: "18px" }}>
+                  आपकी Customer ID
+                </h3>
+                <div style={{
+                  fontSize: "34px",
+                  fontWeight: 900,
+                  letterSpacing: "5px",
+                  color: "#123e86",
+                }}>
+                  {customerId}
+                </div>
+                <p style={{ color: "#b91c1c", fontWeight: 800, fontSize: "13px", margin: "12px 0 0" }}>
+                  इस ID को अभी लिखकर सुरक्षित रख लें।
+                  यह दोबारा नहीं दिखाई जाएगी।
+                </p>
+                <button
+                  type="button"
+                  onClick={() => navigator.clipboard?.writeText(customerId)}
+                  style={{
+                    marginTop: "12px",
+                    padding: "10px 18px",
+                    background: "#123e86",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "9px",
+                    fontWeight: 800,
+                  }}
+                >
+                  Copy Customer ID
+                </button>
+              </div>
             )}
 
             <button
@@ -191,7 +241,6 @@ export default function RegisterPage() {
                 fontWeight: 900,
                 fontSize: "18px",
                 cursor: loading ? "wait" : "pointer",
-                boxShadow: "0 7px 18px rgba(18,62,134,0.25)",
               }}
             >
               {loading ? "Please wait..." : "REGISTER"}
@@ -206,7 +255,16 @@ export default function RegisterPage() {
           </div>
         </form>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 8px", marginTop: "24px", padding: "15px 10px", background: "rgba(5,22,55,0.78)", border: "1px solid rgba(246,214,138,0.65)", borderRadius: "15px" }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "12px 8px",
+          marginTop: "24px",
+          padding: "15px 10px",
+          background: "rgba(5,22,55,0.78)",
+          border: "1px solid rgba(246,214,138,0.65)",
+          borderRadius: "15px",
+        }}>
           {["🏠 Home Services", "🛡️ Trusted Services", "👨‍🔧 Professional Team", "🕒 24/7 Support"].map((service) => (
             <div key={service} style={{ textAlign: "center", color: "#ffffff", fontSize: "12px", fontWeight: 700 }}>
               {service}
