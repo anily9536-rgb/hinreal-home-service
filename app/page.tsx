@@ -338,7 +338,23 @@ feels like your own. Your dream lifestyle begins here.
   
 </section>
           </div>
-        {/* SELL YOUR PROPERTY SECTION */}
+        {/* PREMIUM SALE PROPERTY HEADING */}
+<div style={{ textAlign: "center", margin: "45px auto 20px", padding: "0 15px" }}>
+  <p style={{ color: "#A77B25", letterSpacing: "5px", fontWeight: 800 }}>
+    REAL HOME SERVICE
+  </p>
+  <h2 style={{
+    color: "#10264A",
+    fontFamily: "Georgia, serif",
+    fontSize: "clamp(30px, 5vw, 46px)",
+    fontWeight: 900,
+    textTransform: "uppercase",
+    letterSpacing: "1.5px"
+  }}>
+    Sale Property <span style={{ color: "#B88625", fontStyle: "italic" }}>Section</span>
+  </h2>
+  <div style={{ width: 105, height: 4, background: "#C9A34A", margin: "12px auto" }} />
+</div>
 <SellYourProperty />
                 {/* LATEST PROPERTIES SLIDER */}
         <section style={{ maxWidth: 1100, margin: "35px auto", padding: 18 }}>
