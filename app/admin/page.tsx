@@ -1059,6 +1059,26 @@ function printPurchaseBill() {
   textAlign: "left",
   color: "#fff",
 }}
+        <button
+  type="button"
+  onClick={() => router.push("/admin/sale-by-customer")}
+  style={{
+    padding: 20,
+    background: "linear-gradient(135deg, #C9A34A, #8A641C)",
+    border: "2px solid #F4D17A",
+    borderRadius: 12,
+    minWidth: 0,
+    minHeight: 145,
+    boxSizing: "border-box",
+    cursor: "pointer",
+    textAlign: "left",
+    color: "#10264A",
+  }}
+>
+  <h3 style={{ marginTop: 0 }}>Sale By Customer</h3>
+  <p>Customer Submitted Properties</p>
+  <p>View / Approve / Delete →</p>
+</button>
       ><h3 style={{ margin: "0 0 10px", color: "#fff" }}>Commission</h3>
         <p style={{ margin: 0, color: "#fff" }}>Property Commission</p>
         <p style={{ marginBottom: 0, color: "#fff" }}>Add / View / Print →</p>
